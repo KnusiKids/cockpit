@@ -1,0 +1,5 @@
+# Nicht in Suchmaschinen, Startdatei immer frisch laden
+Header set X-Robots-Tag "noindex, nofollow"
+<FilesMatch "(index\.html|sw\.js|manifest\.webmanifest)$">
+  Header set Cache-Control "no-cache"
+</FilesMatch>
