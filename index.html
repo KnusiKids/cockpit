@@ -422,15 +422,15 @@ body.gate #gate{display:grid;min-height:100vh;min-height:100dvh;place-items:cent
 </section>
 
 <section id="zentrale" hidden>
-  <div class="topbar"><div><h1>Schaltzentrale</h1><div class="sub">Ein Klick legt einen Auftrag an. Rechnungen und Gutschriften entstehen nur als Entwurf im Postfach, gesendet wird nie.</div></div><div class="actions"><button class="btn light" id="refreshBtn">Aktualisieren</button></div></div>
+  <div class="topbar"><div><h1>Schaltzentrale</h1><div class="sub">Rechnungen entstehen über den Rechnungslauf (3× täglich) als Entwurf im Postfach, gesendet wird nie automatisch. Die übrigen Aufträge haben noch keinen ausführenden Lauf.</div></div><div class="actions"><button class="btn light" id="refreshBtn">Aktualisieren</button></div></div>
   <div class="bento">
     <div class="tile s12" id="zLogin" hidden><div class="empty">Für die Schaltzentrale bitte links unten anmelden (Admin-Konto der Website).</div></div>
     <div class="tile s12">
       <div class="t-head"><h2>Schnellaktionen</h2></div>
       <div class="actions-grid">
-        <div class="action"><b>EÜR aktualisieren</b><span class="tiny">Neue EÜR-Fassung mit Backup, aus Rechnungen und Belegen. Braucht den PC.</span><button class="btn small" data-auftrag="eur_update">Auftrag anlegen</button></div>
-        <div class="action"><b>Kennzahlen holen</b><span class="tiny">Instagram, Google-Profil und Buchungszahlen ins Cockpit eintragen.</span><button class="btn small" data-auftrag="kennzahlen">Auftrag anlegen</button></div>
-        <div class="action"><b>Zahlungserinnerungen prüfen</b><span class="tiny">Fällige Rechnungen gegen die Teilnehmerliste prüfen, Entwürfe ablegen.</span><button class="btn small" data-auftrag="erinnerung">Auftrag anlegen</button></div>
+        <div class="action"><b>EÜR aktualisieren</b><span class="tiny">Neue EÜR-Fassung mit Backup, aus Rechnungen und Belegen. Braucht den PC.</span><button class="btn small" data-auftrag="eur_update" disabled title="Noch kein Lauf eingerichtet, der diesen Auftrag ausführt">wartet auf Einrichtung</button></div>
+        <div class="action"><b>Kennzahlen holen</b><span class="tiny">Instagram, Google-Profil und Buchungszahlen ins Cockpit eintragen.</span><button class="btn small" data-auftrag="kennzahlen" disabled title="Noch kein Lauf eingerichtet, der diesen Auftrag ausführt">wartet auf Einrichtung</button></div>
+        <div class="action"><b>Zahlungserinnerungen prüfen</b><span class="tiny">Fällige Rechnungen gegen die Teilnehmerliste prüfen, Entwürfe ablegen.</span><button class="btn small" data-auftrag="erinnerung" disabled title="Noch kein Lauf eingerichtet, der diesen Auftrag ausführt">wartet auf Einrichtung</button></div>
       </div>
     </div>
     <div class="tile s12" id="tCsv">
@@ -722,6 +722,8 @@ const eurc = v => v==null||isNaN(v) ? "–" : Number(v).toLocaleString("de-DE",{
 const eur = v => v==null||isNaN(v) ? "–" : nf.format(v)+" €";
 const fmt = v => v==null||v==="" ? "–" : new Intl.NumberFormat("de-DE").format(v);
 const dt = s => s ? new Date(s+"T12:00:00").toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit",year:"numeric"}) : "–";
+const heuteBerlin = () => new Date().toLocaleDateString("sv-SE",{timeZone:"Europe/Berlin"});
+const ymdBerlin = d => new Date(d).toLocaleDateString("sv-SE",{timeZone:"Europe/Berlin"});
 const dshort = s => s ? new Date(s+"T12:00:00").toLocaleDateString("de-DE",{day:"2-digit",month:"short"}) : "–";
 const esc = s => String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const sollSum = m => m.soll.lokal+m.soll.physisch+m.soll.digital;
@@ -865,7 +867,7 @@ function renderOverview(){
   // Termine (live aus der Datenbank, ergänzt um eigene Termine)
   if(window.LIVE && LIVE.zyklen){
     const own = D.termine.filter(t=>!LIVE.zyklen.some(z=>z.start===t.datum && (z.typ||"").split(" ")[0]===(t.angebot||"").split(" ")[0]));
-    var termQuelle = LIVE.zyklen.filter(z=>z.start>=new Date().toISOString().slice(0,10)).map(z=>({datum:z.start,ort:z.ort,angebot:z.typ,belegt:z.belegt,max:z.plaetze})).concat(own);
+    var termQuelle = LIVE.zyklen.filter(z=>z.start>=heuteBerlin()).map(z=>({datum:z.start,ort:z.ort,angebot:z.typ,belegt:z.belegt,max:z.plaetze})).concat(own);
   } else { var termQuelle = D.termine; }
   const kom = termQuelle.filter(t=>t.datum && daysTo(t.datum)>=0).sort((a,b)=>a.datum.localeCompare(b.datum)).slice(0,4);
   $("ovTermine").innerHTML = kom.length ? kom.map(t=>{ const q=t.max? t.belegt/t.max : null; return `<div class="li"><div style="width:58px" class="tiny">${dshort(t.datum)}</div><div class="grow"><div class="t">${esc(t.angebot)}</div><div class="tiny">${esc(t.ort)}</div></div>${q!=null?`<div style="width:110px"><div class="bar"><span style="width:${Math.min(100,q*100)}%;background:${q>=.8?'var(--green)':q>=.5?'var(--mustard)':'var(--terracotta)'}"></span></div><div class="tiny num" style="text-align:right">${fmt(t.belegt)}/${fmt(t.max)}</div></div>`:""}</div>`; }).join("") : `<div class="empty">Keine kommenden Termine.</div>`;
@@ -901,7 +903,7 @@ function renderNachtragen(){
   $("kpiTable").innerHTML=k+"</tbody>";
   document.querySelectorAll("#kpiTable input").forEach(inp=>inp.addEventListener("change",e=>{
     const x=D.kennzahlen[e.target.dataset.i], f=e.target.dataset.f, v=e.target.value.trim();
-    if(f==="wert"){ x.wert = v===""?null:Number(v); x.datum=new Date().toISOString().slice(0,10); if(x.wert!=null){ x.verlauf=x.verlauf||[]; x.verlauf.push({datum:x.datum,wert:x.wert}); } }
+    if(f==="wert"){ x.wert = v===""?null:Number(v); x.datum=heuteBerlin(); if(x.wert!=null){ x.verlauf=x.verlauf||[]; x.verlauf.push({datum:x.datum,wert:x.wert}); } }
     else { x.datum=v; }
     save("Gespeichert"); }));
 }
@@ -920,7 +922,7 @@ function renderFristen(){
 }
 $("addFrist").addEventListener("click",()=>{ const t=$("fTitel").value.trim(), d=$("fDatum").value; if(!t||!d){ toast("Aufgabe und Datum ausfüllen"); return; } D.fristen.push({titel:t,datum:d,wer:$("fWer").value.trim(),ok:false}); ["fTitel","fDatum","fWer"].forEach(x=>$(x).value=""); save("Frist hinzugefügt"); });
 $("addStd").addEventListener("click",()=>{ const w=$("hWoche").value, s=$("hStd").value; if(!w||s===""){ toast("Woche und Stunden ausfüllen"); return; }
-  const d=new Date(w+"T12:00:00"); const day=(d.getDay()+6)%7; d.setDate(d.getDate()-day); const mo=d.toISOString().slice(0,10);
+  const d=new Date(w+"T12:00:00"); const day=(d.getDay()+6)%7; d.setDate(d.getDate()-day); const mo=ymdBerlin(d);
   const ex=D.stunden.find(x=>x.woche===mo); if(ex) ex.std=Number(s); else D.stunden.push({woche:mo,std:Number(s)});
   $("hStd").value=""; save(Number(s)>=15?"Gespeichert. Achtung: 15 Stunden erreicht":"Gespeichert"); });
 
@@ -940,7 +942,7 @@ function renderDec(){
   document.querySelectorAll("#decList textarea").forEach(x=>x.addEventListener("input",()=>setDraft(x.dataset.i,{notiz:x.value})));
   decBar();
 }
-$("decSave").addEventListener("click",()=>{ const heute=new Date().toISOString().slice(0,10); let n=0;
+$("decSave").addEventListener("click",()=>{ const heute=heuteBerlin(); let n=0;
   Object.entries(DEC_DRAFT).forEach(([i,d])=>{ const e=D.entscheidungen[i]; if(d.a!==undefined && d.a!==e.a){ e.a=d.a; e.datum=heute; } if(d.notiz!==undefined) e.notiz=d.notiz; n++; });
   DEC_DRAFT={}; save(n===1?"Entscheidung gespeichert":`${n} Entscheidungen gespeichert`); });
 $("decUndo").addEventListener("click",()=>{ DEC_DRAFT={}; renderDec(); toast("Änderungen verworfen"); });
@@ -951,7 +953,7 @@ const STAT={laeuft:"läuft",wartet:"wartet auf Ja",geplant:"geplant",erledigt:"e
 const PCOL={laeuft:"var(--terracotta)",wartet:"var(--mustard)",geplant:"#BFA899",erledigt:"var(--green)",gestoppt:"#BFA899"};
 const PCHIP={laeuft:"warn",wartet:"warn",geplant:"neutral",erledigt:"up",gestoppt:"neutral"};
 let projFilter="alle"; try{ projFilter=localStorage.getItem(KEY+"-pf")||"alle"; }catch(e){}
-function tageBis(d){ if(!d) return null; return Math.round((new Date(d+"T12:00")-new Date(new Date().toISOString().slice(0,10)+"T12:00"))/864e5); }
+function tageBis(d){ if(!d) return null; return Math.round((new Date(d+"T12:00")-new Date(heuteBerlin()+"T12:00"))/864e5); }
 function fristChip(p){ const n=tageBis(p.frist); if(n==null||p.status==="erledigt") return ""; const c=n<0?"down":n<=14?"warn":"neutral"; return `<span class="chip ${c}">${n<0?`${-n} T. drüber`:n===0?"heute":`in ${n} T.`}</span>`; }
 function pbar(p,h){ return `<div class="pbar" ${h?`style="height:${h}px"`:""}><span style="width:${p.fortschritt||0}%;background:${PCOL[p.status]||"var(--terracotta)"}"></span></div>`; }
 function projRing(pct){ const R=54,C=2*Math.PI*R,p=Math.max(0,Math.min(1,pct)); return `<svg width="130" height="130" viewBox="0 0 130 130" role="img" aria-label="${Math.round(p*100)} Prozent"><circle cx="65" cy="65" r="${R}" fill="none" stroke="#F3EADF" stroke-width="13"/><circle cx="65" cy="65" r="${R}" fill="none" stroke="url(#gp)" stroke-width="13" stroke-linecap="round" stroke-dasharray="${C*p} ${C}" transform="rotate(-90 65 65)"/><defs><linearGradient id="gp" x1="0" x2="1"><stop offset="0" stop-color="#C9963A"/><stop offset="1" stop-color="#5E8A4E"/></linearGradient></defs><text x="65" y="72" text-anchor="middle" style="font:650 24px var(--sans);fill:#33231C">${Math.round(p*100)} %</text></svg>`; }
@@ -1012,7 +1014,7 @@ $("addTermin").addEventListener("click",()=>{ const d=$("tDatum").value, a=$("tA
   D.termine.push({datum:d,ort:$("tOrt").value,angebot:a,belegt:b===""?null:Number(b),max:m===""?null:Number(m)}); ["tDatum","tAngebot","tBelegt","tMax"].forEach(x=>$(x).value=""); save("Termin hinzugefügt"); });
 
 /* ===== Sichern ===== */
-$("exportBtn").addEventListener("click",()=>{ const blob=new Blob([JSON.stringify(D,null,2)],{type:"application/json"}); const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="KnusiKids-Cockpit-Sicherung_"+new Date().toISOString().slice(0,10)+".json"; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),1000); toast("Sicherung heruntergeladen"); });
+$("exportBtn").addEventListener("click",()=>{ const blob=new Blob([JSON.stringify(D,null,2)],{type:"application/json"}); const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="KnusiKids-Cockpit-Sicherung_"+heuteBerlin()+".json"; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),1000); toast("Sicherung heruntergeladen"); });
 $("importFile").addEventListener("change",e=>{ const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{ try{ const x=JSON.parse(r.result); if(!x.monate||!x.kennzahlen) throw 0; D=x; if(!D.fristen) D.fristen=structuredClone(DEFAULT.fristen); if(!D.stunden) D.stunden=[]; if(!D.kitas) D.kitas=[]; save("Sicherung geladen"); }catch(err){ toast("Datei ist keine Cockpit-Sicherung"); } }; r.readAsText(f); e.target.value=""; });
 $("resetBtn").addEventListener("click",()=>{ const b=$("resetBtn"); if(b.dataset.c!=="1"){ b.dataset.c="1"; b.textContent="Wirklich zurücksetzen? Nochmal klicken"; return; } D=structuredClone(DEFAULT); b.dataset.c=""; b.textContent="Auf Stand 30.10.2026 zurücksetzen"; save("Zurückgesetzt"); });
 
@@ -1079,9 +1081,9 @@ const SB = window.SB = {
   }
 };
 function migrateNow(){ projMigrate(); if(!D.fristen) D.fristen=structuredClone(DEFAULT.fristen); if(!D.stunden) D.stunden=[]; if(!D.kitas) D.kitas=[]; if(!D.historie) D.historie=structuredClone(DEFAULT.historie); D.kennzahlen.forEach(k=>{ if(!k.verlauf) k.verlauf=k.wert!=null?[{datum:k.datum,wert:k.wert}]:[]; }); }
-function setKZ(key,val){ const k=D.kennzahlen.find(x=>x.key===key); if(!k||val==null) return false; const d=new Date().toISOString().slice(0,10); if(k.wert===val&&k.datum===d) return false; if(k.wert!==val){ k.verlauf=k.verlauf||[]; k.verlauf.push({datum:d,wert:val}); } k.wert=val; k.datum=d; return true; }
+function setKZ(key,val){ const k=D.kennzahlen.find(x=>x.key===key); if(!k||val==null) return false; const d=heuteBerlin(); if(k.wert===val&&k.datum===d) return false; if(k.wert!==val){ k.verlauf=k.verlauf||[]; k.verlauf.push({datum:d,wert:val}); } k.wert=val; k.datum=d; return true; }
 function applyLive(){
-  if(!LIVE) return; const today=new Date().toISOString().slice(0,10);
+  if(!LIVE) return; const today=heuteBerlin();
   const kern=(LIVE.zyklen||[]).filter(z=>/Minis|Maxis/i.test(z.typ||"") && z.ende>=today);
   let ch=false;
   if(kern.length){ ch=setKZ("auslastung_belegt",kern.reduce((a,z)=>a+z.belegt,0))||ch; ch=setKZ("auslastung_plaetze",kern.reduce((a,z)=>a+(z.plaetze||0),0))||ch; }
@@ -1089,7 +1091,7 @@ function applyLive(){
   if(ch){ D._dirty=true; try{ localStorage.setItem(KEY,JSON.stringify(D)); }catch(e){} SB.schedulePush(); }
 }
 const AUFTRAG_NAME={rechnung:"Rechnung",storno_gutschrift:"Storno mit Gutschrift",gutschrift:"Gutschrift",erinnerung:"Zahlungserinnerungen",eur_update:"EÜR aktualisieren",kennzahlen:"Kennzahlen holen",sonstiges:"Storno ohne Gutschrift"};
-const AUFTRAG_STATUS={neu:["wartet","warn"],in_arbeit:["in Arbeit","neutral"],erledigt:["erledigt","up"],fehler:["Fehler","down"],abgebrochen:["abgebrochen","neutral"]};
+const AUFTRAG_STATUS={neu:["wartet auf Einrichtung","warn"],in_arbeit:["in Arbeit","neutral"],erledigt:["erledigt","up"],fehler:["Fehler","down"],abgebrochen:["abgebrochen","neutral"]};
 function renderLiveTiles(){
   if(!LIVE){ $("livePill").innerHTML=""; return; }
   $("livePill").innerHTML=`<span class="livepill"><i></i>live</span>`;
@@ -1101,7 +1103,7 @@ function renderLiveTiles(){
     [lastM?`Rechnungen ${lastM.monat.slice(5)}/${lastM.monat.slice(0,4)}`:"Rechnungen", lastM?`${eur(lastM.summe)} · ${lastM.anzahl} St.`:"–"],
     ["Letzte Rechnungsnummer", esc(LIVE.letzte_rechnungsnummer||"–")]
   ].map(([a,b])=>`<div class="li"><div class="grow muted">${a}</div><div class="num" style="font-weight:600">${b}</div></div>`).join("");
-  $("ovAuftr").innerHTML = AUFTR.length? AUFTR.slice(0,5).map(a=>{ const [l,c]=AUFTRAG_STATUS[a.status]||[a.status,"neutral"]; return `<div class="li"><div class="grow"><div class="t">${AUFTRAG_NAME[a.typ]||esc(a.typ)}</div><div class="tiny">${new Date(a.erstellt_am).toLocaleString("de-DE",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"})}${a.ergebnis?" · "+esc(a.ergebnis):""}</div></div><span class="chip ${c}">${l}</span></div>`; }).join("") : `<div class="empty">Noch keine Aufträge.</div>`;
+  $("ovAuftr").innerHTML = AUFTR.length? AUFTR.slice(0,5).map(a=>{ let [l,c]=AUFTRAG_STATUS[a.status]||[a.status,"neutral"]; if(a.status==="neu"&&a.typ==="rechnung"){ l="Rechnungslauf erstellt den Entwurf"; c="neutral"; } return `<div class="li"><div class="grow"><div class="t">${AUFTRAG_NAME[a.typ]||esc(a.typ)}</div><div class="tiny">${new Date(a.erstellt_am).toLocaleString("de-DE",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"})}${a.ergebnis?" · "+esc(a.ergebnis):""}</div></div><span class="chip ${c}">${l}</span></div>`; }).join("") : `<div class="empty">Noch keine Aufträge.</div>`;
   const offen=AUFTR.filter(a=>a.status==="neu"||a.status==="in_arbeit").length+ohne; $("badgeZ").hidden=!offen; $("badgeZ").textContent=offen;
 }
 function renderZentrale(){ renderCSV();
@@ -1117,10 +1119,10 @@ function renderZentrale(){ renderCSV();
   const RS={entwurf_abgelegt:["Entwurf im Postfach","up"],rechnung_erstellt:["wird abgelegt","warn"],julia_bestaetigt:["wartet auf Lauf","warn"],fehler:["Fehler","down"],uebersprungen:["vor Automatik, manuell","neutral"]};
   $("zRe").innerHTML = res.length? `<thead><tr><th>Rechnung</th><th>Eltern</th><th>Kurs</th><th class="n">Betrag</th><th>Fällig</th><th>Stand</th><th></th></tr></thead><tbody>`+res.slice(0,60).map(b=>{ let [l,c]=RS[b.re_status]||[b.re_status||"–","neutral"]; const st=b.status==="cancelled";
     if(b.bezahlt_am && !st){ l="bezahlt "+dshort(b.bezahlt_am); c="up"; }
-    return `<tr><td class="num">${esc(b.rechnungsnummer)}</td><td>${esc(b.eltern)}</td><td>${esc(b.kurs)}<div class="tiny">${esc(b.ort)} · ${dt(b.start)}</div></td><td class="n num">${b.betrag!=null?Number(b.betrag).toLocaleString("de-DE",{style:"currency",currency:"EUR"}):"–"}</td><td class="num">${dt(b.faellig_am)}${b.erinnerung_am?`<div class="tiny">erinnert</div>`:""}</td><td>${st?'<span class="chip down">storniert</span>':`<span class="chip ${c}">${l}</span>`}</td><td style="white-space:nowrap">${b.bezahlt_am?`<button class="btn light small" data-unpaid="${esc(b.rechnungsnummer)}" title="Zahlung zurücknehmen">↺</button>`:`<button class="btn light small" data-paid="${esc(b.rechnungsnummer)}" data-betrag="${b.betrag??""}">bezahlt</button>`} ${st?"":`<button class="btn light small" data-sto="${b.id}">Storno</button>`}</td></tr>
-    <tr id="sto-${b.id}" hidden><td colspan="7"><div class="inline-form"><input type="text" id="stg-${b.id}" placeholder="Grund, z. B. Workshop abgesagt" aria-label="Grund"><input type="number" step="0.01" id="stb-${b.id}" value="${b.betrag??""}" aria-label="Gutschrift Betrag"><label class="tiny" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="stk-${b.id}" checked> Gutschrift</label><button class="btn accent small" data-stogo="${b.id}">Stornieren</button></div><div class="tiny" style="margin-top:4px">Storniert die Buchung sofort im System. Die Gutschrift erstellt die Automatik als Entwurf.</div></td></tr>`; }).join("")+"</tbody>" : `<tbody><tr><td class="empty">Keine Rechnungen gefunden.</td></tr></tbody>`;
+    return `<tr><td class="num">${esc(b.rechnungsnummer)}</td><td>${esc(b.eltern)}</td><td>${esc(b.kurs)}<div class="tiny">${esc(b.ort)} · ${dt(b.start)}</div></td><td class="n num">${b.betrag!=null?Number(b.betrag).toLocaleString("de-DE",{style:"currency",currency:"EUR"}):"–"}</td><td class="num">${dt(b.faellig_am)}${b.erinnerung_am?`<div class="tiny">erinnert</div>`:""}</td><td>${st?(b.bezahlt_am?'<span class="chip warn">storniert, aber bezahlt: Erstattung prüfen</span>':'<span class="chip down">storniert</span>'):`<span class="chip ${c}">${l}</span>`}</td><td style="white-space:nowrap">${b.bezahlt_am?`<button class="btn light small" data-unpaid="${esc(b.rechnungsnummer)}" title="Zahlung zurücknehmen">↺</button>`:`<button class="btn light small" data-paid="${esc(b.rechnungsnummer)}" data-betrag="${b.betrag??""}">bezahlt</button>`} ${st?"":`<button class="btn light small" data-sto="${b.id}">Storno</button>`}</td></tr>
+    <tr id="sto-${b.id}" hidden><td colspan="7"><div class="inline-form"><input type="text" id="stg-${b.id}" placeholder="Grund, z. B. Workshop abgesagt" aria-label="Grund"><input type="number" step="0.01" id="stb-${b.id}" value="${b.betrag??""}" aria-label="Gutschrift Betrag"><label class="tiny" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="stk-${b.id}" checked> Gutschrift</label><button class="btn accent small" data-stogo="${b.id}">Stornieren</button></div><div class="tiny" style="margin-top:4px">Storniert die Buchung sofort im System. Die Gutschrift bitte noch von Hand erstellen, die Automatik dafür ist noch nicht eingerichtet.</div></td></tr>`; }).join("")+"</tbody>" : `<tbody><tr><td class="empty">Keine Rechnungen gefunden.</td></tr></tbody>`;
   document.querySelectorAll("[data-paid]").forEach(btn=>btn.addEventListener("click",async()=>{ if(btn.dataset.c!=="1"){ btn.dataset.c="1"; btn.textContent="heute bezahlt?"; return; } btn.disabled=true;
-    try{ await SB.call("/rest/v1/cockpit_zahlungen",{method:"POST",headers:{Prefer:"return=minimal"},body:JSON.stringify({rechnungsnummer:btn.dataset.paid,betrag:Number(btn.dataset.betrag)||0,datum:new Date().toISOString().slice(0,10),quelle:"manuell"})}); toast("Als bezahlt erfasst"); await SB.live(); }catch(e){ toast(e.message); btn.disabled=false; } }));
+    try{ await SB.call("/rest/v1/cockpit_zahlungen",{method:"POST",headers:{Prefer:"return=minimal"},body:JSON.stringify({rechnungsnummer:btn.dataset.paid,betrag:Number(btn.dataset.betrag)||0,datum:heuteBerlin(),quelle:"manuell"})}); toast("Als bezahlt erfasst"); await SB.live(); }catch(e){ toast(e.message); btn.disabled=false; } }));
   document.querySelectorAll("[data-unpaid]").forEach(btn=>btn.addEventListener("click",async()=>{ if(btn.dataset.c!=="1"){ btn.dataset.c="1"; btn.textContent="zurücknehmen?"; return; }
     try{ await SB.call(`/rest/v1/cockpit_zahlungen?rechnungsnummer=eq.${encodeURIComponent(btn.dataset.unpaid)}`,{method:"DELETE",headers:{Prefer:"return=minimal"}}); toast("Zahlung zurückgenommen"); await SB.live(); }catch(e){ toast(e.message); } }));
   document.querySelectorAll("[data-sto]").forEach(b=>b.addEventListener("click",()=>{ const r=$("sto-"+b.dataset.sto); r.hidden=!r.hidden; }));
@@ -1128,9 +1130,9 @@ function renderZentrale(){ renderCSV();
     const id=btn.dataset.stogo, grund=$("stg-"+id).value.trim(), gs=$("stk-"+id).checked, bet=$("stb-"+id).value;
     if(!grund){ toast("Bitte einen Grund angeben"); return; }
     if(btn.dataset.c!=="1"){ btn.dataset.c="1"; btn.textContent="Wirklich stornieren?"; return; }
-    btn.disabled=true; try{ await SB.rpc("cockpit_storno",{p_booking_id:id,p_grund:grund,p_gutschrift:gs,p_betrag:bet===""?null:Number(bet)}); toast(gs?"Storniert, Gutschrift beauftragt":"Storniert"); await SB.live(); }catch(e){ toast(e.message); btn.disabled=false; }
+    btn.disabled=true; try{ await SB.rpc("cockpit_storno",{p_booking_id:id,p_grund:grund,p_gutschrift:gs,p_betrag:bet===""?null:Number(bet)}); toast(gs?"Storniert. Die Gutschrift bitte noch von Hand erstellen, dafür gibt es noch keinen Lauf.":"Storniert"); await SB.live(); }catch(e){ toast(e.message); btn.disabled=false; }
   }));
-  $("zAuftr").innerHTML = AUFTR.length? `<thead><tr><th>Angelegt</th><th>Auftrag</th><th>Stand</th><th>Ergebnis</th><th></th></tr></thead><tbody>`+AUFTR.map(a=>{ const [l,c]=AUFTRAG_STATUS[a.status]||[a.status,"neutral"]; return `<tr><td class="num">${new Date(a.erstellt_am).toLocaleString("de-DE",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"})}</td><td>${AUFTRAG_NAME[a.typ]||esc(a.typ)}${a.payload&&a.payload.rechnungsnummer?`<div class="tiny">${esc(a.payload.rechnungsnummer)}</div>`:""}</td><td><span class="chip ${c}">${l}</span></td><td class="tiny">${esc(a.ergebnis||"")}</td><td>${a.status==="neu"&&a.typ!=="rechnung"?`<button class="btn light small" data-abbr="${a.id}">Abbrechen</button>`:""}</td></tr>`; }).join("")+"</tbody>" : `<tbody><tr><td class="empty">Noch keine Aufträge.</td></tr></tbody>`;
+  $("zAuftr").innerHTML = AUFTR.length? `<thead><tr><th>Angelegt</th><th>Auftrag</th><th>Stand</th><th>Ergebnis</th><th></th></tr></thead><tbody>`+AUFTR.map(a=>{ let [l,c]=AUFTRAG_STATUS[a.status]||[a.status,"neutral"]; if(a.status==="neu"&&a.typ==="rechnung"){ l="Rechnungslauf erstellt den Entwurf"; c="neutral"; } return `<tr><td class="num">${new Date(a.erstellt_am).toLocaleString("de-DE",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"})}</td><td>${AUFTRAG_NAME[a.typ]||esc(a.typ)}${a.payload&&a.payload.rechnungsnummer?`<div class="tiny">${esc(a.payload.rechnungsnummer)}</div>`:""}</td><td><span class="chip ${c}">${l}</span></td><td class="tiny">${esc(a.ergebnis||"")}</td><td>${a.status==="neu"&&a.typ!=="rechnung"?`<button class="btn light small" data-abbr="${a.id}">Abbrechen</button>`:""}</td></tr>`; }).join("")+"</tbody>" : `<tbody><tr><td class="empty">Noch keine Aufträge.</td></tr></tbody>`;
   document.querySelectorAll("[data-abbr]").forEach(b=>b.addEventListener("click",async()=>{ try{ await SB.call(`/rest/v1/cockpit_auftraege?id=eq.${b.dataset.abbr}`,{method:"PATCH",headers:{Prefer:"return=minimal"},body:JSON.stringify({status:"abgebrochen"})}); toast("Abgebrochen"); await SB.live(); }catch(e){ toast(e.message); } }));
 }
 document.querySelectorAll("[data-auftrag]").forEach(b=>b.addEventListener("click",async()=>{
@@ -1196,7 +1198,7 @@ function grokBriefing(){
   return s;
 }
 $("grokCopy").addEventListener("click",async()=>{ try{ await navigator.clipboard.writeText(grokBriefing()); toast("Briefing kopiert, jetzt bei GAIA einfügen"); }catch(e){ toast("Kopieren ging nicht, bitte Datei nutzen"); } });
-$("grokFile").addEventListener("click",async()=>{ const d=new Date().toISOString().slice(0,10); const name=`${d}_Auftraege_an_GAIA_v1_CL.md`;
+$("grokFile").addEventListener("click",async()=>{ const d=heuteBerlin(); const name=`${d}_Auftraege_an_GAIA_v1_CL.md`;
   if(await FS.write(["18_Transfer Claude GrokBot"],name,grokBriefing())) toast("Abgelegt in 18_Transfer Claude GrokBot"); else download(name,grokBriefing(),"text/markdown"); });
 function download(name,text,type){ const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([text],{type})); a.download=name; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),2000); }
 
@@ -1252,11 +1254,11 @@ function renderPipelines(){
   kanban("kbMarketing", D.marketing.map(m=>({...m,ort:m.wer, preis:null, schritt:(m.kz&&K(m.kz).wert!=null?`${fmt(K(m.kz).wert)} · `:"")+(m.schritt||"")})), MK_ST, (i,s)=>{ D.marketing[i].status=s; save("Verschoben"); }, i=>{ D.marketing.splice(i,1); save("Entfernt"); });
   if(!SB.s || !BUCH.length){ $("flowPill").innerHTML=""; $("flow").innerHTML=`<div class="empty" style="grid-column:1/-1">Nach der Anmeldung siehst du hier live, wo jede Buchung steht.</div>`; $("flowStuck").innerHTML=""; return; }
   $("flowPill").innerHTML=`<span class="livepill"><i></i>live</span>`;
-  const heute=new Date().toISOString().slice(0,10);
+  const heute=heuteBerlin();
   const alt=BUCH.filter(b=>!b.test&&b.re_status==="uebersprungen"&&!b.rechnungsnummer).length;
   const B=BUCH.filter(b=>!b.test&&!(b.re_status==="uebersprungen"&&!b.rechnungsnummer));
   const g={ohne:[],lauf:[],entwurf:[],erinnert:[],bezahlt:[],storno:[]};
-  B.forEach(b=>{ if(b.bezahlt_am) g.bezahlt.push(b); else if(b.status==="cancelled") g.storno.push(b); else if(!b.re_status) g.ohne.push(b); else if(!b.rechnungsnummer||!["entwurf_abgelegt","uebersprungen"].includes(b.re_status)) g.lauf.push(b); else if(b.erinnerung_am) g.erinnert.push(b); else g.entwurf.push(b); });
+  B.forEach(b=>{ if(b.status==="cancelled") g.storno.push(b); else if(b.bezahlt_am) g.bezahlt.push(b); else if(!b.re_status) g.ohne.push(b); else if(!b.rechnungsnummer||!["entwurf_abgelegt","uebersprungen"].includes(b.re_status)) g.lauf.push(b); else if(b.erinnerung_am) g.erinnert.push(b); else g.entwurf.push(b); });
   const sum=a=>a.reduce((s,b)=>s+(Number(b.bezahlt_betrag)||Number(b.betrag)||Number(b.referenzpreis)||0),0);
   $("flow").innerHTML=[["ohne","Gebucht, ohne Rechnung"],["lauf","Rechnung in Arbeit"],["entwurf","Entwurf im Postfach, unbezahlt"],["erinnert","Erinnert, unbezahlt"],["bezahlt","Bezahlt"],["storno","Storniert"]].map(([k,l])=>`<div class="st"><b class="num">${g[k].length}</b><span>${l}</span><div class="sum num">${eur(sum(g[k]))}</div></div>`).join("");
   const ueber=[...g.entwurf,...g.erinnert].filter(b=>b.faellig_am&&b.faellig_am<heute).sort((a,b)=>a.faellig_am.localeCompare(b.faellig_am));
@@ -1326,7 +1328,7 @@ $("ntGo").addEventListener("click",async()=>{ const n=$("ntName").value.trim(); 
 /* ===== Kurse steuern (live) ===== */
 function renderKurse(){
   if(!SB.s || !LIVE){ $("zKurse").innerHTML=`<tbody><tr><td class="empty">Nach der Anmeldung sichtbar.</td></tr></tbody>`; return; }
-  const heute=new Date().toISOString().slice(0,10), Z=(LIVE.zyklen||[]).filter(z=>(z.ende||z.start)>=heute&&z.id);
+  const heute=heuteBerlin(), Z=(LIVE.zyklen||[]).filter(z=>(z.ende||z.start)>=heute&&z.id);
   $("zKurse").innerHTML = Z.length? `<thead><tr><th>Kurs</th><th>Zeitraum</th><th style="width:150px">Belegt</th><th class="n" style="width:90px">Plätze</th><th style="width:170px">Status</th><th></th></tr></thead><tbody>`+Z.map(z=>{ const q=z.plaetze?z.belegt/z.plaetze:0;
     return `<tr><td>${esc(z.typ)}<div class="tiny">${esc(z.ort||"")}${z.tag?` · ${esc(z.tag)}`:""}${z.zeit?` ${esc(z.zeit)}`:""}</div></td><td class="num">${dshort(z.start)} bis ${dshort(z.ende)}</td><td><div class="bar"><span style="width:${Math.min(100,q*100)}%;background:${q>=.8?'var(--green)':q>=.5?'var(--mustard)':'var(--terracotta)'}"></span></div><div class="tiny num">${z.belegt} von ${z.plaetze} · ${Math.round(q*100)} %</div></td>
       <td><input type="number" min="${z.belegt}" max="40" value="${z.plaetze}" id="kp-${z.id}" aria-label="Plätze"></td><td><select id="ks-${z.id}" aria-label="Status">${[["planned","Entwurf"],["active","offen, buchbar"],["paused","pausiert"],["closed","geschlossen"]].map(([v,l])=>`<option value="${v}" ${z.status===v?"selected":""}>${l}</option>`).join("")}</select></td><td><button class="btn light small" data-kurs="${z.id}">Übernehmen</button></td></tr>`; }).join("")+"</tbody>" : `<tbody><tr><td class="empty">Keine laufenden oder kommenden Kurse.</td></tr></tbody>`;
@@ -1371,7 +1373,7 @@ function renderCSV(){
   const out=$("csvOut");
   if(!CSV){ out.innerHTML = D.n26? `<div class="tiny">Letzter Import ${new Date(D.n26.importiert_am).toLocaleString("de-DE",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"})}: ${dt(D.n26.von)} bis ${dt(D.n26.bis)}.</div>`:""; return; }
   const A=csvAuswertung(), mk=Object.keys(A.m).sort(), Z=SB.s? zuordnung(A) : [];
-  const heute=new Date().toISOString().slice(0,10);
+  const heute=heuteBerlin();
   out.innerHTML=`<div class="tiny" style="margin-bottom:8px">Zeitraum ${dt(A.von)} bis ${dt(A.bis)} · Konten, die zählen: ${CSV.konten.map(k=>`<label style="display:inline-flex;gap:4px;align-items:center;margin-right:10px"><input type="checkbox" data-acc="${esc(k)}" ${CSV.wahl.includes(k)?"checked":""}>${esc(k)}</label>`).join("")}<br>Umbuchungen zwischen euren Konten werden nicht mitgezählt.</div>
     <details><summary class="tiny" style="cursor:pointer;color:var(--terracotta);font-weight:600">Monatssummen anzeigen</summary><div class="tablewrap"><table class="mini"><thead><tr><th>Monat</th><th class="n">Einnahmen</th><th class="n">Ausgaben</th><th class="n">Saldo</th></tr></thead><tbody>${mk.map(k=>`<tr><td>${MON[k.slice(5)]} ${k.slice(0,4)}</td><td class="n num">${eur(A.m[k].ein)}</td><td class="n num">${eur(-A.m[k].aus)}</td><td class="n num" style="color:${A.m[k].ein+A.m[k].aus>=0?"var(--green)":"var(--red)"}">${eur(A.m[k].ein+A.m[k].aus)}</td></tr>`).join("")}</tbody></table></div></details>
     ${!SB.s?`<div class="tiny" style="margin-top:8px">Für den Abgleich mit den Rechnungen bitte anmelden.</div>`: !Z.length? `<div style="margin-top:10px"><span class="chip up">Alle Rechnungen sind schon als bezahlt erfasst.</span></div>` : `
@@ -1555,13 +1557,13 @@ function renderTeilnehmer(){
   const el=$("tnListe"); if(!el) return;
   if(!SB.s){ el.innerHTML=""; return; }
   if(!TN){ el.innerHTML='<div class="tnleer">Lade Teilnehmer …</div>'; return; }
-  const heute=new Date().toISOString().slice(0,10), q=($("tnSuche").value||"").toLowerCase().trim();
+  const heute=heuteBerlin(), q=($("tnSuche").value||"").toLowerCase().trim();
   const kurse=TN.filter(k=> tnFilter==="alle" || (tnFilter==="laeuft" ? (k.start<=heute && (k.ende||k.start)>=heute) : k.start>heute));
   const html=kurse.map(k=>{
     const tn=(k.teilnehmer||[]).filter(t=>!q || [t.eltern,t.email,t.telefon,k.kurs,k.ort,k.gruppe].join(" ").toLowerCase().includes(q));
     if(q && !tn.length) return "";
     const n=(k.teilnehmer||[]).length, da=(k.teilnehmer||[]).filter(t=>t.vor_ort).length, pct=k.max?Math.min(100,Math.round(n/k.max*100)):0;
-    const termine=Array.isArray(k.termine)?k.termine.map(d=>String(d).slice(0,10)).filter(d=>d>=heute).sort():[];
+    const termine=Array.isArray(k.termine)?k.termine.map(d=>ymdBerlin(d)).filter(d=>d>=heute).sort():[];
     const naechster=termine[0]?` · nächster Termin ${dt(termine[0])}`:"";
     return `<div class="tnkurs"><h2>${esc(k.kurs||"Kurs")}${k.gruppe?` <span class="tiny">${esc(k.gruppe)}</span>`:""}</h2>
       <div class="meta">${esc(k.ort||"")}${k.tag?` · ${esc(k.tag)}`:""}${k.zeit?` · ${esc(k.zeit)}`:""} · ${dt(k.start)}${k.ende&&k.ende!==k.start?` bis ${dt(k.ende)}`:""}${naechster}${k.alter?` · ${esc(k.alter)}`:""}</div>
