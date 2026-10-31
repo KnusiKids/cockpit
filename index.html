@@ -234,7 +234,7 @@ body.gate #gate{display:grid;min-height:100vh;min-height:100dvh;place-items:cent
   .navback{position:fixed;inset:0;background:rgba(43,30,24,.45);z-index:65}
   body.navopen .navback{display:block}
   main{padding:calc(14px + env(safe-area-inset-top)) 14px calc(92px + env(safe-area-inset-bottom))!important}
-  .mbar{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;left:0;right:0;bottom:0;z-index:60;background:#2B1E18;padding:6px 4px calc(6px + env(safe-area-inset-bottom));box-shadow:0 -6px 20px rgba(0,0,0,.18)}
+  .mbar{display:grid;grid-template-columns:repeat(6,1fr);position:fixed;left:0;right:0;bottom:0;z-index:60;background:#2B1E18;padding:6px 4px calc(6px + env(safe-area-inset-bottom));box-shadow:0 -6px 20px rgba(0,0,0,.18)}
   .mbar button{all:unset;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 2px;border-radius:12px;color:#CDBBAE;font-size:.68rem;font-weight:600;position:relative;-webkit-tap-highlight-color:transparent}
   .mbar button svg{width:22px;height:22px}
   .mbar button[aria-current="page"]{color:#fff;background:rgba(255,255,255,.09)}
@@ -270,6 +270,29 @@ body.gate #gate{display:grid;min-height:100vh;min-height:100dvh;place-items:cent
   .fbar select{max-width:none;flex:1 1 140px}
   .nurDesktop{display:none!important}
 }
+
+.tnliste{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:16px;align-items:start}
+.tnkurs{background:var(--surface);border-radius:var(--r);box-shadow:var(--shadow);padding:16px 18px;min-width:0}
+.tnkurs h2{font-family:var(--serif);font-weight:normal;font-size:1.15rem;margin:0}
+.tnkurs .meta{font-size:.8rem;color:var(--ink-3);margin:2px 0 10px}
+.tnkurs .belegt{display:flex;align-items:center;gap:10px;font-size:.82rem;color:var(--ink-2);margin-bottom:8px}
+.tnp{display:grid;grid-template-columns:28px 1fr auto;gap:4px 10px;align-items:center;padding:9px 0;border-top:1px solid var(--line)}
+.tnp input[type=checkbox]{width:22px;height:22px;accent-color:var(--green);margin:0}
+.tnp .wer{font-weight:600;min-width:0;overflow-wrap:anywhere}
+.tnp .wer span{font-weight:400;color:var(--ink-3);font-size:.8rem}
+.tnp .kon2{grid-column:2/-1;display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.82rem;min-width:0}
+.tnp .kon2 a{color:var(--terracotta);text-decoration:none;font-weight:600;overflow-wrap:anywhere}
+.tnp.da{background:linear-gradient(90deg,var(--green-soft),transparent 70%)}
+.chip.ok{background:var(--green-soft);color:var(--green)}
+.tnleer{color:var(--ink-3);font-size:.85rem;padding:8px 0}
+@media (max-width:820px){
+  .tnliste{grid-template-columns:1fr}
+  .mbar button{font-size:.6rem}
+  main table.mcard td{flex-wrap:wrap}
+  main table.mcard td>*{min-width:0;max-width:100%;overflow-wrap:anywhere}
+  main table.mcard a.kon{white-space:normal;overflow-wrap:anywhere}
+  main table.mcard td:not(:first-child)>div,main table.mcard td:not(:first-child)>a{flex:1 1 100%;text-align:right}
+}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -290,6 +313,7 @@ body.gate #gate{display:grid;min-height:100vh;min-height:100dvh;place-items:cent
   <div class="grp">Vertrieb</div>
   <button data-view="pipelines"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="5" height="16" rx="1.5"/><rect x="10" y="4" width="5" height="11" rx="1.5"/><rect x="17" y="4" width="4" height="7" rx="1.5"/></svg>Pipelines</button>
   <button data-view="kitas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-7 9 7v9H3z"/><path d="M9 20v-6h6v6"/></svg>Kunden</button>
+  <button data-view="teilnehmer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.5"/><path d="M15.5 14.2c3 .3 5.5 2.6 5.5 5.8"/></svg>Teilnehmerliste</button>
   <button data-view="orte"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s7-6.2 7-11a7 7 0 10-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>Kurse und Orte</button>
   <div class="grp">System</div>
   <button data-view="sichern"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Daten sichern</button>
@@ -529,6 +553,15 @@ body.gate #gate{display:grid;min-height:100vh;min-height:100dvh;place-items:cent
   </div>
 </section>
 
+<section id="teilnehmer" hidden>
+  <div class="topbar"><div><h1>Teilnehmerliste</h1><div class="sub">Laufende und kommende Kurse. Keine Kindernamen, nur das Alter. Häkchen = vor Ort da.</div></div><div class="actions"><button class="btn light" id="tnRefresh">Aktualisieren</button></div></div>
+  <div class="nurOffline tile"><p class="tiny" style="margin:0">Nach der Anmeldung siehst du hier alle Teilnehmer je Kurs.</p></div>
+  <div class="nurOnline">
+    <div class="pfilter" id="tnFilter"><button data-tnf="laeuft" aria-pressed="true">Läuft gerade</button><button data-tnf="kommend" aria-pressed="false">Kommend</button><button data-tnf="alle" aria-pressed="false">Alle</button></div>
+    <div class="fbar"><input type="search" id="tnSuche" placeholder="Eltern, Telefon, E-Mail, Kurs, Ort" aria-label="Teilnehmer suchen"></div>
+    <div id="tnListe" class="tnliste"></div>
+  </div>
+</section>
 <section id="orte" hidden>
   <div class="topbar"><div><h1>Kurse und Orte</h1><div class="sub">Direkt die Daten der Buchungsseite. Neue Kurse starten als Entwurf und sind erst nach „Veröffentlichen“ buchbar.</div></div></div>
   <div class="bento nurOnline">
@@ -591,6 +624,7 @@ body.gate #gate{display:grid;min-height:100vh;min-height:100dvh;place-items:cent
 <div class="navback" id="navBack"></div>
 <nav class="mbar" aria-label="Schnellwahl">
   <button data-mview="ueberblick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="5" rx="2"/><rect x="13" y="10" width="8" height="11" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/></svg>Überblick</button>
+  <button data-mview="teilnehmer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.5"/><path d="M15.5 14.2c3 .3 5.5 2.6 5.5 5.8"/></svg>Teilnehmer</button>
   <button data-mview="zentrale"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg>Zentrale<span class="badge" id="mbadgeZ" hidden></span></button>
   <button data-mview="aufgaben"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg>Aufgaben<span class="badge" id="mbadgeT" hidden></span></button>
   <button data-mview="kitas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-7 9 7v9H3z"/><path d="M9 20v-6h6v6"/></svg>Kunden</button>
@@ -772,7 +806,7 @@ function go(view){
   try{ localStorage.setItem(KEY+"-view", view); }catch(e){}
   window.scrollTo(0,0);
   document.querySelectorAll(".mbar button[data-mview]").forEach(b=>{ if(b.dataset.mview===view) b.setAttribute("aria-current","page"); else b.removeAttribute("aria-current"); });
-  const imMenu=!["ueberblick","zentrale","aufgaben","kitas"].includes(view); const mm=document.getElementById("mMenu"); if(mm){ if(imMenu) mm.setAttribute("aria-current","page"); else mm.removeAttribute("aria-current"); }
+  const imMenu=!["ueberblick","teilnehmer","zentrale","aufgaben","kitas"].includes(view); const mm=document.getElementById("mMenu"); if(mm){ if(imMenu) mm.setAttribute("aria-current","page"); else mm.removeAttribute("aria-current"); }
   document.body.classList.remove("navopen");
 }
 document.querySelectorAll("aside button[data-view]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.view)));
@@ -1510,6 +1544,46 @@ $("qrCopy").addEventListener("click",()=>QR.kopieren());
 $("qrSave").addEventListener("click",()=>QR.speichern());
 $("qrClose").addEventListener("click",()=>{ $("qrModal").hidden=true; });
 
+/* ===== Teilnehmerliste (ohne Kindernamen) ===== */
+let TN=null, tnFilter="laeuft";
+try{ tnFilter=localStorage.getItem(KEY+"-tnf")||"laeuft"; }catch(e){}
+function alterText(a){ if(a==null||a==="") return "Alter –"; a=Number(a); const j=Math.floor(a), m=Math.round((a-j)*12); return j+" J."+(m?` ${m} M.`:""); }
+function waLink(tel){ if(!tel) return ""; let n=String(tel).replace(/[^\d+]/g,""); if(n.startsWith("00")) n="+"+n.slice(2); if(n.startsWith("0")) n="+49"+n.slice(1); n=n.replace("+",""); return `<a href="https://wa.me/${n}" target="_blank" rel="noopener">WhatsApp</a>`; }
+function tnZahlung(t){ if(t.bezahlt) return '<span class="chip ok">bezahlt</span>'; if(t.re_status==="entwurf_abgelegt") return '<span class="chip down">offen</span>'; if(t.rechnungsnummer) return '<span class="chip">Rechnung</span>'; return '<span class="chip">ohne Rechnung</span>'; }
+function renderTeilnehmer(){
+  document.querySelectorAll("[data-tnf]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.tnf===tnFilter));
+  const el=$("tnListe"); if(!el) return;
+  if(!SB.s){ el.innerHTML=""; return; }
+  if(!TN){ el.innerHTML='<div class="tnleer">Lade Teilnehmer …</div>'; return; }
+  const heute=new Date().toISOString().slice(0,10), q=($("tnSuche").value||"").toLowerCase().trim();
+  const kurse=TN.filter(k=> tnFilter==="alle" || (tnFilter==="laeuft" ? (k.start<=heute && (k.ende||k.start)>=heute) : k.start>heute));
+  const html=kurse.map(k=>{
+    const tn=(k.teilnehmer||[]).filter(t=>!q || [t.eltern,t.email,t.telefon,k.kurs,k.ort,k.gruppe].join(" ").toLowerCase().includes(q));
+    if(q && !tn.length) return "";
+    const n=(k.teilnehmer||[]).length, da=(k.teilnehmer||[]).filter(t=>t.vor_ort).length, pct=k.max?Math.min(100,Math.round(n/k.max*100)):0;
+    const termine=Array.isArray(k.termine)?k.termine.map(d=>String(d).slice(0,10)).filter(d=>d>=heute).sort():[];
+    const naechster=termine[0]?` · nächster Termin ${dt(termine[0])}`:"";
+    return `<div class="tnkurs"><h2>${esc(k.kurs||"Kurs")}${k.gruppe?` <span class="tiny">${esc(k.gruppe)}</span>`:""}</h2>
+      <div class="meta">${esc(k.ort||"")}${k.tag?` · ${esc(k.tag)}`:""}${k.zeit?` · ${esc(k.zeit)}`:""} · ${dt(k.start)}${k.ende&&k.ende!==k.start?` bis ${dt(k.ende)}`:""}${naechster}${k.alter?` · ${esc(k.alter)}`:""}</div>
+      <div class="belegt"><div class="pbar" style="max-width:160px"><span style="width:${pct}%;background:var(--terracotta)"></span></div><b>${n}${k.max?` / ${k.max}`:""}</b> gebucht${da?` · ${da} da`:""}</div>
+      ${tn.length? tn.map(t=>`<div class="tnp${t.vor_ort?" da":""}"><input type="checkbox" data-vorort="${t.id}" ${t.vor_ort?"checked":""} aria-label="Vor Ort da"><div class="wer">${esc(t.eltern||"ohne Namen")} <span>· Kind ${alterText(t.kind_alter)}</span></div>${tnZahlung(t)}
+        <div class="kon2">${t.telefon?`<a href="tel:${esc(String(t.telefon).replace(/\s/g,""))}">${esc(t.telefon)}</a>${waLink(t.telefon)}`:""}${t.email?`<a href="mailto:${esc(t.email)}">${esc(t.email)}</a>`:""}</div></div>`).join("") : '<div class="tnleer">Noch keine Buchungen.</div>'}
+    </div>`; }).join("");
+  el.innerHTML = html || `<div class="tnleer">${tnFilter==="laeuft"?"Gerade läuft kein Kurs.":tnFilter==="kommend"?"Keine kommenden Kurse.":"Keine Kurse."}</div>`;
+  el.querySelectorAll("[data-vorort]").forEach(c=>c.addEventListener("change",async()=>{
+    const id=c.dataset.vorort, wert=c.checked; c.disabled=true;
+    try{ await SB.rpc("cockpit_vor_ort",{p_booking:id,p_wert:wert}); TN.forEach(k=>(k.teilnehmer||[]).forEach(t=>{ if(t.id===id) t.vor_ort=wert; })); toast(wert?"Als da markiert":"Häkchen entfernt"); }
+    catch(e){ c.checked=!wert; toast(e.message); }
+    renderTeilnehmer();
+  }));
+}
+async function ladeTeilnehmer(){ if(!SB.s) return; try{ const r=await SB.rpc("cockpit_teilnehmer"); TN=Array.isArray(r)?r:[]; }catch(e){ TN=TN||[]; toast("Teilnehmer: "+e.message); } renderTeilnehmer(); }
+document.querySelectorAll("[data-tnf]").forEach(b=>b.addEventListener("click",()=>{ tnFilter=b.dataset.tnf; try{ localStorage.setItem(KEY+"-tnf",tnFilter); }catch(e){} renderTeilnehmer(); }));
+$("tnSuche").addEventListener("input",()=>renderTeilnehmer());
+$("tnRefresh").addEventListener("click",()=>{ if(!SB.s){ toast("Bitte zuerst anmelden"); return; } ladeTeilnehmer().then(()=>toast("Aktualisiert")); });
+const _liveOrig = SB.live.bind(SB);
+SB.live = async function(){ await _liveOrig(); await ladeTeilnehmer(); };
+
 /* ===== Handy: Tabellen als Karten, Zahlen zählen beim Start hoch ===== */
 function tabellenKarten(){
   document.querySelectorAll("main table").forEach(t=>{
@@ -1541,7 +1615,7 @@ function zahlenHochzaehlen(){
   });
 }
 const _renderAllOrig = renderAll;
-renderAll = function(){ _renderAllOrig(); tabellenKarten(); if(!ZAEHL.fertig && window.LIVE) setTimeout(zahlenHochzaehlen,30); };
+renderAll = function(){ _renderAllOrig(); tabellenKarten(); renderTeilnehmer(); if(!ZAEHL.fertig && window.LIVE) setTimeout(zahlenHochzaehlen,30); };
 
 renderAll();
 try{ const v=localStorage.getItem(KEY+"-view"); if(v && document.getElementById(v)) go(v); }catch(e){}
