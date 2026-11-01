@@ -294,13 +294,71 @@ body.gate #gate{display:grid;min-height:100vh;min-height:100dvh;place-items:cent
   main table.mcard td:not(:first-child)>div,main table.mcard td:not(:first-child)>a{flex:1 1 100%;text-align:right}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ===== Phase B: Heute, Buchen, Anwesenheit pro Termin ===== */
+.heute-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:18px;align-items:start}
+.heute-col{display:flex;flex-direction:column;gap:18px;min-width:0}
+.hkurs .when{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--terracotta-dark);background:var(--terracotta-soft);border-radius:999px;padding:2px 10px;margin-bottom:6px}
+.hkurs .acts{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 6px}
+.anw{all:unset;cursor:pointer;box-sizing:border-box;min-width:64px;height:40px;padding:0 10px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;gap:4px;font-size:.82rem;font-weight:700;background:var(--sand-soft);color:var(--ink-2);box-shadow:inset 0 0 0 1px var(--line);-webkit-tap-highlight-color:transparent}
+.anw.da{background:var(--green);color:#fff;box-shadow:none}
+.anw.teil{background:var(--mustard-soft);color:#7A5A16;box-shadow:inset 0 0 0 1px var(--mustard)}
+.anw.fehlt{background:var(--red-soft);color:var(--red);box-shadow:inset 0 0 0 1px #E8B8AC}
+.anw[disabled]{cursor:default;opacity:.55}
+.tnp2{display:grid;grid-template-columns:auto 1fr auto;gap:4px 12px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.tnp2 .wer{font-weight:600;min-width:0;overflow-wrap:anywhere}
+.tnp2 .wer span{font-weight:400;color:var(--ink-3);font-size:.8rem}
+.tnp2 .kon3{grid-column:2/-1;display:flex;flex-wrap:wrap;gap:6px;min-width:0}
+.kbtn{all:unset;cursor:pointer;box-sizing:border-box;display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:999px;font-size:.78rem;font-weight:600;color:var(--terracotta-dark);background:var(--terracotta-soft);text-decoration:none;-webkit-tap-highlight-color:transparent}
+.kbtn.grau{color:var(--ink-2);background:var(--sand-soft)}
+.anwkopf{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:.82rem;color:var(--ink-2);margin:2px 0 4px}
+.anwkopf select{width:auto;padding:4px 8px;font-size:.8rem}
+.todo2{display:grid;grid-template-columns:1fr auto;gap:2px 12px;align-items:center;padding:11px 0;border-top:1px solid var(--line)}
+.todo2:first-child{border-top:0}
+.todo2 .was{font-weight:600;min-width:0;overflow-wrap:anywhere}
+.todo2 .warum{grid-column:1;font-size:.8rem;color:var(--ink-3)}
+.todo2 .tu{grid-row:1/3;grid-column:2;display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
+.allesgut{padding:18px 4px;text-align:center;color:var(--green);font-weight:600}
+.neu2{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-top:1px solid var(--line);font-size:.86rem}
+.neu2:first-child{border-top:0}
+.neu2 b{font-weight:600}
+.stepper{display:flex;gap:8px}
+.stepper button{all:unset;cursor:pointer;width:48px;height:44px;border-radius:12px;display:grid;place-items:center;font-weight:700;background:var(--sand-soft);box-shadow:inset 0 0 0 1px var(--line)}
+.stepper button[aria-pressed="true"]{background:var(--terracotta);color:#fff;box-shadow:none}
+.stepper input{width:76px!important}
+.zweispalt:not([hidden]){display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:8px}
+.modal input:not([type=checkbox]){min-width:0;width:100%}
+input[type=email],input[type=tel],input[type=search].bk{background:#FCFAF7;border:1px solid var(--line);border-radius:10px;padding:7px 9px;width:100%}
+.vorschlag{border:1px solid var(--line);border-radius:12px;margin-top:4px;overflow:hidden}
+.vorschlag button{all:unset;cursor:pointer;display:block;box-sizing:border-box;width:100%;padding:9px 12px;font-size:.86rem;border-top:1px solid var(--line)}
+.vorschlag button:first-child{border-top:0}
+.vorschlag button:hover{background:var(--sand-soft)}
+.vorschlag small{color:var(--ink-3)}
+.preiszeile{display:flex;justify-content:space-between;align-items:baseline;gap:10px;background:var(--sand-soft);border-radius:12px;padding:10px 12px;margin-top:14px}
+.preiszeile b{font-size:1.15rem}
+.linkbtn{all:unset;cursor:pointer;color:var(--terracotta-dark);font-weight:600;font-size:.82rem}
+.hinweis{font-size:.8rem;color:var(--ink-2);background:var(--mustard-soft);border-radius:10px;padding:8px 10px;margin-top:10px}
+.fehlerbox{font-size:.84rem;color:var(--red);background:var(--red-soft);border-radius:10px;padding:8px 10px;margin-top:10px}
+.plusliste{display:grid;gap:8px;margin-top:12px}
+.plusliste .btn{width:100%;padding:13px 14px;font-size:.95rem;text-align:left}
+.mbar .plus{display:flex;align-items:center;justify-content:center}
+.mbar .plus span{width:46px;height:46px;border-radius:50%;background:var(--terracotta);color:#fff;display:grid;place-items:center;box-shadow:0 6px 16px rgba(181,96,63,.45);margin-top:-14px}
+.mbar .plus span svg{width:24px;height:24px}
+@media (max-width:820px){
+  .heute-grid{grid-template-columns:1fr}
+  .mbar{grid-template-columns:repeat(5,1fr)!important}
+  .anw{min-width:72px;height:44px}
+  .todo2{grid-template-columns:1fr}
+  .todo2 .tu{grid-row:auto;grid-column:1;justify-content:flex-start;margin-top:6px}
+}
 </style>
 </head>
 <body>
 <div class="app">
 <aside aria-label="Bereiche">
   <div class="logo"><img class="mark" src="data:image/png;base64,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" alt="KnusiKids"><div><b>KnusiKids</b><span>Cockpit</span></div></div>
-  <button data-view="ueberblick" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="5" rx="2"/><rect x="13" y="10" width="8" height="11" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/></svg>Überblick</button>
+  <button data-view="heute"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>Heute<span class="badge" id="badgeH" hidden></span></button>
+  <button data-view="ueberblick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="5" rx="2"/><rect x="13" y="10" width="8" height="11" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/></svg>Überblick</button>
   <button data-view="plan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Monatsplan</button>
   <button data-view="nachtragen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg>Zahlen nachtragen</button>
   <div class="grp">Steuerung</div>
@@ -325,8 +383,23 @@ body.gate #gate{display:grid;min-height:100vh;min-height:100dvh;place-items:cent
 </aside>
 
 <main>
+<!-- Heute (Julia zuerst) -->
+<section id="heute" hidden>
+  <div class="topbar">
+    <div><h1 id="hGruss">Guten Tag</h1><div class="sub" id="hSub"></div></div>
+    <div class="actions"><button class="btn accent" data-buchen="">Familie buchen</button><button class="btn light" id="hRefresh">Aktualisieren</button></div>
+  </div>
+  <div class="nurOffline tile"><p class="tiny" style="margin:0">Bitte anmelden, dann siehst du hier deinen Tag.</p></div>
+  <div class="nurOnline heute-grid">
+    <div class="heute-col" id="hKurse"></div>
+    <div class="heute-col">
+      <div class="tile"><div class="t-head"><h2>Zu erledigen</h2><span class="tiny" id="hTodoN" style="margin-left:auto"></span></div><div id="hTodo"></div></div>
+      <div class="tile"><div class="t-head"><h2>Neu gebucht</h2><span class="tiny" style="margin-left:auto">letzte 7 Tage</span></div><div id="hNeu"></div></div>
+    </div>
+  </div>
+</section>
 <!-- Überblick -->
-<section id="ueberblick">
+<section id="ueberblick" hidden>
   <div class="topbar">
     <div><h1 id="greet">Guten Tag</h1><div class="sub" id="subline"></div></div>
     <div class="actions"><button class="btn accent" data-qr><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-3px;margin-right:6px"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></svg>QR zum Buchen</button><button class="btn light" data-go="nachtragen">Zahlen eintragen</button><button class="btn" data-go="sichern">Sichern</button></div>
@@ -554,7 +627,7 @@ body.gate #gate{display:grid;min-height:100vh;min-height:100dvh;place-items:cent
 </section>
 
 <section id="teilnehmer" hidden>
-  <div class="topbar"><div><h1>Teilnehmerliste</h1><div class="sub">Laufende und kommende Kurse. Keine Kindernamen, nur das Alter. Häkchen = vor Ort da.</div></div><div class="actions"><button class="btn light" id="tnRefresh">Aktualisieren</button></div></div>
+  <div class="topbar"><div><h1>Teilnehmerliste</h1><div class="sub">Laufende und kommende Kurse. Keine Kindernamen. Anwesenheit pro Termin: einmal tippen = da, nochmal = fehlt.</div></div><div class="actions"><button class="btn accent" data-buchen="">Familie buchen</button><button class="btn light" id="tnRefresh">Aktualisieren</button></div></div>
   <div class="nurOffline tile"><p class="tiny" style="margin:0">Nach der Anmeldung siehst du hier alle Teilnehmer je Kurs.</p></div>
   <div class="nurOnline">
     <div class="pfilter" id="tnFilter"><button data-tnf="laeuft" aria-pressed="true">Läuft gerade</button><button data-tnf="kommend" aria-pressed="false">Kommend</button><button data-tnf="alle" aria-pressed="false">Alle</button></div>
@@ -623,12 +696,11 @@ body.gate #gate{display:grid;min-height:100vh;min-height:100dvh;place-items:cent
 </div>
 <div class="navback" id="navBack"></div>
 <nav class="mbar" aria-label="Schnellwahl">
-  <button data-mview="ueberblick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="5" rx="2"/><rect x="13" y="10" width="8" height="11" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/></svg>Überblick</button>
-  <button data-mview="teilnehmer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.5"/><path d="M15.5 14.2c3 .3 5.5 2.6 5.5 5.8"/></svg>Teilnehmer</button>
-  <button data-mview="zentrale"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg>Zentrale<span class="badge" id="mbadgeZ" hidden></span></button>
-  <button data-mview="aufgaben"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg>Aufgaben<span class="badge" id="mbadgeT" hidden></span></button>
-  <button data-mview="kitas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-7 9 7v9H3z"/><path d="M9 20v-6h6v6"/></svg>Kunden</button>
-  <button id="mMenu" aria-label="Alle Bereiche"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h16"/></svg>Menü</button>
+  <button data-mview="heute"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>Heute<span class="badge" id="mbadgeH" hidden></span></button>
+  <button data-mview="teilnehmer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.5"/><path d="M15.5 14.2c3 .3 5.5 2.6 5.5 5.8"/></svg>Kurse</button>
+  <button class="plus" id="mPlus" aria-label="Neu: Familie buchen und mehr"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg></span></button>
+  <button data-mview="kitas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-7 9 7v9H3z"/><path d="M9 20v-6h6v6"/></svg>Familien</button>
+  <button id="mMenu" aria-label="Alle Bereiche"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h16"/></svg>Mehr</button>
 </nav>
 <div id="gate">
   <div class="card">
@@ -639,6 +711,68 @@ body.gate #gate{display:grid;min-height:100vh;min-height:100dvh;place-items:cent
     <div class="ordiv">oder</div>
     <button class="btn light" id="gateMail" style="width:100%;margin-top:8px">Mit E-Mail und Passwort</button>
     <div class="err" id="gateErr"></div>
+  </div>
+</div>
+<div class="modal" id="plusModal" hidden role="dialog" aria-modal="true" aria-labelledby="plusTitle">
+  <div class="card">
+    <h3 id="plusTitle">Neu</h3>
+    <div class="plusliste">
+      <button class="btn accent" data-buchen="">Familie buchen</button>
+      <button class="btn light" data-plusgo="aufgaben">Aufgabe notieren</button>
+      <button class="btn light" data-qr>QR-Code zum Buchen teilen</button>
+      <button class="btn light" data-plusgo="orte">Kurs anlegen</button>
+    </div>
+    <button class="btn light" id="plusClose" style="width:100%;margin-top:12px">Schließen</button>
+  </div>
+</div>
+<div class="modal" id="buchModal" hidden role="dialog" aria-modal="true" aria-labelledby="buchTitle">
+  <div class="card">
+    <h3 id="buchTitle">Familie buchen</h3>
+    <div class="tiny">Keine Kindernamen. Gesendet wird nichts, die Rechnung kommt als Entwurf ins Postfach.</div>
+    <label for="bkName">Familie</label>
+    <input type="text" id="bkName" autocomplete="off" placeholder="Name eintippen oder neue Familie">
+    <div class="vorschlag" id="bkVorschlag" hidden></div>
+    <div id="bkKontakt" style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px">
+      <div><label for="bkMail">E-Mail</label><input type="email" id="bkMail" placeholder="für die Rechnung"></div>
+      <div><label for="bkTel">Telefon</label><input type="tel" id="bkTel" placeholder="optional"></div>
+    </div>
+    <label for="bkKurs">Kurs und Termin</label>
+    <select id="bkKurs"></select>
+    <label>Wie viele Kinder?</label>
+    <div class="stepper" id="bkAnz"><button type="button" data-anz="1" aria-pressed="true">1</button><button type="button" data-anz="2" aria-pressed="false">2</button><button type="button" data-anz="3" aria-pressed="false">3</button><input type="number" id="bkAnzMehr" min="1" max="10" placeholder="mehr" aria-label="Andere Anzahl"></div>
+    <div class="preiszeile"><span id="bkPreisText">Preis</span><b id="bkPreis">–</b></div>
+    <div style="margin-top:6px"><button class="linkbtn" type="button" id="bkPreisAuf">Preis anpassen (Rabatt, Geschwister)</button></div>
+    <div id="bkPreisBox" hidden class="zweispalt">
+      <div><label for="bkPreisEigen">Gesamtpreis €</label><input type="number" step="0.01" min="0" id="bkPreisEigen"></div>
+      <div><label for="bkPreisGrund">Grund</label><input type="text" id="bkPreisGrund" placeholder="z. B. Geschwisterrabatt"></div>
+    </div>
+    <label style="display:flex;gap:8px;align-items:center;margin-top:14px;color:var(--ink-2)"><input type="checkbox" id="bkRechnung" checked> Rechnung als Entwurf vorbereiten</label>
+    <div class="tiny" id="bkRechHinweis"></div>
+    <div id="bkFehler"></div>
+    <button class="btn accent" id="bkGo" style="width:100%;margin-top:14px;padding:13px">Buchen</button>
+    <button class="btn light" id="bkClose" style="width:100%;margin-top:8px">Abbrechen</button>
+  </div>
+</div>
+<div class="modal" id="aeModal" hidden role="dialog" aria-modal="true" aria-labelledby="aeTitle">
+  <div class="card">
+    <h3 id="aeTitle">Buchung ändern</h3>
+    <div class="tiny" id="aeInfo"></div>
+    <label>Kinder</label>
+    <div class="stepper" id="aeAnz"><button type="button" data-anz="1">1</button><button type="button" data-anz="2">2</button><button type="button" data-anz="3">3</button><input type="number" id="aeAnzMehr" min="1" max="10" placeholder="mehr" aria-label="Andere Anzahl"></div>
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:8px">
+      <div><label for="aePreis">Gesamtpreis €</label><input type="number" step="0.01" min="0" id="aePreis" placeholder="Standard"></div>
+      <div><label for="aeGrund">Grund</label><input type="text" id="aeGrund" placeholder="z. B. Geschwisterrabatt"></div>
+    </div>
+    <div class="tiny" id="aeRech" style="margin-top:8px"></div>
+    <div id="aeFehler"></div>
+    <button class="btn accent" id="aeGo" style="width:100%;margin-top:14px;padding:13px">Speichern</button>
+    <button class="btn light" id="aeNach" style="width:100%;margin-top:8px" hidden>Rechnung jetzt vorbereiten</button>
+    <details style="margin-top:12px"><summary class="linkbtn">Buchung stornieren</summary>
+      <label for="aeStGrund">Grund</label><input type="text" id="aeStGrund" placeholder="z. B. Familie hat abgesagt">
+      <div class="hinweis" id="aeStHinweis"></div>
+      <button class="btn light" id="aeStorno" style="width:100%;margin-top:8px">Stornieren</button>
+    </details>
+    <button class="btn light" id="aeClose" style="width:100%;margin-top:12px">Schließen</button>
   </div>
 </div>
 <div class="modal" id="qrModal" hidden role="dialog" aria-modal="true" aria-labelledby="qrTitle">
@@ -808,7 +942,7 @@ function go(view){
   try{ localStorage.setItem(KEY+"-view", view); }catch(e){}
   window.scrollTo(0,0);
   document.querySelectorAll(".mbar button[data-mview]").forEach(b=>{ if(b.dataset.mview===view) b.setAttribute("aria-current","page"); else b.removeAttribute("aria-current"); });
-  const imMenu=!["ueberblick","teilnehmer","zentrale","aufgaben","kitas"].includes(view); const mm=document.getElementById("mMenu"); if(mm){ if(imMenu) mm.setAttribute("aria-current","page"); else mm.removeAttribute("aria-current"); }
+  const imMenu=!["heute","teilnehmer","kitas"].includes(view); const mm=document.getElementById("mMenu"); if(mm){ if(imMenu) mm.setAttribute("aria-current","page"); else mm.removeAttribute("aria-current"); }
   document.body.classList.remove("navopen");
 }
 document.querySelectorAll("aside button[data-view]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.view)));
@@ -1277,7 +1411,7 @@ function renderKunden(){
   $("kFam").hidden=kTab!=="fam"; $("kB2b").hidden=kTab!=="b2b";
   if(!SB.s) return;
   $("famTable").innerHTML = KUNDEN.length? `<thead><tr><th>Familie</th><th>Kontakt</th><th>Kurse</th><th class="n">Buchungen</th><th>Erste Buchung</th><th class="n">Umsatz</th><th></th></tr></thead><tbody>`+KUNDEN.map(k=>{ const kurse=(k.kurse||[]); const st=k.buchungen>1?"Wiederbucher":k.buchungen===1?"einmal gebucht":"nur storniert";
-    return `<tr data-kurse="${esc(kurse.join("|"))}" data-st="${st}"><td><b>${esc(k.name)}</b><div class="tiny">${st}</div></td><td>${mailLink(k.email)}<div>${telLink(k.telefon)}</div></td><td class="tiny">${esc(kurse.join(", "))}</td><td class="n num">${k.buchungen}${k.stornos?`<div class="tiny">${k.stornos} storniert</div>`:""}</td><td class="num">${k.erste?dt(k.erste.slice(0,10)):"–"}</td><td class="n num">${eur(k.umsatz)}</td><td>${k.offen>0?`<span class="chip down">${eurc(k.offen)} offen</span>`:""}</td></tr>`; }).join("")+"</tbody>" : `<tbody><tr><td class="empty">Noch keine Buchungen.</td></tr></tbody>`;
+    return `<tr data-kurse="${esc(kurse.join("|"))}" data-st="${st}"><td><b>${esc(k.name)}</b><div class="tiny">${st}${k.kinder_plaetze>k.buchungen?` · ${k.kinder_plaetze} Kinderplätze`:""}</div><button class="kbtn" style="margin-top:6px" data-kbuch="${KUNDEN.indexOf(k)}">Buchen</button></td><td>${mailLink(k.email)}<div>${telLink(k.telefon)}</div></td><td class="tiny">${esc(kurse.join(", "))}</td><td class="n num">${k.buchungen}${k.stornos?`<div class="tiny">${k.stornos} storniert</div>`:""}</td><td class="num">${k.erste?dt(k.erste.slice(0,10)):"–"}</td><td class="n num">${eur(k.umsatz)}</td><td>${k.offen>0?`<span class="chip down">${eurc(k.offen)} offen</span>`:""}</td></tr>`; }).join("")+"</tbody>" : `<tbody><tr><td class="empty">Noch keine Buchungen.</td></tr></tbody>`;
   $("b2bTable").innerHTML = B2B.length? `<thead><tr><th>Einrichtung</th><th>Typ</th><th>Ansprechpartner und Kontakt</th><th style="width:140px">Stand</th><th style="width:70px">Prio</th><th>Nächster Schritt</th><th></th></tr></thead><tbody>`+B2B.map(x=>`<tr><td><b>${esc(x.name)}</b><div class="tiny">${esc(x.ort||"")}${x.strasse?` · ${esc(x.strasse)}`:""}</div>${x.website?`<a class="kon tiny" href="${esc(x.website)}" target="_blank" rel="noopener">Website</a>`:""}</td><td>${esc(x.typ)}</td><td>${x.ansprechpartner?`${esc(x.ansprechpartner)}${x.rolle?` <span class="tiny">(${esc(x.rolle)})</span>`:""}<br>`:""}${mailLink(x.email)}<div>${telLink(x.telefon)}</div></td>
     <td><select data-bst="${x.id}" aria-label="Stand">${B2B_ST.concat([["abgesagt","Abgesagt"]]).map(([v,l])=>`<option value="${v}" ${x.status===v?"selected":""}>${l}</option>`).join("")}</select></td><td><select data-bpr="${x.id}" aria-label="Prio">${["","A","B","C"].map(v=>`<option ${x.prioritaet===v||(!x.prioritaet&&!v)?"selected":""}>${v}</option>`).join("")}</select></td>
     <td><input type="text" data-bsch="${x.id}" value="${esc(x.naechster_schritt||"")}" aria-label="Nächster Schritt">${x.passung?`<div class="tiny">${esc(x.passung)}</div>`:""}</td><td><button class="btn light small" data-bdel="${x.id}">✕</button></td></tr>`).join("")+"</tbody>" : `<tbody><tr><td class="empty">Noch keine Einrichtungen.</td></tr></tbody>`;
@@ -1504,7 +1638,7 @@ document.getElementById("navBack").addEventListener("click",()=>document.body.cl
 document.getElementById("gateGoogle").addEventListener("click",()=>SB.google());
 document.getElementById("lmGoogle").addEventListener("click",()=>SB.google());
 document.getElementById("gateMail").addEventListener("click",()=>{ $("loginModal").hidden=false; $("lmMail").focus(); });
-(function badgeSpiegel(){ [["badgeZ","mbadgeZ"],["badgeT","mbadgeT"]].forEach(([a,b])=>{ const q=document.getElementById(a), z=document.getElementById(b); if(!q||!z) return; const f=()=>{ z.textContent=q.textContent; z.hidden=q.hidden; }; f(); new MutationObserver(f).observe(q,{attributes:true,childList:true,characterData:true,subtree:true}); }); })();
+(function badgeSpiegel(){ [["badgeZ","mbadgeZ"],["badgeT","mbadgeT"],["badgeH","mbadgeH"]].forEach(([a,b])=>{ const q=document.getElementById(a), z=document.getElementById(b); if(!q||!z) return; const f=()=>{ z.textContent=q.textContent; z.hidden=q.hidden; }; f(); new MutationObserver(f).observe(q,{attributes:true,childList:true,characterData:true,subtree:true}); }); })();
 if(WEB && "serviceWorker" in navigator) window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
 gateUi();
 
@@ -1562,22 +1696,8 @@ function renderTeilnehmer(){
   const html=kurse.map(k=>{
     const tn=(k.teilnehmer||[]).filter(t=>!q || [t.eltern,t.email,t.telefon,k.kurs,k.ort,k.gruppe].join(" ").toLowerCase().includes(q));
     if(q && !tn.length) return "";
-    const n=(k.teilnehmer||[]).length, da=(k.teilnehmer||[]).filter(t=>t.vor_ort).length, pct=k.max?Math.min(100,Math.round(n/k.max*100)):0;
-    const termine=Array.isArray(k.termine)?k.termine.map(d=>ymdBerlin(d)).filter(d=>d>=heute).sort():[];
-    const naechster=termine[0]?` · nächster Termin ${dt(termine[0])}`:"";
-    return `<div class="tnkurs"><h2>${esc(k.kurs||"Kurs")}${k.gruppe?` <span class="tiny">${esc(k.gruppe)}</span>`:""}</h2>
-      <div class="meta">${esc(k.ort||"")}${k.tag?` · ${esc(k.tag)}`:""}${k.zeit?` · ${esc(k.zeit)}`:""} · ${dt(k.start)}${k.ende&&k.ende!==k.start?` bis ${dt(k.ende)}`:""}${naechster}${k.alter?` · ${esc(k.alter)}`:""}</div>
-      <div class="belegt"><div class="pbar" style="max-width:160px"><span style="width:${pct}%;background:var(--terracotta)"></span></div><b>${n}${k.max?` / ${k.max}`:""}</b> gebucht${da?` · ${da} da`:""}</div>
-      ${tn.length? tn.map(t=>`<div class="tnp${t.vor_ort?" da":""}"><input type="checkbox" data-vorort="${t.id}" ${t.vor_ort?"checked":""} aria-label="Vor Ort da"><div class="wer">${esc(t.eltern||"ohne Namen")} <span>· Kind ${alterText(t.kind_alter)}</span></div>${tnZahlung(t)}
-        <div class="kon2">${t.telefon?`<a href="tel:${esc(String(t.telefon).replace(/\s/g,""))}">${esc(t.telefon)}</a>${waLink(t.telefon)}`:""}${t.email?`<a href="mailto:${esc(t.email)}">${esc(t.email)}</a>`:""}</div></div>`).join("") : '<div class="tnleer">Noch keine Buchungen.</div>'}
-    </div>`; }).join("");
+    return kursKarte(k, tn, {modus:"liste"}); }).join("");
   el.innerHTML = html || `<div class="tnleer">${tnFilter==="laeuft"?"Gerade läuft kein Kurs.":tnFilter==="kommend"?"Keine kommenden Kurse.":"Keine Kurse."}</div>`;
-  el.querySelectorAll("[data-vorort]").forEach(c=>c.addEventListener("change",async()=>{
-    const id=c.dataset.vorort, wert=c.checked; c.disabled=true;
-    try{ await SB.rpc("cockpit_vor_ort",{p_booking:id,p_wert:wert}); TN.forEach(k=>(k.teilnehmer||[]).forEach(t=>{ if(t.id===id) t.vor_ort=wert; })); toast(wert?"Als da markiert":"Häkchen entfernt"); }
-    catch(e){ c.checked=!wert; toast(e.message); }
-    renderTeilnehmer();
-  }));
 }
 async function ladeTeilnehmer(){ if(!SB.s) return; try{ const r=await SB.rpc("cockpit_teilnehmer"); TN=Array.isArray(r)?r:[]; }catch(e){ TN=TN||[]; toast("Teilnehmer: "+e.message); } renderTeilnehmer(); }
 document.querySelectorAll("[data-tnf]").forEach(b=>b.addEventListener("click",()=>{ tnFilter=b.dataset.tnf; try{ localStorage.setItem(KEY+"-tnf",tnFilter); }catch(e){} renderTeilnehmer(); }));
@@ -1619,8 +1739,246 @@ function zahlenHochzaehlen(){
 const _renderAllOrig = renderAll;
 renderAll = function(){ _renderAllOrig(); tabellenKarten(); renderTeilnehmer(); if(!ZAEHL.fertig && window.LIVE) setTimeout(zahlenHochzaehlen,30); };
 
+/* ===== Phase B: Heute, Familie buchen, Anwesenheit pro Termin ===== */
+function toastLang(t){ const el=$("toast"); el.textContent=t; el.classList.add("show"); clearTimeout(toast._t); toast._t=setTimeout(()=>el.classList.remove("show"),5000); }
+const ANW_SEL={};
+function kursTermineAlle(k){ return Array.isArray(k.termine)&&k.termine.length ? [...new Set(k.termine.map(d=>ymdBerlin(d)))].sort() : (k.start?[k.start]:[]); }
+function wochentag(d){ return new Date(d+"T12:00:00").toLocaleDateString("de-DE",{weekday:"long",day:"2-digit",month:"2-digit"}); }
+function wannText(d){ const h=heuteBerlin(); if(d===h) return "Heute"; const m=new Date(h+"T12:00:00"); m.setDate(m.getDate()+1); if(d===ymdBerlin(m)) return "Morgen"; return wochentag(d); }
+function telHref(t){ return "tel:"+String(t||"").replace(/[^\d+]/g,""); }
+function waHref(tel){ let n=String(tel||"").replace(/[^\d+]/g,""); if(n.startsWith("00")) n="+"+n.slice(2); if(n.startsWith("0")) n="+49"+n.slice(1); return "https://wa.me/"+n.replace("+",""); }
+function kontaktKnoepfe(t){ return `${t.telefon?`<a class="kbtn" href="${esc(telHref(t.telefon))}">Anrufen</a><a class="kbtn" href="${esc(waHref(t.telefon))}" target="_blank" rel="noopener">WhatsApp</a>`:""}${t.email?`<a class="kbtn" href="mailto:${esc(t.email)}">Mail</a>`:""}`; }
+function kinderText(n){ n=Number(n)||1; return n===1?"1 Kind":n+" Kinder"; }
+function anwStatus(t,termin){ const v=(t.anwesenheit||{})[termin], n=Number(t.anzahl)||1;
+  if(v===undefined||v===null) return {cls:"",txt:"abhaken"};
+  if(v===0) return {cls:"fehlt",txt:"fehlt"};
+  if(v>=n) return {cls:"da",txt:n>1?`✓ ${v}/${n}`:"✓ da"};
+  return {cls:"teil",txt:`${v}/${n} da`}; }
+function anwNaechster(t,termin){ const v=(t.anwesenheit||{})[termin], n=Number(t.anzahl)||1;
+  if(v===undefined||v===null) return n; if(v>0) return v-1; return null; }
+function teilnehmerZeile(k,t,termin,erlaubt){
+  const a=anwStatus(t,termin);
+  const via=t.via==="admin"?` · von ${esc(t.angelegt_von||"Hand")} gebucht`:"";
+  const alter=t.kind_alter!=null?` · ${alterText(t.kind_alter)}`:"";
+  return `<div class="tnp2">
+    <button class="anw ${a.cls}" data-anw="${t.id}" data-termin="${termin||""}" ${erlaubt&&termin?"":"disabled"} aria-label="Anwesenheit ${esc(t.eltern||"")}">${erlaubt&&termin?a.txt:"–"}</button>
+    <div class="wer">${esc(t.eltern||"ohne Namen")} <span>· ${kinderText(t.anzahl)}${alter}${via}</span></div>${tnZahlung(t)}
+    <div class="kon3">${kontaktKnoepfe(t)}<button class="kbtn grau" data-aendern="${t.id}" data-kurs="${k.id}">Ändern</button></div></div>`;
+}
+function kursKarte(k,tn,o){
+  const heute=heuteBerlin(), termine=kursTermineAlle(k), vergangen=termine.filter(d=>d<=heute);
+  let termin = o.termin || ANW_SEL[k.id] || (termine.includes(heute)?heute:vergangen[vergangen.length-1]) || null;
+  const erlaubt = !!termin && termin<=heute;
+  const alle=k.teilnehmer||[], kinder=alle.reduce((a,t)=>a+(Number(t.anzahl)||1),0), frei=k.max?Math.max(0,k.max-kinder):null;
+  const da = termin? alle.reduce((a,t)=>a+(Number((t.anwesenheit||{})[termin])||0),0) : 0;
+  const markiert = termin? alle.filter(t=>(t.anwesenheit||{})[termin]!=null).length : 0;
+  const pct=k.max?Math.min(100,Math.round(kinder/k.max*100)):0;
+  const naechster=termine.find(d=>d>=heute);
+  const mails=alle.map(t=>t.email).filter(Boolean);
+  const kopf = o.modus==="heute"
+    ? `<span class="when">${esc(wannText(o.termin))}${k.zeit?` · ${esc(k.zeit)}`:""}</span><h2>${esc(k.kurs||"Kurs")}</h2><div class="meta">${esc(k.ort||"")}${k.alter?` · ${esc(k.alter)}`:""}${termine.length>1?` · Termin ${termine.indexOf(o.termin)+1} von ${termine.length}`:""}</div>`
+    : `<h2>${esc(k.kurs||"Kurs")}${k.gruppe?` <span class="tiny">${esc(k.gruppe)}</span>`:""}</h2><div class="meta">${esc(k.ort||"")}${k.tag?` · ${esc(k.tag)}`:""}${k.zeit?` · ${esc(k.zeit)}`:""} · ${dt(k.start)}${k.ende&&k.ende!==k.start?` bis ${dt(k.ende)}`:""}${naechster?` · nächster Termin ${dt(naechster)}`:""}${k.alter?` · ${esc(k.alter)}`:""}</div>`;
+  const auswahl = (o.modus!=="heute" && vergangen.length>1) ? `<select data-anwsel="${k.id}" aria-label="Termin für Anwesenheit">${vergangen.slice().reverse().map(d=>`<option value="${d}" ${d===termin?"selected":""}>${dt(d)}</option>`).join("")}</select>` : (termin?`<b>${dt(termin)}</b>`:"");
+  const anwKopf = erlaubt ? `<div class="anwkopf"><span>${termin===heute&&o.modus==="heute"?"Heute da:":"Da am "+auswahl+":"}</span><span><b>${da}</b> von ${kinder} Kindern${markiert<alle.length?` · ${alle.length-markiert} ${alle.length-markiert===1?"Familie":"Familien"} noch offen`:" · fertig ✓"}</span></div>`
+                          : `<div class="anwkopf">${(o.termin||naechster)?`Abhaken geht am Kurstag (${dt(o.termin||naechster)}).`:""}</div>`;
+  return `<div class="tnkurs hkurs">${kopf}
+    <div class="belegt"><div class="pbar" style="max-width:160px"><span style="width:${pct}%;background:var(--terracotta)"></span></div><b>${kinder}${k.max?` / ${k.max}`:""}</b> Kinder · ${alle.length} ${alle.length===1?"Familie":"Familien"}${frei!=null?` · ${frei} frei`:""}</div>
+    <div class="acts">${(!k.ende||k.ende>=heute)?`<button class="kbtn" data-buchen="${k.id}">+ Familie buchen</button>`:""}${mails.length?`<a class="kbtn grau" href="mailto:?bcc=${encodeURIComponent(mails.join(","))}">Alle per Mail</a>`:""}</div>
+    ${alle.length?anwKopf:""}
+    ${tn.length? tn.map(t=>teilnehmerZeile(k,t,termin,erlaubt)).join("") : '<div class="tnleer">Noch keine Buchungen.</div>'}
+  </div>`;
+}
+document.addEventListener("change",e=>{ const s=e.target.closest("[data-anwsel]"); if(!s) return; ANW_SEL[s.dataset.anwsel]=s.value; renderTeilnehmer(); renderHeute(); });
+document.addEventListener("click",async e=>{
+  const b=e.target.closest("[data-anw]"); if(!b||b.disabled) return;
+  const id=b.dataset.anw, termin=b.dataset.termin; let t=null; (TN||[]).forEach(k=>(k.teilnehmer||[]).forEach(x=>{ if(x.id===id) t=x; })); if(!t) return;
+  const neu=anwNaechster(t,termin), alt=(t.anwesenheit||{})[termin];
+  t.anwesenheit=t.anwesenheit||{}; if(neu===null) delete t.anwesenheit[termin]; else t.anwesenheit[termin]=neu;
+  renderTeilnehmer(); renderHeute();
+  try{ await SB.rpc("cockpit_anwesenheit_setzen",{p_booking:id,p_termin:termin,p_anwesend:neu}); }
+  catch(err){ if(alt===undefined) delete t.anwesenheit[termin]; else t.anwesenheit[termin]=alt; renderTeilnehmer(); renderHeute(); toast("Nicht gespeichert: "+err.message); }
+});
+
+/* ----- Heute ----- */
+function ichName(){ const m=(SB.s&&SB.s.mail||"").toLowerCase(); if(m.startsWith("julia")) return "Julia"; if(m.startsWith("tayeb")) return "Tay"; return ""; }
+function heuteTermine(){
+  const h=heuteBerlin(), paare=[];
+  (TN||[]).forEach(k=>kursTermineAlle(k).forEach(d=>{ if(d>=h) paare.push({k,d}); }));
+  paare.sort((a,b)=>a.d.localeCompare(b.d)||(a.k.zeit||"").localeCompare(b.k.zeit||""));
+  if(!paare.length) return [];
+  const erster=paare[0].d; return paare.filter(p=>p.d===erster);
+}
+function zuErledigen(){
+  const h=heuteBerlin(), L=[];
+  (BUCH||[]).filter(b=>b.status==="confirmed"&&!b.test&&!b.re_status).forEach(b=>{
+    const n=Number(b.anzahl)||1, betrag=b.preis_vereinbart!=null?Number(b.preis_vereinbart):(b.referenzpreis!=null?Number(b.referenzpreis)*n:null);
+    L.push({p:1, was:`Rechnung für ${b.eltern||"Familie"}`, warum:`${b.kurs||""} ${dt(b.start)} · ${kinderText(n)} · noch keine Rechnung`,
+      tu: betrag? `<button class="btn small accent" data-hre="${b.id}" data-betrag="${betrag}">Rechnung vorbereiten (${eurc(betrag)})</button>` : `<button class="btn small light" data-go="zentrale">Preis fehlt</button>`}); });
+  (BUCH||[]).filter(b=>b.re_status==="fehler").forEach(b=>L.push({p:1, was:`Rechnung hängt: ${b.eltern||""}`, warum:(b.fehler||"Fehler im Rechnungslauf").slice(0,90), tu:`<button class="btn small light" data-go="zentrale">Ansehen</button>`}));
+  (BUCH||[]).filter(b=>b.status==="cancelled"&&b.bezahlt_am).forEach(b=>L.push({p:2, was:`Erstattung prüfen: ${b.eltern||""}`, warum:`${b.rechnungsnummer||""} storniert, aber ${eurc(b.bezahlt_betrag)} bezahlt`, tu:`<button class="btn small light" data-go="zentrale">Ansehen</button>`}));
+  (BUCH||[]).filter(b=>b.status==="confirmed"&&!b.test&&b.re_status==="entwurf_abgelegt"&&!b.bezahlt_am&&b.faellig_am&&b.faellig_am<h).forEach(b=>{
+    L.push({p:2, was:`Zahlung klären: ${b.eltern||""}`, warum:`${b.rechnungsnummer} · ${eurc(b.betrag)} · seit ${-tageBis(b.faellig_am)} Tagen fällig, kein Zahlungseingang erfasst`,
+      tu: kontaktKnoepfe({telefon:b.telefon,email:b.email})}); });
+  todoList().filter(t=>t.status!=="erledigt").sort((a,b)=>(a.prio||9)-(b.prio||9)||String(a.faellig||"9").localeCompare(String(b.faellig||"9"))).slice(0,6).forEach(t=>
+    L.push({p:3, was:t.titel, warum:[t.wer, t.faellig?`fällig ${dt(t.faellig)}`:""].filter(Boolean).join(" · ")||"Aufgabe", tu:`<button class="btn small light" data-terl="${t.id}">Erledigt</button>`}));
+  return L.sort((a,b)=>a.p-b.p);
+}
+function renderHeute(){
+  const sek=$("heute"); if(!sek) return;
+  const std=Number(new Intl.DateTimeFormat("de-DE",{hour:"numeric",hourCycle:"h23",timeZone:"Europe/Berlin"}).formatToParts(new Date()).find(x=>x.type==="hour").value);
+  const gruss=std<11?"Guten Morgen":std<18?"Hallo":"Guten Abend", wer=ichName();
+  $("hGruss").textContent = gruss+(wer?", "+wer:"");
+  $("hSub").textContent = new Date().toLocaleDateString("de-DE",{weekday:"long",day:"numeric",month:"long",timeZone:"Europe/Berlin"});
+  if(!SB.s) return;
+  const T=heuteTermine();
+  $("hKurse").innerHTML = !TN ? '<div class="tile"><div class="tnleer">Lade Kurse …</div></div>'
+    : T.length ? T.map(p=>kursKarte(p.k,p.k.teilnehmer||[],{modus:"heute",termin:p.d})).join("")
+    : '<div class="tile"><div class="tnleer">Keine kommenden Kurstermine. <button class="linkbtn" data-plusgo="orte">Kurs anlegen</button></div></div>';
+  const L=zuErledigen();
+  $("hTodoN").textContent = L.length? L.length+" offen" : "";
+  $("hTodo").innerHTML = L.length ? L.slice(0,10).map(x=>`<div class="todo2"><div class="was">${esc(x.was)}</div><div class="tu">${x.tu}</div><div class="warum">${esc(x.warum)}</div></div>`).join("")+(L.length>10?`<div class="tiny" style="margin-top:8px">und ${L.length-10} weitere</div>`:"")
+    : '<div class="allesgut">Alles Wichtige erledigt 🌿</div>';
+  const bh=$("badgeH"); if(bh){ const n=L.filter(x=>x.p<=2).length; bh.textContent=n; bh.hidden=!n; }
+  const grenze=Date.now()-7*864e5;
+  const neu=(BUCH||[]).filter(b=>!b.test&&b.status==="confirmed"&&new Date(b.gebucht_am).getTime()>=grenze).slice(0,8);
+  $("hNeu").innerHTML = neu.length ? neu.map(b=>`<div class="neu2"><div><b>${esc(b.eltern||"")}</b><div class="tiny">${esc(b.kurs||"")} · ${dt(b.start)} · ${kinderText(b.anzahl)}${b.via==="admin"?` · von ${esc(b.angelegt_von||"Hand")}`:" · online"}</div></div><div class="tiny num" style="white-space:nowrap">${dshort((b.gebucht_am||"").slice(0,10))}</div></div>`).join("")
+    : '<div class="tnleer">Keine neuen Buchungen in den letzten 7 Tagen.</div>';
+}
+$("hRefresh").addEventListener("click",()=>{ if(!SB.s){ toast("Bitte zuerst anmelden"); return; } SB.live().then(()=>toast("Aktualisiert")).catch(e=>SB.fail(e)); });
+document.addEventListener("click",async e=>{
+  const r=e.target.closest("[data-hre]");
+  if(r){ if(r.dataset.c!=="1"){ r.dataset.c="1"; r.textContent=`Sicher? ${eurc(Number(r.dataset.betrag))}`; return; }
+    r.disabled=true; try{ await SB.rpc("cockpit_rechnung_anstossen",{p_booking_id:r.dataset.hre,p_betrag:Number(r.dataset.betrag),p_notiz:null}); toastLang("Rechnung vorbereitet. Der Entwurf liegt nach dem nächsten Rechnungslauf im Postfach."); await SB.live(); }catch(err){ toast(err.message); r.disabled=false; } return; }
+  const t=e.target.closest("[data-terl]");
+  if(t){ t.disabled=true; try{ await todoPatch(t.dataset.terl,{status:"erledigt"}); toast("Erledigt"); renderHeute(); }catch(err){ toast(err.message); t.disabled=false; } return; }
+  const g=e.target.closest("[data-plusgo]"); if(g){ $("plusModal").hidden=true; go(g.dataset.plusgo); return; }
+});
+$("mPlus").addEventListener("click",()=>{ $("plusModal").hidden=false; });
+$("plusClose").addEventListener("click",()=>{ $("plusModal").hidden=true; });
+document.addEventListener("click",e=>{ if(e.target.closest("#plusModal [data-qr],#plusModal [data-buchen]")) $("plusModal").hidden=true; },true);
+
+/* ----- Familie buchen ----- */
+const BK={anz:1, kunde:null, preisEigen:false, ueberbuchen:false, rechWunsch:true};
+function kommendeKurse(){ const h=heuteBerlin(); return (TN||[]).filter(k=>(k.ende||k.start)>=h && k.status!=="cancelled").sort((a,b)=>(a.start||"").localeCompare(b.start||"")); }
+function kursLabel(k){ const kinder=(k.teilnehmer||[]).reduce((a,t)=>a+(Number(t.anzahl)||1),0), frei=k.max!=null?k.max-kinder:null, h=heuteBerlin();
+  const nx=kursTermineAlle(k).find(d=>d>=h)||k.start; const laeuft=k.start<h;
+  return `${k.kurs||"Kurs"} · ${laeuft?"läuft, nächster ":"ab "}${dt(nx)}${k.zeit?" "+k.zeit:""} · ${k.ort||""}${frei!=null?` · ${frei>0?frei+" frei":"voll"}`:""}${k.status==="planned"?" · Entwurf":""}`; }
+function bkKurs(){ return (TN||[]).find(k=>k.id===$("bkKurs").value); }
+function bkAnzahl(){ const m=Number($("bkAnzMehr").value); return m>=1&&m<=10?Math.round(m):BK.anz; }
+function bkPreisRechnen(){
+  const k=bkKurs(), n=bkAnzahl(), ref=k&&k.preis!=null?Number(k.preis):null;
+  document.querySelectorAll("#bkAnz [data-anz]").forEach(b=>b.setAttribute("aria-pressed", String(!$("bkAnzMehr").value && Number(b.dataset.anz)===BK.anz)));
+  if(BK.preisEigen && $("bkPreisEigen").value!==""){ $("bkPreisText").textContent=`${kinderText(n)}, vereinbarter Preis`; $("bkPreis").textContent=eurc(Number($("bkPreisEigen").value)); }
+  else if(ref!=null){ $("bkPreisText").textContent= n>1?`${n} × ${eurc(ref)}`:"1 Kind"; $("bkPreis").textContent=eurc(ref*n); }
+  else { $("bkPreisText").textContent="Für diesen Kurs ist kein Preis hinterlegt"; $("bkPreis").textContent="bitte eintragen"; }
+  const mail=$("bkMail").value.trim(), rech=$("bkRechnung");
+  rech.disabled=!mail; rech.checked = !!mail && BK.rechWunsch;
+  $("bkRechHinweis").textContent = !mail ? "Ohne E-Mail keine Rechnung. Du kannst sie später nachholen." : (k && n && $("bkRechnung").checked ? "Eine gemeinsame Rechnung für die Familie, als Entwurf. Senden entscheidest du." : "");
+  const frei=k&&k.max!=null? k.max-(k.teilnehmer||[]).reduce((a,t)=>a+(Number(t.anzahl)||1),0) : null;
+  $("bkGo").dataset.c=""; $("bkGo").textContent = frei!=null && n>frei ? `Buchen (nur ${Math.max(0,frei)} frei)` : "Buchen";
+}
+function buchenOeffnen(kursId, kunde){
+  if(!SB.s){ toast("Bitte zuerst anmelden"); return; }
+  const kk=kommendeKurse();
+  if(!kk.length){ toast("Keine kommenden Kurse"); return; }
+  $("bkKurs").innerHTML = kk.map(k=>`<option value="${k.id}">${esc(kursLabel(k))}</option>`).join("");
+  if(kursId && kk.some(k=>k.id===kursId)) $("bkKurs").value=kursId;
+  Object.assign(BK,{anz:1,kunde:null,preisEigen:false,ueberbuchen:false,rechWunsch:true});
+  ["bkName","bkMail","bkTel","bkAnzMehr","bkPreisEigen","bkPreisGrund"].forEach(x=>$(x).value="");
+  $("bkPreisBox").hidden=true; $("bkRechnung").checked=true; $("bkFehler").innerHTML=""; $("bkVorschlag").hidden=true;
+  if(kunde){ $("bkName").value=kunde.name||""; $("bkMail").value=kunde.email||""; $("bkTel").value=kunde.telefon||""; BK.kunde=kunde; }
+  bkPreisRechnen(); $("buchModal").hidden=false; if(!kunde) setTimeout(()=>$("bkName").focus(),50);
+}
+document.addEventListener("click",e=>{ const b=e.target.closest("[data-buchen]"); if(b){ buchenOeffnen(b.dataset.buchen||null); return; }
+  const kb=e.target.closest("[data-kbuch]"); if(kb){ buchenOeffnen(null, KUNDEN[Number(kb.dataset.kbuch)]); } });
+$("bkName").addEventListener("input",()=>{
+  const q=$("bkName").value.toLowerCase().trim(); BK.kunde=null; const box=$("bkVorschlag");
+  if(q.length<2){ box.hidden=true; return; }
+  const treffer=(KUNDEN||[]).filter(k=>[k.name,k.email,k.telefon].join(" ").toLowerCase().includes(q)).slice(0,5);
+  box.innerHTML = treffer.map(k=>`<button type="button" data-kwahl="${KUNDEN.indexOf(k)}"><b>${esc(k.name||"")}</b><br><small>${esc([k.email,k.telefon].filter(Boolean).join(" · "))}${k.buchungen?` · ${k.buchungen} Buchung${k.buchungen>1?"en":""}`:""}</small></button>`).join("")
+    + `<button type="button" data-kneu><small>Neue Familie „${esc($("bkName").value.trim())}“ anlegen</small></button>`;
+  box.hidden=false;
+});
+$("bkVorschlag").addEventListener("click",e=>{ const w=e.target.closest("[data-kwahl]");
+  if(w){ const k=KUNDEN[Number(w.dataset.kwahl)]; BK.kunde=k; $("bkName").value=k.name||""; $("bkMail").value=k.email||""; $("bkTel").value=k.telefon||""; }
+  else if(e.target.closest("[data-kneu]")){ $("bkMail").focus(); }
+  $("bkVorschlag").hidden=true; bkPreisRechnen(); });
+$("bkAnz").addEventListener("click",e=>{ const b=e.target.closest("[data-anz]"); if(!b) return; BK.anz=Number(b.dataset.anz); $("bkAnzMehr").value=""; bkPreisRechnen(); });
+["bkAnzMehr","bkPreisEigen","bkMail"].forEach(x=>$(x).addEventListener("input",bkPreisRechnen));
+$("bkKurs").addEventListener("change",bkPreisRechnen); $("bkRechnung").addEventListener("change",()=>{ BK.rechWunsch=$("bkRechnung").checked; bkPreisRechnen(); });
+$("bkPreisAuf").addEventListener("click",()=>{ BK.preisEigen=true; $("bkPreisBox").hidden=false; const k=bkKurs(); if(k&&k.preis!=null&&$("bkPreisEigen").value==="") $("bkPreisEigen").value=(Number(k.preis)*bkAnzahl()).toFixed(2); $("bkPreisEigen").focus(); bkPreisRechnen(); });
+$("bkClose").addEventListener("click",()=>{ $("buchModal").hidden=true; });
+$("bkGo").addEventListener("click",async()=>{
+  const b=$("bkGo"), k=bkKurs(), n=bkAnzahl(), name=$("bkName").value.trim(), mail=$("bkMail").value.trim(), tel=$("bkTel").value.trim();
+  $("bkFehler").innerHTML="";
+  if(!name) return void($("bkFehler").innerHTML='<div class="fehlerbox">Bitte den Namen der Familie eintragen.</div>');
+  if(!mail && !tel) return void($("bkFehler").innerHTML='<div class="fehlerbox">Bitte E-Mail oder Telefon eintragen, damit ihr die Familie erreicht.</div>');
+  if(!k) return;
+  const eigen = BK.preisEigen && $("bkPreisEigen").value!=="" ? Number($("bkPreisEigen").value) : null;
+  const preis = eigen!=null ? eigen : (k.preis!=null?Number(k.preis)*n:null);
+  if(b.dataset.c!=="1"){ b.dataset.c="1"; b.textContent=`Jetzt buchen: ${kinderText(n)}${preis!=null?", "+eurc(preis):""}`; return; }
+  b.disabled=true;
+  try{
+    const r=await SB.rpc("cockpit_buchung_anlegen",{p_cycle:k.id,p_name:name,p_email:mail||null,p_telefon:tel||null,p_anzahl:n,p_preis:eigen,p_preis_hinweis:eigen!=null?($("bkPreisGrund").value.trim()||null):null,p_rechnung:$("bkRechnung").checked,p_ueberbuchen:BK.ueberbuchen,p_notiz:null});
+    $("buchModal").hidden=true;
+    const re = r.rechnung==="entwurf_folgt"?" Die Rechnung liegt nach dem nächsten Rechnungslauf als Entwurf im Postfach.": r.rechnung==="keine_email"?" Ohne E-Mail keine Rechnung.": r.rechnung==="kein_preis"?" Kein Preis, deshalb keine Rechnung.":"";
+    toastLang(`Gebucht: ${name}, ${kinderText(n)}. Jetzt ${r.belegt} von ${r.max} Plätzen belegt.${re}`);
+    await SB.live();
+  }catch(err){
+    const m=String(err.message||err);
+    if(/Nicht genug Plaetze/.test(m)){ BK.ueberbuchen=true; $("bkFehler").innerHTML=`<div class="fehlerbox">${esc(m.replace("Plaetze","Plätze").replace("gewuenscht","gewünscht"))}. Nochmal tippen bucht trotzdem (Kurs wird überbucht).</div>`; b.dataset.c="1"; b.textContent="Trotzdem buchen"; }
+    else { $("bkFehler").innerHTML=`<div class="fehlerbox">${esc(m)}</div>`; b.dataset.c=""; b.textContent="Buchen"; }
+  }
+  b.disabled=false;
+});
+
+/* ----- Buchung ändern / stornieren ----- */
+const AE={id:null, anz:1, t:null, k:null, ueber:false};
+function aeAnzahl(){ const m=Number($("aeAnzMehr").value); return m>=1&&m<=10?Math.round(m):AE.anz; }
+function aeZeichnen(){ document.querySelectorAll("#aeAnz [data-anz]").forEach(b=>b.setAttribute("aria-pressed", String(!$("aeAnzMehr").value && Number(b.dataset.anz)===AE.anz))); $("aeGo").dataset.c=""; $("aeGo").textContent="Speichern"; }
+function stornoHinweis(k){ const nx=kursTermineAlle(k).find(d=>d>=heuteBerlin()); if(!k.start) return "";
+  const tage=Math.round((new Date(k.start+"T12:00:00")-new Date(heuteBerlin()+"T12:00:00"))/864e5);
+  const satz = tage<0||k.start<=heuteBerlin() ? "Der Kurs hat begonnen: laut AGB keine Erstattung." : tage>=14 ? "Mehr als 14 Tage vor Kursbeginn: laut AGB kostenfrei (100 % Gutschrift)." : tage>=7 ? "13 bis 7 Tage vor Kursbeginn: laut AGB 50 % Stornogebühr." : "Weniger als 7 Tage vor Kursbeginn: laut AGB 75 % Stornogebühr.";
+  return satz+" Die Gutschrift erstellt ihr bis auf Weiteres von Hand; eine Absage durch KnusiKids ist immer 100 %."; }
+document.addEventListener("click",e=>{ const b=e.target.closest("[data-aendern]"); if(!b) return;
+  let t=null, k=null; (TN||[]).forEach(kk=>(kk.teilnehmer||[]).forEach(x=>{ if(x.id===b.dataset.aendern){ t=x; k=kk; } })); if(!t) return;
+  Object.assign(AE,{id:t.id, anz:Number(t.anzahl)||1, t, k, ueber:false});
+  $("aeInfo").textContent=`${t.eltern||""} · ${k.kurs||""} · ${k.ort||""} · ab ${dt(k.start)}`;
+  $("aeAnzMehr").value = AE.anz>3?AE.anz:""; $("aePreis").value = t.preis_vereinbart!=null?Number(t.preis_vereinbart).toFixed(2):""; $("aeGrund").value=t.preis_hinweis||"";
+  $("aePreis").placeholder = k.preis!=null? `Standard ${eurc(Number(k.preis)*AE.anz)}` : "kein Standardpreis";
+  $("aeRech").textContent = t.rechnungsnummer ? `Rechnung ${t.rechnungsnummer}: Ändert sich der Betrag, wird sie unter derselben Nummer neu als Entwurf abgelegt. Ist sie schon verschickt, besser Gutschrift statt neuer Fassung.` : t.re_status==="uebersprungen" ? "Bisher ohne Rechnung." : t.re_status ? "Rechnung ist in Vorbereitung, der Betrag wird angepasst." : "Noch keine Rechnung.";
+  $("aeNach").hidden = !(t.re_status==="uebersprungen" && !t.rechnungsnummer && t.email);
+  $("aeStHinweis").textContent=stornoHinweis(k); $("aeStGrund").value=""; $("aeFehler").innerHTML=""; $("aeStorno").dataset.c=""; $("aeStorno").textContent="Stornieren";
+  aeZeichnen(); $("aeModal").hidden=false; });
+$("aeAnz").addEventListener("click",e=>{ const b=e.target.closest("[data-anz]"); if(!b) return; AE.anz=Number(b.dataset.anz); $("aeAnzMehr").value=""; aeZeichnen(); });
+$("aeAnzMehr").addEventListener("input",aeZeichnen);
+$("aeClose").addEventListener("click",()=>{ $("aeModal").hidden=true; });
+$("aeGo").addEventListener("click",async()=>{
+  const b=$("aeGo"), n=aeAnzahl(), preis=$("aePreis").value===""?null:Number($("aePreis").value);
+  if(b.dataset.c!=="1"){ b.dataset.c="1"; b.textContent=`Speichern: ${kinderText(n)}${preis!=null?", "+eurc(preis):""}`; return; }
+  b.disabled=true; $("aeFehler").innerHTML="";
+  try{ const r=await SB.rpc("cockpit_buchung_aendern",{p_booking:AE.id,p_anzahl:n,p_preis:preis,p_preis_hinweis:$("aeGrund").value.trim()||null,p_ueberbuchen:AE.ueber});
+    $("aeModal").hidden=true;
+    const info = String(r.rechnung||"").startsWith("rechnung_korrektur:") ? ` Rechnung ${r.rechnung.split(":")[1]} wird mit ${eurc(r.preis)} neu als Entwurf abgelegt.` : r.rechnung==="betrag_angepasst" ? ` Rechnungsbetrag jetzt ${eurc(r.preis)}.` : "";
+    toastLang(`Gespeichert: ${kinderText(n)}. ${r.belegt} von ${r.max} Plätzen belegt.${info}`); await SB.live(); }
+  catch(err){ const m=String(err.message||err); if(/Nicht genug Plaetze/.test(m)){ AE.ueber=true; $("aeFehler").innerHTML=`<div class="fehlerbox">${esc(m.replace("Plaetze","Plätze"))}. Nochmal tippen speichert trotzdem (überbucht).</div>`; b.dataset.c="1"; b.textContent="Trotzdem speichern"; } else { $("aeFehler").innerHTML=`<div class="fehlerbox">${esc(m)}</div>`; b.dataset.c=""; b.textContent="Speichern"; } }
+  b.disabled=false; });
+$("aeNach").addEventListener("click",async()=>{ const b=$("aeNach"); if(b.dataset.c!=="1"){ b.dataset.c="1"; b.textContent="Sicher? Rechnung vorbereiten"; return; } b.disabled=true;
+  try{ const r=await SB.rpc("cockpit_rechnung_nachholen",{p_booking:AE.id}); $("aeModal").hidden=true; toastLang(`Rechnung über ${eurc(r.preis)} vorbereitet, Entwurf folgt im nächsten Rechnungslauf.`); await SB.live(); }
+  catch(err){ $("aeFehler").innerHTML=`<div class="fehlerbox">${esc(err.message)}</div>`; } b.disabled=false; b.dataset.c=""; b.textContent="Rechnung jetzt vorbereiten"; });
+$("aeStorno").addEventListener("click",async()=>{ const b=$("aeStorno"), g=$("aeStGrund").value.trim();
+  if(!g){ $("aeFehler").innerHTML='<div class="fehlerbox">Bitte einen Grund für das Storno eintragen.</div>'; return; }
+  if(b.dataset.c!=="1"){ b.dataset.c="1"; b.textContent="Wirklich stornieren? Plätze werden frei"; return; } b.disabled=true;
+  try{ await SB.rpc("cockpit_storno",{p_booking_id:AE.id,p_grund:g,p_gutschrift:false,p_betrag:null}); $("aeModal").hidden=true; toastLang("Storniert, die Plätze sind wieder frei. Eine noch nicht erstellte Rechnung wird nicht mehr erstellt."); await SB.live(); }
+  catch(err){ $("aeFehler").innerHTML=`<div class="fehlerbox">${esc(err.message)}</div>`; } b.disabled=false; });
+
+/* Heute bei jedem Neuzeichnen und nach dem Laden der Teilnehmer aktualisieren */
+const _renderAllB = renderAll; renderAll = function(){ _renderAllB(); renderHeute(); };
+const _ladeTnB = ladeTeilnehmer; ladeTeilnehmer = async function(){ await _ladeTnB(); renderHeute(); };
+SB.live = async function(){ await _liveOrig(); await ladeTeilnehmer(); };
+
 renderAll();
-try{ const v=localStorage.getItem(KEY+"-view"); if(v && document.getElementById(v)) go(v); }catch(e){}
+go("heute");
 SB.start(); FS.init(); filterAnlegen();
 if(!SB.s){ if(!WEB) setTimeout(zahlenHochzaehlen,150); } else setTimeout(zahlenHochzaehlen,3000);
 </script>
