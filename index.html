@@ -1253,7 +1253,7 @@ function renderZentrale(){ renderCSV();
   const RS={entwurf_abgelegt:["Entwurf im Postfach","up"],rechnung_erstellt:["wird abgelegt","warn"],julia_bestaetigt:["wartet auf Lauf","warn"],fehler:["Fehler","down"],uebersprungen:["vor Automatik, manuell","neutral"]};
   $("zRe").innerHTML = res.length? `<thead><tr><th>Rechnung</th><th>Eltern</th><th>Kurs</th><th class="n">Betrag</th><th>Fällig</th><th>Stand</th><th></th></tr></thead><tbody>`+res.slice(0,60).map(b=>{ let [l,c]=RS[b.re_status]||[b.re_status||"–","neutral"]; const st=b.status==="cancelled";
     if(b.bezahlt_am && !st){ l="bezahlt "+dshort(b.bezahlt_am); c="up"; }
-    return `<tr><td class="num">${esc(b.rechnungsnummer)}</td><td>${esc(b.eltern)}</td><td>${esc(b.kurs)}<div class="tiny">${esc(b.ort)} · ${dt(b.start)}</div></td><td class="n num">${b.betrag!=null?Number(b.betrag).toLocaleString("de-DE",{style:"currency",currency:"EUR"}):"–"}</td><td class="num">${dt(b.faellig_am)}${b.erinnerung_am?`<div class="tiny">erinnert</div>`:""}</td><td>${st?(b.bezahlt_am?'<span class="chip warn">storniert, aber bezahlt: Erstattung prüfen</span>':'<span class="chip down">storniert</span>'):`<span class="chip ${c}">${l}</span>`}</td><td style="white-space:nowrap">${b.bezahlt_am?`<button class="btn light small" data-unpaid="${esc(b.rechnungsnummer)}" title="Zahlung zurücknehmen">↺</button>`:`<button class="btn light small" data-paid="${esc(b.rechnungsnummer)}" data-betrag="${b.betrag??""}">bezahlt</button>`} ${st?"":`<button class="btn light small" data-sto="${b.id}">Storno</button>`}</td></tr>
+    return `<tr><td class="num">${esc(b.rechnungsnummer)}</td><td>${esc(b.eltern)}</td><td>${esc(b.kurs)}<div class="tiny">${esc(b.ort)} · ${dt(b.start)}</div></td><td class="n num">${b.betrag!=null?Number(b.betrag).toLocaleString("de-DE",{style:"currency",currency:"EUR"}):"–"}</td><td class="num">${dt(b.faellig_am)}${b.erinnerung_am?`<div class="tiny">erinnert</div>`:""}</td><td>${st?(b.bezahlt_am?(Number(b.erstattet_betrag)>=Number(b.bezahlt_betrag)-0.01?'<span class="chip">storniert, erstattet</span>':'<span class="chip warn">storniert, aber bezahlt: Erstattung prüfen</span>'):'<span class="chip down">storniert</span>'):`<span class="chip ${c}">${l}</span>`}</td><td style="white-space:nowrap">${b.bezahlt_am?`<button class="btn light small" data-unpaid="${esc(b.rechnungsnummer)}" title="Zahlung zurücknehmen">↺</button>`:`<button class="btn light small" data-paid="${esc(b.rechnungsnummer)}" data-betrag="${b.betrag??""}">bezahlt</button>`} ${st?"":`<button class="btn light small" data-sto="${b.id}">Storno</button>`}</td></tr>
     <tr id="sto-${b.id}" hidden><td colspan="7"><div class="inline-form"><input type="text" id="stg-${b.id}" placeholder="Grund, z. B. Workshop abgesagt" aria-label="Grund"><input type="number" step="0.01" id="stb-${b.id}" value="${b.betrag??""}" aria-label="Gutschrift Betrag"><label class="tiny" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="stk-${b.id}" checked> Gutschrift</label><button class="btn accent small" data-stogo="${b.id}">Stornieren</button></div><div class="tiny" style="margin-top:4px">Storniert die Buchung sofort im System. Die Gutschrift bitte noch von Hand erstellen, die Automatik dafür ist noch nicht eingerichtet.</div></td></tr>`; }).join("")+"</tbody>" : `<tbody><tr><td class="empty">Keine Rechnungen gefunden.</td></tr></tbody>`;
   document.querySelectorAll("[data-paid]").forEach(btn=>btn.addEventListener("click",async()=>{ if(btn.dataset.c!=="1"){ btn.dataset.c="1"; btn.textContent="heute bezahlt?"; return; } btn.disabled=true;
     try{ await SB.call("/rest/v1/cockpit_zahlungen",{method:"POST",headers:{Prefer:"return=minimal"},body:JSON.stringify({rechnungsnummer:btn.dataset.paid,betrag:Number(btn.dataset.betrag)||0,datum:heuteBerlin(),quelle:"manuell"})}); toast("Als bezahlt erfasst"); await SB.live(); }catch(e){ toast(e.message); btn.disabled=false; } }));
@@ -1483,42 +1483,69 @@ function csvLesen(txt){
   if(!CSV.wahl.length) CSV.wahl=konten.filter(k=>/knusi/i.test(k));
   renderCSV();
 }
+const reNr=s=>{ const x=String(s||"").match(/RE[\s\-_]?(20\d{2})[\s\-_]?0*(\d{1,4})/i); return x?`RE-${x[1]}-${x[2].padStart(4,"0")}`:null; };
 function csvAuswertung(){
   const {rows,konten,wahl}=CSV; const intern=new Set([...konten,"Hauptkonto"]);
-  const m={}, zahl={}; let von="9",bis="0";
-  const ein=[]; rows.forEach(r=>{ if(!wahl.includes(r.acc)) return; if(r.d<von) von=r.d; if(r.d>bis) bis=r.d; if(intern.has(r.p)) return; if(r.a>0) ein.push(r);
+  const m={}, zahl={}; let von="9",bis="0"; const ein=[], aus=[];
+  rows.forEach(r=>{ if(!wahl.includes(r.acc)) return; if(r.d<von) von=r.d; if(r.d>bis) bis=r.d; if(intern.has(r.p)) return;
     const k=r.d.slice(0,7); m[k]=m[k]||{ein:0,aus:0}; if(r.a>0) m[k].ein+=r.a; else m[k].aus+=r.a;
-    if(r.a>0){ const re=(r.ref.match(/RE[\s\-_]?(20\d{2})[\s\-_]?0*(\d{1,4})/i)); if(re){ const nr=`RE-${re[1]}-${re[2].padStart(4,"0")}`; if(!zahl[nr]||zahl[nr].datum<r.d) zahl[nr]={rechnungsnummer:nr,betrag:Math.round(r.a*100)/100,datum:r.d}; } } });
-  return {m,zahl:Object.values(zahl),von,bis,ein};
+    if(r.a>0){ ein.push(r); const re=reNr(r.ref); if(re){ r.re=re; if(!zahl[re]) zahl[re]={rechnungsnummer:re,betrag:0,datum:r.d,teile:[]}; zahl[re].betrag=Math.round((zahl[re].betrag+r.a)*100)/100; zahl[re].teile.push(r); if(r.d>zahl[re].datum) zahl[re].datum=r.d; } }
+    else aus.push(r); });
+  return {m,zahl:Object.values(zahl),von,bis,ein,aus};
 }
 const MON={"01":"Jan","02":"Feb","03":"Mär","04":"Apr","05":"Mai","06":"Jun","07":"Jul","08":"Aug","09":"Sep","10":"Okt","11":"Nov","12":"Dez"};
 const norm=s=>String(s||"").toLowerCase().normalize("NFKD").replace(/[̀-ͯ]/g,"").replace(/ß/g,"ss");
+function nameTeile(n){ return norm(n).split(/[^a-z0-9]+/).filter(t=>t.length>=4 && !["familie","und","oder","knusikids","workshop"].includes(t)); }
+function passtName(b,r){ const hay=norm(r.p+" "+r.ref); return nameTeile(b.eltern).some(t=>hay.includes(t)); }
 function zuordnung(A){
-  const offen=BUCH.filter(b=>b.rechnungsnummer&&!b.bezahlt_am&&Number(b.betrag)>0), out=[], benutzt=new Set();
+  const offen=BUCH.filter(b=>b.rechnungsnummer&&!b.bezahlt_am&&Number(b.betrag)>0&&!b.test), out=[], benutzt=new Set();
+  A.zahl.forEach(z=>z.teile.forEach(r=>benutzt.add(r)));
   offen.forEach(b=>{ const nz=A.zahl.find(z=>z.rechnungsnummer===b.rechnungsnummer);
-    if(nz){ out.push({b,z:nz,art:"Nummer",an:true}); return; }
-    const nr=b.rechnungsnummer.slice(-4), nach=norm((b.eltern||"").trim().split(/\s+/).pop());
-    const k=A.ein.filter(r=>!benutzt.has(r) && Math.abs(r.a-Number(b.betrag))<0.011 && ((nach.length>=3 && norm(r.p+" "+r.ref).includes(nach)) || new RegExp(`(^|\\D)0*${+nr}(\\D|$)`).test(r.ref)));
-    if(k.length===1){ benutzt.add(k[0]); out.push({b,z:{rechnungsnummer:b.rechnungsnummer,betrag:k[0].a,datum:k[0].d},art:"Name und Betrag",an:false}); }
-    else out.push({b,z:null,art:k.length>1?"mehrdeutig":"nicht gefunden",an:false}); });
-  return out;
+    if(nz){ out.push({b,z:nz,art:nz.teile.length>1?`Nummer, ${nz.teile.length} Zahlungen`:"Nummer",an:true}); return; }
+    const betr=Number(b.betrag), nr=+b.rechnungsnummer.slice(-4);
+    const kand=A.ein.filter(r=>!benutzt.has(r) && !r.re && (passtName(b,r) || new RegExp(`(^|\\D)0*${nr}(\\D|$)`).test(r.ref)));
+    const genau=kand.filter(r=>Math.abs(r.a-betr)<0.011), nah=kand.filter(r=>Math.abs(r.a-betr)<=1.0);
+    const neu=r=>({rechnungsnummer:b.rechnungsnummer,betrag:r.a,datum:r.d,teile:[r]});
+    if(genau.length===1){ benutzt.add(genau[0]); out.push({b,z:neu(genau[0]),art:"Name und Betrag",an:true,von:genau[0].p}); }
+    else if(!genau.length && nah.length===1){ benutzt.add(nah[0]); out.push({b,z:neu(nah[0]),art:"Name, Betrag weicht ab",an:false,von:nah[0].p}); }
+    else out.push({b,z:null,art:kand.length>1?"mehrdeutig":"nicht gefunden",an:false}); });
+  const bezahlt=BUCH.filter(b=>b.rechnungsnummer&&b.bezahlt_am&&!(Number(b.erstattet_betrag)>0)).concat(out.filter(x=>x.z).map(x=>Object.assign(Object.create(x.b),{bezahlt_betrag:x.z.betrag,_neu:x}))), E=[];
+  A.aus.filter(r=>/gutschrift|erstatt|storn|GS-20/i.test(r.ref)).forEach(r=>{
+    const re=reNr(r.ref); let b=re?bezahlt.find(x=>x.rechnungsnummer===re):null, art="Nummer";
+    if(!b){ const k=bezahlt.filter(x=>passtName(x,r)); if(k.length===1){ b=k[0]; art="Name"; } }
+    if(!b || E.some(e=>e.b===b)) return;
+    const betrag=Math.round(-r.a*100)/100, voll=Math.abs(betrag-Number(b.bezahlt_betrag||b.betrag))<0.011;
+    E.push({b,r,art:(voll?art:art+", Teilbetrag")+(b._neu?" (Zahlung aus diesem Import)":""),betrag,an:voll&&(!b._neu||b._neu.an),neu:b._neu}); });
+  return {Z:out,E};
 }
 function renderCSV(){
   const out=$("csvOut");
   if(!CSV){ out.innerHTML = D.n26? `<div class="tiny">Letzter Import ${new Date(D.n26.importiert_am).toLocaleString("de-DE",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"})}: ${dt(D.n26.von)} bis ${dt(D.n26.bis)}.</div>`:""; return; }
-  const A=csvAuswertung(), mk=Object.keys(A.m).sort(), Z=SB.s? zuordnung(A) : [];
-  const heute=heuteBerlin();
+  const A=csvAuswertung(), mk=Object.keys(A.m).sort(), ZE=SB.s? zuordnung(A) : {Z:[],E:[]}, Z=ZE.Z, E=ZE.E;
+  const heute=heuteBerlin(), eu=v=>Number(v).toLocaleString("de-DE",{style:"currency",currency:"EUR"});
+  const anzZ=Z.filter(x=>x.an).length, anzE=E.filter(x=>x.an).length;
   out.innerHTML=`<div class="tiny" style="margin-bottom:8px">Zeitraum ${dt(A.von)} bis ${dt(A.bis)} · Konten, die zählen: ${CSV.konten.map(k=>`<label style="display:inline-flex;gap:4px;align-items:center;margin-right:10px"><input type="checkbox" data-acc="${esc(k)}" ${CSV.wahl.includes(k)?"checked":""}>${esc(k)}</label>`).join("")}<br>Umbuchungen zwischen euren Konten werden nicht mitgezählt.</div>
     <details><summary class="tiny" style="cursor:pointer;color:var(--terracotta);font-weight:600">Monatssummen anzeigen</summary><div class="tablewrap"><table class="mini"><thead><tr><th>Monat</th><th class="n">Einnahmen</th><th class="n">Ausgaben</th><th class="n">Saldo</th></tr></thead><tbody>${mk.map(k=>`<tr><td>${MON[k.slice(5)]} ${k.slice(0,4)}</td><td class="n num">${eur(A.m[k].ein)}</td><td class="n num">${eur(-A.m[k].aus)}</td><td class="n num" style="color:${A.m[k].ein+A.m[k].aus>=0?"var(--green)":"var(--red)"}">${eur(A.m[k].ein+A.m[k].aus)}</td></tr>`).join("")}</tbody></table></div></details>
-    ${!SB.s?`<div class="tiny" style="margin-top:8px">Für den Abgleich mit den Rechnungen bitte anmelden.</div>`: !Z.length? `<div style="margin-top:10px"><span class="chip up">Alle Rechnungen sind schon als bezahlt erfasst.</span></div>` : `
-    <div class="t-head" style="margin:14px 0 6px"><h2 style="font-size:.95rem">Abgleich: ${Z.length} Rechnungen ohne erfasste Zahlung</h2></div>
-    <div class="tablewrap"><table class="mini match"><thead><tr><th></th><th>Rechnung</th><th>Eltern</th><th class="n">Betrag</th><th>Fällig</th><th>Gefunden</th></tr></thead><tbody>${Z.map((x,i)=>`<tr><td>${x.z?`<input type="checkbox" data-zi="${i}" ${x.an?"checked":""} aria-label="übernehmen">`:""}</td><td class="num">${esc(x.b.rechnungsnummer)}</td><td>${esc(x.b.eltern)}${x.b.status==="cancelled"?' <span class="chip down">storniert</span>':""}</td><td class="n num">${Number(x.b.betrag).toLocaleString("de-DE",{style:"currency",currency:"EUR"})}</td><td class="num">${dt(x.b.faellig_am)}</td><td>${x.z?`<span class="chip ${x.art==="Nummer"?"up":"warn"}">${x.art}</span> <span class="tiny">${dt(x.z.datum)}, ${Number(x.z.betrag).toLocaleString("de-DE",{style:"currency",currency:"EUR"})}</span>`:`<span class="chip ${x.b.faellig_am&&x.b.faellig_am<heute?"down":"neutral"}">${x.art}</span>`}</td></tr>`).join("")}</tbody></table></div>
-    <div class="tiny" style="margin-top:6px">Grün = Rechnungsnummer im Verwendungszweck (vorausgewählt). Gelb = Name und Betrag passen, bitte selbst prüfen und anhaken.</div>
-    <button class="btn accent small" id="csvZahl" style="margin-top:10px">Angehakte als bezahlt speichern</button>`}`;
+    ${!SB.s?`<div class="tiny" style="margin-top:8px">Für den Abgleich mit den Rechnungen bitte anmelden.</div>`: (!Z.length && !E.length)? `<div style="margin-top:10px"><span class="chip up">Alle Rechnungen sind schon als bezahlt erfasst.</span></div>` : `
+    ${Z.length?`<div class="t-head" style="margin:14px 0 6px"><h2 style="font-size:.95rem">Zahlungen: ${Z.length} Rechnungen ohne erfasste Zahlung, ${Z.filter(x=>x.z).length} gefunden</h2></div>
+    <div class="tablewrap"><table class="mini match"><thead><tr><th></th><th>Rechnung</th><th>Eltern</th><th class="n">Betrag</th><th>Fällig</th><th>Gefunden</th></tr></thead><tbody>${Z.map((x,i)=>`<tr><td>${x.z?`<input type="checkbox" data-zi="${i}" ${x.an?"checked":""} aria-label="übernehmen">`:""}</td><td class="num">${esc(x.b.rechnungsnummer)}</td><td>${esc(x.b.eltern)}${x.b.status==="cancelled"?' <span class="chip down">storniert</span>':""}</td><td class="n num">${eu(x.b.betrag)}</td><td class="num">${dt(x.b.faellig_am)}</td><td>${x.z?`<span class="chip ${/^Nummer/.test(x.art)?"up":x.an?"ok":"warn"}">${x.art}</span> <span class="tiny">${dt(x.z.datum)}, ${eu(x.z.betrag)}${x.von?` · von ${esc(x.von)}`:""}</span>`:`<span class="chip ${x.b.faellig_am&&x.b.faellig_am<heute?"down":"neutral"}">${x.art}</span>`}</td></tr>`).join("")}</tbody></table></div>`:""}
+    ${E.length?`<div class="t-head" style="margin:14px 0 6px"><h2 style="font-size:.95rem">Rückerstattungen erkannt: ${E.length}</h2></div>
+    <div class="tablewrap"><table class="mini match"><thead><tr><th></th><th>Rechnung</th><th>Eltern</th><th class="n">Erstattet</th><th>Am</th><th>Erkannt über</th></tr></thead><tbody>${E.map((x,i)=>`<tr><td><input type="checkbox" data-ei="${i}" ${x.an?"checked":""} aria-label="übernehmen"></td><td class="num">${esc(x.b.rechnungsnummer)}</td><td>${esc(x.b.eltern)}</td><td class="n num">${eu(x.betrag)}</td><td class="num">${dt(x.r.d)}</td><td><span class="chip ${x.an?"ok":"warn"}">${x.art}</span> <span class="tiny">${esc(x.r.ref.slice(0,60))}</span></td></tr>`).join("")}</tbody></table></div>`:""}
+    <div class="tiny" style="margin-top:6px">Vorausgewählt: Rechnungsnummer im Verwendungszweck, oder eindeutiger Name mit genau passendem Betrag. Gelb (Betrag weicht ab, Teilbetrag) bitte selbst prüfen und anhaken. Gespeichert wird erst mit dem Knopf.</div>
+    <button class="btn accent small" id="csvZahl" style="margin-top:10px">Angehakte speichern (${anzZ} Zahlungen${E.length?`, ${anzE} Erstattungen`:""})</button>`}`;
   out.querySelectorAll("[data-acc]").forEach(c=>c.addEventListener("change",()=>{ CSV.wahl = c.checked? [...CSV.wahl,c.dataset.acc] : CSV.wahl.filter(x=>x!==c.dataset.acc); renderCSV(); }));
-  $("csvZahl")&&$("csvZahl").addEventListener("click",async e=>{ const sel=[...out.querySelectorAll("[data-zi]:checked")].map(c=>Z[+c.dataset.zi]); if(!sel.length) return toast("Nichts angehakt");
-    const b=e.target; if(b.dataset.c!=="1"){ b.dataset.c="1"; b.textContent=`${sel.length} als bezahlt speichern?`; return; } b.disabled=true;
-    try{ await SB.call("/rest/v1/cockpit_zahlungen?on_conflict=rechnungsnummer",{method:"POST",headers:{Prefer:"resolution=ignore-duplicates,return=minimal"},body:JSON.stringify(sel.map(x=>({rechnungsnummer:x.z.rechnungsnummer,betrag:Math.round(x.z.betrag*100)/100,datum:x.z.datum,quelle:x.art==="Nummer"?"n26_nummer":"n26_name"})))}); merkeN26(A); toast(`${sel.length} Zahlungen gespeichert`); await SB.live(); renderCSV(); }catch(err){ toast(err.message); b.disabled=false; } });
+  const zaehle=()=>{ const b=$("csvZahl"); if(!b) return; b.dataset.c=""; b.textContent=`Angehakte speichern (${out.querySelectorAll("[data-zi]:checked").length} Zahlungen${E.length?`, ${out.querySelectorAll("[data-ei]:checked").length} Erstattungen`:""})`; };
+  out.querySelectorAll("[data-zi],[data-ei]").forEach(c=>c.addEventListener("change",zaehle));
+  $("csvZahl")&&$("csvZahl").addEventListener("click",async e=>{
+    const sel=[...out.querySelectorAll("[data-zi]:checked")].map(c=>Z[+c.dataset.zi]), selE=[...out.querySelectorAll("[data-ei]:checked")].map(c=>E[+c.dataset.ei]);
+    const selE2=selE.filter(x=>!x.neu||sel.includes(x.neu)); if(selE2.length<selE.length) toast("Erstattung ohne angehakte Zahlung übersprungen"); selE.length=0; selE.push(...selE2);
+    if(!sel.length && !selE.length) return toast("Nichts angehakt");
+    const b=e.target; if(b.dataset.c!=="1"){ b.dataset.c="1"; b.textContent=`Sicher? ${sel.length} Zahlungen${selE.length?`, ${selE.length} Erstattungen`:""} speichern`; return; } b.disabled=true;
+    try{
+      if(sel.length) await SB.call("/rest/v1/cockpit_zahlungen?on_conflict=rechnungsnummer",{method:"POST",headers:{Prefer:"resolution=ignore-duplicates,return=minimal"},body:JSON.stringify(sel.map(x=>({rechnungsnummer:x.z.rechnungsnummer,betrag:Math.round(x.z.betrag*100)/100,datum:x.z.datum,quelle:/^Nummer/.test(x.art)?"n26_nummer":"n26_name",notiz:x.z.teile&&x.z.teile.length>1?`${x.z.teile.length} Zahlungen: `+x.z.teile.map(t=>`${t.d} ${t.a}`).join(", "):(/^Nummer/.test(x.art)?null:`N26 ohne Rechnungsnummer, erkannt über ${x.art}`)})))});
+      for(const x of selE) await SB.call(`/rest/v1/cockpit_zahlungen?rechnungsnummer=eq.${encodeURIComponent(x.b.rechnungsnummer)}`,{method:"PATCH",headers:{Prefer:"return=minimal"},body:JSON.stringify({erstattet_betrag:x.betrag,erstattet_am:x.r.d,erstattet_notiz:x.r.ref.slice(0,120)})});
+      merkeN26(A); toastLang(`Gespeichert: ${sel.length} Zahlungen${selE.length?`, ${selE.length} Erstattungen`:""}.`); await SB.live(); renderCSV();
+    }catch(err){ toast(err.message); b.disabled=false; } });
 }
 function merkeN26(A){ D.n26={importiert_am:new Date().toISOString(),von:A.von,bis:A.bis,zahlungen:A.zahl.length,monate:Object.fromEntries(Object.entries(A.m).map(([k,v])=>[k,{ein:Math.round(v.ein*100)/100,aus:Math.round(v.aus*100)/100}]))}; D._dirty=true; try{ localStorage.setItem(KEY,JSON.stringify(D)); }catch(e){} SB.schedulePush(); }
 function csvDatei(file){ if(!file) return; const r=new FileReader(); r.onload=()=>{ try{ csvLesen(String(r.result)); toast("CSV gelesen"); }catch(e){ toast(e.message); } }; r.readAsText(file,"utf-8"); }
@@ -1816,7 +1843,7 @@ function zuErledigen(){
     L.push({p:1, was:`Rechnung für ${b.eltern||"Familie"}`, warum:`${b.kurs||""} ${dt(b.start)} · ${kinderText(n)} · noch keine Rechnung`,
       tu: betrag? `<button class="btn small accent" data-hre="${b.id}" data-betrag="${betrag}">Rechnung vorbereiten (${eurc(betrag)})</button>` : `<button class="btn small light" data-go="zentrale">Preis fehlt</button>`}); });
   (BUCH||[]).filter(b=>b.re_status==="fehler").forEach(b=>L.push({p:1, was:`Rechnung hängt: ${b.eltern||""}`, warum:(b.fehler||"Fehler im Rechnungslauf").slice(0,90), tu:`<button class="btn small light" data-go="zentrale">Ansehen</button>`}));
-  (BUCH||[]).filter(b=>b.status==="cancelled"&&b.bezahlt_am).forEach(b=>L.push({p:2, was:`Erstattung prüfen: ${b.eltern||""}`, warum:`${b.rechnungsnummer||""} storniert, aber ${eurc(b.bezahlt_betrag)} bezahlt`, tu:`<button class="btn small light" data-go="zentrale">Ansehen</button>`}));
+  (BUCH||[]).filter(b=>b.status==="cancelled"&&b.bezahlt_am&&!(Number(b.erstattet_betrag)>=Number(b.bezahlt_betrag)-0.01)).forEach(b=>L.push({p:2, was:`Erstattung prüfen: ${b.eltern||""}`, warum:`${b.rechnungsnummer||""} storniert, aber ${eurc(b.bezahlt_betrag)} bezahlt`, tu:`<button class="btn small light" data-go="zentrale">Ansehen</button>`}));
   const zk=(BUCH||[]).filter(b=>b.status==="confirmed"&&!b.test&&b.re_status==="entwurf_abgelegt"&&!b.bezahlt_am&&b.faellig_am&&b.faellig_am<h).sort((x,y)=>x.faellig_am.localeCompare(y.faellig_am));
   if(zk.length){ const stand=window.LIVE&&LIVE.zahlungen_stand?dt(LIVE.zahlungen_stand):"unbekannt", summe=zk.reduce((s,b)=>s+(Number(b.betrag)||0),0);
     L.push({p:2, was:`${zk.length} ${zk.length===1?"Rechnung":"Rechnungen"} ohne erfassten Zahlungseingang`, warum:`zusammen ${eurc(summe)} · letzter Bankabgleich ${stand}. Erst N26 abgleichen, dann nachfragen.`,
