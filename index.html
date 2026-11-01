@@ -351,6 +351,56 @@ input[type=email],input[type=tel],input[type=search].bk{background:#FCFAF7;borde
   .todo2{grid-template-columns:1fr}
   .todo2 .tu{grid-row:auto;grid-column:1;justify-content:flex-start;margin-top:6px}
 }
+
+/* ===== UX-Runde 01.11.: Handy lesbar und gut tippbar ===== */
+[hidden]{display:none!important}
+:root{--ink-3:#857266}
+button,a,select,input,label,summary{touch-action:manipulation}
+.btn,.kbtn,.anw,.seg button,.mbar button{-webkit-tap-highlight-color:transparent;transition:transform .08s ease,filter .08s ease}
+.btn:active,.kbtn:active,.anw:active,.seg button:active{transform:scale(.97);filter:brightness(.95)}
+.btn:focus-visible,.kbtn:focus-visible,.anw:focus-visible,a:focus-visible,.seg button:focus-visible{outline:3px solid var(--terracotta);outline-offset:2px}
+@media (max-width:820px){
+  /* Schrift: nichts unter 12 px, Fließtext etwas größer */
+  .tiny{font-size:.84rem;line-height:1.45}
+  .chip{font-size:.8rem;padding:3px 10px}
+  th,.formgrid label,main table.mcard td::before{font-size:.82rem}
+  .mbar button{font-size:.75rem!important}
+  .mbar .badge{font-size:.7rem}
+  .tnkurs .meta,.tnp .wer span{font-size:.86rem}
+  /* Tippziele mindestens 44 px (Apple-Richtwert) */
+  .btn{min-height:44px;padding:10px 16px;font-size:.95rem}
+  .btn.small{min-height:44px;padding:9px 14px;font-size:.9rem;border-radius:12px}
+  .kbtn{min-height:44px;padding:8px 14px;font-size:.9rem}
+  .pfilter button{min-height:44px;padding:8px 16px!important;font-size:.92rem}
+  .linkbtn{display:inline-flex;align-items:center;min-height:44px;font-size:.92rem}
+  .t-head .more{min-width:44px;justify-content:center}
+  .seg button{min-height:40px;padding:8px 14px;font-size:.92rem}
+  .t-head .more{min-height:44px;padding:10px 8px;margin:-10px -4px -10px auto;font-size:.9rem;display:inline-flex;align-items:center}
+  .tnp .kon2 a,a.kon{display:inline-flex;align-items:center;min-height:44px}
+  .kcard .kact select{min-height:44px;font-size:16px!important;padding:6px 10px!important}
+  .kcard .kact span{display:flex;gap:6px}
+  .kcard .kact button{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;font-size:1.05rem;box-sizing:border-box}
+  input[type=number],input[type=text],input[type=email],input[type=tel],input[type=search],input[type=password],input[type=date],input[type=time],select,textarea{min-height:44px}
+  label:has(>input[type=checkbox]){min-height:44px;display:flex!important;align-items:center;gap:10px;white-space:nowrap;cursor:pointer}
+  input[type=checkbox]{width:22px;height:22px;flex:0 0 22px;margin:0;accent-color:var(--terracotta)}
+  /* Kopfzeile: Aktionen linksbündig, Hauptaktion breit */
+  .topbar .actions{margin-left:0;width:100%}
+  .topbar .actions .btn{flex:1 1 auto}
+  /* Filter: nie breiter als der Bildschirm, zwei pro Zeile */
+  .fbar select{flex:1 1 calc(50% - 8px);max-width:100%;min-width:0}
+  .fbar input[type=search]{flex:1 1 100%;min-width:0}
+  /* Formulare: keine gequetschten Spalten */
+  .formgrid{grid-template-columns:1fr 1fr!important}
+  .formgrid>*{grid-column:auto!important;min-width:0}
+  .formgrid>button,.formgrid>.btn{grid-column:1/-1!important}
+  /* Storno-Zeile in der Rechnungsliste: sauber untereinander */
+  main table.mcard td>.inline-form{flex:1 1 100%;width:100%;max-width:100%;grid-template-columns:1fr 1fr!important;gap:8px}
+  .inline-form>*{min-width:0}
+  main table.mcard td .inline-form input[type=text],main table.mcard td .inline-form input[type=number]{max-width:100%;width:100%}
+  .inline-form>input[type=number]{grid-column:1}
+  .inline-form>label{grid-column:2!important;white-space:normal!important;line-height:1.25}
+  .inline-form>input[type=text]{grid-column:1/-1}
+}
 </style>
 </head>
 <body>
@@ -1254,7 +1304,7 @@ function renderZentrale(){ renderCSV();
   $("zRe").innerHTML = res.length? `<thead><tr><th>Rechnung</th><th>Eltern</th><th>Kurs</th><th class="n">Betrag</th><th>Fällig</th><th>Stand</th><th></th></tr></thead><tbody>`+res.slice(0,60).map(b=>{ let [l,c]=RS[b.re_status]||[b.re_status||"–","neutral"]; const st=b.status==="cancelled"||!!b.rechnung_storniert_am;
     if(b.bezahlt_am && !st){ l="bezahlt "+dshort(b.bezahlt_am); c="up"; }
     return `<tr><td class="num">${esc(b.rechnungsnummer)}</td><td>${esc(b.eltern)}</td><td>${esc(b.kurs)}<div class="tiny">${esc(b.ort)} · ${dt(b.start)}</div></td><td class="n num">${b.betrag!=null?Number(b.betrag).toLocaleString("de-DE",{style:"currency",currency:"EUR"}):"–"}</td><td class="num">${dt(b.faellig_am)}${b.erinnerung_am?`<div class="tiny">erinnert</div>`:""}</td><td>${st?(b.bezahlt_am?(Number(b.erstattet_betrag)>=Number(b.bezahlt_betrag)-0.01?'<span class="chip">storniert, erstattet</span>':'<span class="chip warn">storniert, aber bezahlt: Erstattung prüfen</span>'):'<span class="chip down">storniert</span>'):`<span class="chip ${c}">${l}</span>`}</td><td style="white-space:nowrap">${b.bezahlt_am?`<button class="btn light small" data-unpaid="${esc(b.rechnungsnummer)}" title="Zahlung zurücknehmen">↺</button>`:`<button class="btn light small" data-paid="${esc(b.rechnungsnummer)}" data-betrag="${b.betrag??""}">bezahlt</button>`} ${st?"":`<button class="btn light small" data-sto="${b.id}">Storno</button>`}</td></tr>
-    <tr id="sto-${b.id}" hidden><td colspan="7"><div class="inline-form"><input type="text" id="stg-${b.id}" placeholder="Grund, z. B. Workshop abgesagt" aria-label="Grund"><input type="number" step="0.01" id="stb-${b.id}" value="${b.betrag??""}" aria-label="Gutschrift Betrag"><label class="tiny" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="stk-${b.id}" checked> Gutschrift</label><button class="btn accent small" data-stogo="${b.id}">Stornieren</button></div><div class="tiny" style="margin-top:4px">Storniert die Buchung sofort im System. Die Gutschrift bitte noch von Hand erstellen, die Automatik dafür ist noch nicht eingerichtet.</div></td></tr>`; }).join("")+"</tbody>" : `<tbody><tr><td class="empty">Keine Rechnungen gefunden.</td></tr></tbody>`;
+    <tr id="sto-${b.id}" hidden><td colspan="7"><div class="inline-form"><input type="text" id="stg-${b.id}" placeholder="Grund, z. B. Workshop abgesagt" aria-label="Grund"><input type="number" step="0.01" id="stb-${b.id}" value="${b.betrag??""}" aria-label="Gutschrift Betrag"><label class="tiny" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="stk-${b.id}" checked> Gutschrift in dieser Höhe</label><button class="btn accent small" data-stogo="${b.id}">Stornieren</button></div><div class="tiny" style="margin-top:4px">Storniert die Buchung sofort im System. Die Gutschrift bitte noch von Hand erstellen, die Automatik dafür ist noch nicht eingerichtet.</div></td></tr>`; }).join("")+"</tbody>" : `<tbody><tr><td class="empty">Keine Rechnungen gefunden.</td></tr></tbody>`;
   document.querySelectorAll("[data-paid]").forEach(btn=>btn.addEventListener("click",async()=>{ if(btn.dataset.c!=="1"){ btn.dataset.c="1"; btn.textContent="heute bezahlt?"; return; } btn.disabled=true;
     try{ await SB.call("/rest/v1/cockpit_zahlungen",{method:"POST",headers:{Prefer:"return=minimal"},body:JSON.stringify({rechnungsnummer:btn.dataset.paid,betrag:Number(btn.dataset.betrag)||0,datum:heuteBerlin(),quelle:"manuell"})}); toast("Als bezahlt erfasst"); await SB.live(); }catch(e){ toast(e.message); btn.disabled=false; } }));
   document.querySelectorAll("[data-unpaid]").forEach(btn=>btn.addEventListener("click",async()=>{ if(btn.dataset.c!=="1"){ btn.dataset.c="1"; btn.textContent="zurücknehmen?"; return; }
