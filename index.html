@@ -1808,6 +1808,7 @@ function heuteTermine(){
   if(!paare.length) return [];
   const erster=paare[0].d; return paare.filter(p=>p.d===erster);
 }
+let ZK_AUF=false;
 function zuErledigen(){
   const h=heuteBerlin(), L=[];
   (BUCH||[]).filter(b=>b.status==="confirmed"&&!b.test&&!b.re_status).forEach(b=>{
@@ -1816,9 +1817,11 @@ function zuErledigen(){
       tu: betrag? `<button class="btn small accent" data-hre="${b.id}" data-betrag="${betrag}">Rechnung vorbereiten (${eurc(betrag)})</button>` : `<button class="btn small light" data-go="zentrale">Preis fehlt</button>`}); });
   (BUCH||[]).filter(b=>b.re_status==="fehler").forEach(b=>L.push({p:1, was:`Rechnung hängt: ${b.eltern||""}`, warum:(b.fehler||"Fehler im Rechnungslauf").slice(0,90), tu:`<button class="btn small light" data-go="zentrale">Ansehen</button>`}));
   (BUCH||[]).filter(b=>b.status==="cancelled"&&b.bezahlt_am).forEach(b=>L.push({p:2, was:`Erstattung prüfen: ${b.eltern||""}`, warum:`${b.rechnungsnummer||""} storniert, aber ${eurc(b.bezahlt_betrag)} bezahlt`, tu:`<button class="btn small light" data-go="zentrale">Ansehen</button>`}));
-  (BUCH||[]).filter(b=>b.status==="confirmed"&&!b.test&&b.re_status==="entwurf_abgelegt"&&!b.bezahlt_am&&b.faellig_am&&b.faellig_am<h).forEach(b=>{
-    L.push({p:2, was:`Zahlung klären: ${b.eltern||""}`, warum:`${b.rechnungsnummer} · ${eurc(b.betrag)} · seit ${-tageBis(b.faellig_am)} Tagen fällig, kein Zahlungseingang erfasst`,
-      tu: kontaktKnoepfe({telefon:b.telefon,email:b.email})}); });
+  const zk=(BUCH||[]).filter(b=>b.status==="confirmed"&&!b.test&&b.re_status==="entwurf_abgelegt"&&!b.bezahlt_am&&b.faellig_am&&b.faellig_am<h).sort((x,y)=>x.faellig_am.localeCompare(y.faellig_am));
+  if(zk.length){ const stand=window.LIVE&&LIVE.zahlungen_stand?dt(LIVE.zahlungen_stand):"unbekannt", summe=zk.reduce((s,b)=>s+(Number(b.betrag)||0),0);
+    L.push({p:2, was:`${zk.length} ${zk.length===1?"Rechnung":"Rechnungen"} ohne erfassten Zahlungseingang`, warum:`zusammen ${eurc(summe)} · letzter Bankabgleich ${stand}. Erst N26 abgleichen, dann nachfragen.`,
+      tu:`<button class="btn small light" data-zkauf>Liste zeigen</button><button class="btn small light" data-go="zentrale">N26 abgleichen</button>`,
+      extra: zk.map(b=>`<div class="todo2"><div class="was">${esc(b.eltern||"")}</div><div class="tu">${kontaktKnoepfe({telefon:b.telefon,email:b.email})}</div><div class="warum">${esc(b.rechnungsnummer||"")} · ${eurc(b.betrag)} · seit ${-tageBis(b.faellig_am)} Tagen fällig</div></div>`).join("")}); }
   todoList().filter(t=>t.status!=="erledigt").sort((a,b)=>(a.prio||9)-(b.prio||9)||String(a.faellig||"9").localeCompare(String(b.faellig||"9"))).slice(0,6).forEach(t=>
     L.push({p:3, was:t.titel, warum:[t.wer, t.faellig?`fällig ${dt(t.faellig)}`:""].filter(Boolean).join(" · ")||"Aufgabe", tu:`<button class="btn small light" data-terl="${t.id}">Erledigt</button>`}));
   return L.sort((a,b)=>a.p-b.p);
@@ -1836,9 +1839,9 @@ function renderHeute(){
     : '<div class="tile"><div class="tnleer">Keine kommenden Kurstermine. <button class="linkbtn" data-plusgo="orte">Kurs anlegen</button></div></div>';
   const L=zuErledigen();
   $("hTodoN").textContent = L.length? L.length+" offen" : "";
-  $("hTodo").innerHTML = L.length ? L.slice(0,10).map(x=>`<div class="todo2"><div class="was">${esc(x.was)}</div><div class="tu">${x.tu}</div><div class="warum">${esc(x.warum)}</div></div>`).join("")+(L.length>10?`<div class="tiny" style="margin-top:8px">und ${L.length-10} weitere</div>`:"")
+  $("hTodo").innerHTML = L.length ? L.slice(0,10).map(x=>`<div class="todo2"><div class="was">${esc(x.was)}</div><div class="tu">${x.tu}</div><div class="warum">${esc(x.warum)}</div></div>${x.extra?`<div class="zkliste" ${ZK_AUF?"":"hidden"} style="padding-left:12px;border-left:3px solid var(--sand)">${x.extra}</div>`:""}`).join("")+(L.length>10?`<div class="tiny" style="margin-top:8px">und ${L.length-10} weitere</div>`:"")
     : '<div class="allesgut">Alles Wichtige erledigt 🌿</div>';
-  const bh=$("badgeH"); if(bh){ const n=L.filter(x=>x.p<=2).length; bh.textContent=n; bh.hidden=!n; }
+  const bh=$("badgeH"); if(bh){ const n=L.filter(x=>x.p<=1).length; bh.textContent=n; bh.hidden=!n; }
   const grenze=Date.now()-7*864e5;
   const neu=(BUCH||[]).filter(b=>!b.test&&b.status==="confirmed"&&new Date(b.gebucht_am).getTime()>=grenze).slice(0,8);
   $("hNeu").innerHTML = neu.length ? neu.map(b=>`<div class="neu2"><div><b>${esc(b.eltern||"")}</b><div class="tiny">${esc(b.kurs||"")} · ${dt(b.start)} · ${kinderText(b.anzahl)}${b.via==="admin"?` · von ${esc(b.angelegt_von||"Hand")}`:" · online"}</div></div><div class="tiny num" style="white-space:nowrap">${dshort((b.gebucht_am||"").slice(0,10))}</div></div>`).join("")
@@ -1849,6 +1852,7 @@ document.addEventListener("click",async e=>{
   const r=e.target.closest("[data-hre]");
   if(r){ if(r.dataset.c!=="1"){ r.dataset.c="1"; r.textContent=`Sicher? ${eurc(Number(r.dataset.betrag))}`; return; }
     r.disabled=true; try{ await SB.rpc("cockpit_rechnung_anstossen",{p_booking_id:r.dataset.hre,p_betrag:Number(r.dataset.betrag),p_notiz:null}); toastLang("Rechnung vorbereitet. Der Entwurf liegt nach dem nächsten Rechnungslauf im Postfach."); await SB.live(); }catch(err){ toast(err.message); r.disabled=false; } return; }
+  if(e.target.closest("[data-zkauf]")){ ZK_AUF=!ZK_AUF; renderHeute(); return; }
   const t=e.target.closest("[data-terl]");
   if(t){ t.disabled=true; try{ await todoPatch(t.dataset.terl,{status:"erledigt"}); toast("Erledigt"); renderHeute(); }catch(err){ toast(err.message); t.disabled=false; } return; }
   const g=e.target.closest("[data-plusgo]"); if(g){ $("plusModal").hidden=true; go(g.dataset.plusgo); return; }
