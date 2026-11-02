@@ -426,6 +426,8 @@ aside .cbtn{min-height:44px;box-sizing:border-box;display:flex;align-items:cente
   #flowStuck table.mini td{border:0;padding:0}
   #flowStuck table.mini td:nth-child(2){flex:1 1 auto;font-weight:600}
 }
+/* Etappe 1b: Rechnungsknöpfe nur für den Inhaber (Rolle owner) */
+body:not([data-rolle="owner"]) .nur-owner{display:none!important}
 </style>
 </head>
 <body>
@@ -820,7 +822,7 @@ aside .cbtn{min-height:44px;box-sizing:border-box;display:flex;align-items:cente
       <div><label for="bkPreisEigen">Gesamtpreis €</label><input type="number" step="0.01" min="0" id="bkPreisEigen"></div>
       <div><label for="bkPreisGrund">Grund</label><input type="text" id="bkPreisGrund" placeholder="z. B. Geschwisterrabatt"></div>
     </div>
-    <label style="display:flex;gap:8px;align-items:center;margin-top:14px;color:var(--ink-2)"><input type="checkbox" id="bkRechnung" checked> Rechnung als Entwurf vorbereiten</label>
+    <label class="nur-owner" style="display:flex;gap:8px;align-items:center;margin-top:14px;color:var(--ink-2)"><input type="checkbox" id="bkRechnung" checked> Rechnung als Entwurf vorbereiten</label>
     <div class="tiny" id="bkRechHinweis"></div>
     <div id="bkFehler"></div>
     <button class="btn accent" id="bkGo" style="width:100%;margin-top:14px;padding:13px">Buchen</button>
@@ -840,7 +842,7 @@ aside .cbtn{min-height:44px;box-sizing:border-box;display:flex;align-items:cente
     <div class="tiny" id="aeRech" style="margin-top:8px"></div>
     <div id="aeFehler"></div>
     <button class="btn accent" id="aeGo" style="width:100%;margin-top:14px;padding:13px">Speichern</button>
-    <button class="btn light" id="aeNach" style="width:100%;margin-top:8px" hidden>Rechnung jetzt vorbereiten</button>
+    <button class="btn light nur-owner" id="aeNach" style="width:100%;margin-top:8px" hidden>Rechnung jetzt vorbereiten</button>
     <details style="margin-top:12px"><summary class="linkbtn">Buchung stornieren</summary>
       <label for="aeStGrund">Grund</label><input type="text" id="aeStGrund" placeholder="z. B. Familie hat abgesagt">
       <div class="hinweis" id="aeStHinweis"></div>
@@ -1253,7 +1255,22 @@ const SB_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZ
 window.LIVE=null; let BUCH=[], AUFTR=[], TODOS=[], KUNDEN=[], B2B=[], TYPEN=[], ORTE=[];
 const SB = window.SB = {
   s:null, t:null, last:null, state:"aus", ver:null, // ver: Version von cockpit_state beim letzten Laden/Speichern (Etappe 0a)
-  load(){ try{ this.s=JSON.parse(localStorage.getItem(KEY+"-sb")); }catch(e){ this.s=null; } },
+  load(){ try{ this.s=JSON.parse(localStorage.getItem(KEY+"-sb")); }catch(e){ this.s=null; } this.setRolle(this.s&&this.s.rolle||null); },
+  // Etappe 1b: Rolle aus der Datenbank (owner, team, test). Ohne erlaubte Rolle kein Zugang.
+  rolle:null,
+  setRolle(r){ this.rolle=r; if(this.s) this.s.rolle=r; document.body.dataset.rolle=r||""; },
+  istOwner(){ return this.rolle==="owner"; },
+  async rolleHolen(){
+    let r;
+    try{ r=await this.rpc("cockpit_rolle"); }
+    catch(e){
+      // Rückfall, falls die Funktion fehlt (z. B. nach Rückbau von Etappe 1): altes Verhalten, jedes Admin-Konto darf alles
+      if(e.code==="PGRST202" || /Could not find the function/i.test(e.message||"")){ try{ r=(await this.rpc("cockpit_is_admin"))?"owner":null; }catch(_){ r=null; } }
+      else if(e.status) r=null;
+      else return undefined; // Netzfehler: Rolle unbekannt, gespeicherte Rolle behalten
+    }
+    this.setRolle(["owner","team","test"].includes(r)?r:null); return this.rolle;
+  },
   keep(){ try{ this.s? localStorage.setItem(KEY+"-sb",JSON.stringify(this.s)) : localStorage.removeItem(KEY+"-sb"); }catch(e){} },
   async auth(body, grant){
     const r=await fetch(`${SB_URL}/auth/v1/token?grant_type=${grant}`,{method:"POST",headers:{apikey:SB_KEY,"Content-Type":"application/json"},body:JSON.stringify(body)});
@@ -1312,12 +1329,14 @@ const SB = window.SB = {
     history.replaceState(null,"",location.pathname);
     this.s={at:h.get("access_token"),rt:h.get("refresh_token"),exp:Date.now()+(+h.get("expires_in")||3600)*1000,mail:null};
     try{ const r=await fetch(SB_URL+"/auth/v1/user",{headers:{apikey:SB_KEY,Authorization:"Bearer "+this.s.at}}); const u=await r.json(); this.s.mail=u&&u.email; }catch(e){}
-    let ok=false; try{ ok=await this.rpc("cockpit_is_admin"); }catch(e){}
-    if(!ok){ const m=this.s.mail; this.s=null; this.keep(); throw new Error((m?m+" ist":"Dieses Konto ist")+" kein Admin-Konto."); }
+    const ok=await this.rolleHolen();
+    if(!ok){ const m=this.s.mail; this.s=null; this.keep(); this.setRolle(null); throw new Error((m?m+" hat":"Dieses Konto hat")+" keinen Zugang zum Cockpit."); }
     this.keep(); return true;
   },
   google(){ location.href=`${SB_URL}/auth/v1/authorize?provider=google&redirect_to=${encodeURIComponent(location.origin+location.pathname)}`; },
-  async start(){ this.load(); try{ if(await this.fromHash()) toast("Angemeldet"); }catch(e){ this.ui(); gateUi(e.message); return; } this.ui(); if(!this.s) return; try{ await this.pull(); await this.live(); }catch(e){ this.fail(e); } },
+  async start(){ this.load(); let neu=false; try{ neu=await this.fromHash(); if(neu) toast("Angemeldet"); }catch(e){ this.ui(); gateUi(e.message); return; }
+    if(this.s && !neu){ const r=await this.rolleHolen(); if(r===null){ this.s=null; this.keep(); this.ui(); gateUi("Dieses Konto hat keinen Zugang zum Cockpit."); return; } this.keep(); }
+    this.ui(); if(!this.s) return; try{ await this.pull(); await this.live(); }catch(e){ this.fail(e); } },
   fail(e){ this.state="fehler"; this.err=e.message; this.ui(); if(/JWT|token|nicht angemeldet|invalid/i.test(e.message)){ this.s=null; this.keep(); this.ui(); } },
   ui(){
     document.body.classList.toggle('online', !!this.s); gateUi();
@@ -1357,8 +1376,9 @@ function renderLiveTiles(){
 function renderZentrale(){ renderCSV();
   if(!SB.s){ ["zOhne","zRe","zAuftr"].forEach(id=>$(id).innerHTML=""); return; }
   const ohne=BUCH.filter(b=>b.status==="confirmed"&&!b.test&&!b.re_status);
-  $("zOhne").innerHTML = ohne.length? `<thead><tr><th>Gebucht</th><th>Eltern</th><th>Kurs</th><th>Start</th><th class="n" style="width:120px">Betrag €</th><th></th></tr></thead><tbody>`+ohne.map(b=>`<tr><td class="num">${dt((b.gebucht_am||"").slice(0,10))}</td><td>${esc(b.eltern)}</td><td>${esc(b.kurs)}<div class="tiny">${esc(b.ort)}</div></td><td class="num">${dt(b.start)}</td><td><input type="number" step="0.01" min="0" id="amt-${b.id}" value="${b.referenzpreis??""}" aria-label="Betrag"></td><td><button class="btn accent small" data-re="${b.id}">Rechnung anstoßen</button></td></tr>`).join("")+"</tbody>" : `<tbody><tr><td class="empty">Jede bestätigte Buchung hat einen Rechnungsvorgang.</td></tr></tbody>`;
+  $("zOhne").innerHTML = ohne.length? `<thead><tr><th>Gebucht</th><th>Eltern</th><th>Kurs</th><th>Start</th><th class="n" style="width:120px">Betrag €</th><th></th></tr></thead><tbody>`+ohne.map(b=>`<tr><td class="num">${dt((b.gebucht_am||"").slice(0,10))}</td><td>${esc(b.eltern)}</td><td>${esc(b.kurs)}<div class="tiny">${esc(b.ort)}</div></td><td class="num">${dt(b.start)}</td><td><input class="nur-owner" type="number" step="0.01" min="0" id="amt-${b.id}" value="${b.referenzpreis??""}" aria-label="Betrag"></td><td><button class="btn accent small nur-owner" data-re="${b.id}">Rechnung anstoßen</button></td></tr>`).join("")+"</tbody>" : `<tbody><tr><td class="empty">Jede bestätigte Buchung hat einen Rechnungsvorgang.</td></tr></tbody>`;
   document.querySelectorAll("[data-re]").forEach(btn=>btn.addEventListener("click",async()=>{
+    if(!SB.istOwner()) return;
     const id=btn.dataset.re, v=Number($("amt-"+id).value);
     if(btn.dataset.c!=="1"){ btn.dataset.c="1"; btn.textContent=`Bestätigen: ${eur(v)}`; return; }
     btn.disabled=true; try{ await SB.rpc("cockpit_rechnung_anstossen",{p_booking_id:id,p_betrag:v,p_notiz:null}); toast("Rechnung angestoßen, Entwurf folgt im nächsten Lauf"); await SB.live(); }catch(e){ toast(e.message); btn.disabled=false; }
@@ -1368,14 +1388,14 @@ function renderZentrale(){ renderCSV();
   $("zRe").innerHTML = res.length? `<thead><tr><th>Rechnung</th><th>Eltern</th><th>Kurs</th><th class="n">Betrag</th><th>Fällig</th><th>Stand</th><th></th></tr></thead><tbody>`+res.slice(0,60).map(b=>{ let [l,c]=RS[b.re_status]||[b.re_status||"–","neutral"]; const st=b.status==="cancelled"||!!b.rechnung_storniert_am;
     if(b.bezahlt_am && !st){ l="bezahlt "+dshort(b.bezahlt_am); c="up"; }
     return `<tr><td class="num">${esc(b.rechnungsnummer)}</td><td>${esc(b.eltern)}</td><td>${esc(b.kurs)}<div class="tiny">${esc(b.ort)} · ${dt(b.start)}</div></td><td class="n num">${b.betrag!=null?Number(b.betrag).toLocaleString("de-DE",{style:"currency",currency:"EUR"}):"–"}</td><td class="num">${dt(b.faellig_am)}${b.erinnerung_am?`<div class="tiny">erinnert</div>`:""}</td><td>${st?(b.bezahlt_am?(Number(b.erstattet_betrag)>=Number(b.bezahlt_betrag)-0.01?'<span class="chip">storniert, erstattet</span>':'<span class="chip warn">storniert, aber bezahlt: Erstattung prüfen</span>'):'<span class="chip down">storniert</span>'):`<span class="chip ${c}">${l}</span>`}</td><td style="white-space:nowrap">${b.bezahlt_am?`<button class="btn light small" data-unpaid="${esc(b.rechnungsnummer)}" title="Zahlung zurücknehmen">↺</button>`:`<button class="btn light small" data-paid="${esc(b.rechnungsnummer)}" data-betrag="${b.betrag??""}">bezahlt</button>`} ${st?"":`<button class="btn light small" data-sto="${b.id}">Storno</button>`}</td></tr>
-    <tr id="sto-${b.id}" hidden><td colspan="7"><div class="inline-form"><input type="text" id="stg-${b.id}" placeholder="Grund, z. B. Workshop abgesagt" aria-label="Grund"><input type="number" step="0.01" id="stb-${b.id}" value="${b.betrag??""}" aria-label="Gutschrift Betrag"><label class="tiny" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="stk-${b.id}" checked> Gutschrift in dieser Höhe</label><button class="btn accent small" data-stogo="${b.id}">Stornieren</button></div><div class="tiny" style="margin-top:4px">Storniert die Buchung sofort im System. Die Gutschrift bitte noch von Hand erstellen, die Automatik dafür ist noch nicht eingerichtet.</div></td></tr>`; }).join("")+"</tbody>" : `<tbody><tr><td class="empty">Keine Rechnungen gefunden.</td></tr></tbody>`;
+    <tr id="sto-${b.id}" hidden><td colspan="7"><div class="inline-form"><input type="text" id="stg-${b.id}" placeholder="Grund, z. B. Workshop abgesagt" aria-label="Grund"><input class="nur-owner" type="number" step="0.01" id="stb-${b.id}" value="${b.betrag??""}" aria-label="Gutschrift Betrag"><label class="tiny nur-owner" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="stk-${b.id}" checked> Gutschrift in dieser Höhe</label><button class="btn accent small" data-stogo="${b.id}">Stornieren</button></div><div class="tiny" style="margin-top:4px">Storniert die Buchung sofort im System. Die Gutschrift bitte noch von Hand erstellen, die Automatik dafür ist noch nicht eingerichtet.</div></td></tr>`; }).join("")+"</tbody>" : `<tbody><tr><td class="empty">Keine Rechnungen gefunden.</td></tr></tbody>`;
   document.querySelectorAll("[data-paid]").forEach(btn=>btn.addEventListener("click",async()=>{ if(btn.dataset.c!=="1"){ btn.dataset.c="1"; btn.textContent="heute bezahlt?"; return; } btn.disabled=true;
     try{ await SB.call("/rest/v1/cockpit_zahlungen",{method:"POST",headers:{Prefer:"return=minimal"},body:JSON.stringify({rechnungsnummer:btn.dataset.paid,betrag:Number(btn.dataset.betrag)||0,datum:heuteBerlin(),quelle:"manuell"})}); toast("Als bezahlt erfasst"); await SB.live(); }catch(e){ toast(e.message); btn.disabled=false; } }));
   document.querySelectorAll("[data-unpaid]").forEach(btn=>btn.addEventListener("click",async()=>{ if(btn.dataset.c!=="1"){ btn.dataset.c="1"; btn.textContent="zurücknehmen?"; return; }
     try{ await SB.call(`/rest/v1/cockpit_zahlungen?rechnungsnummer=eq.${encodeURIComponent(btn.dataset.unpaid)}`,{method:"DELETE",headers:{Prefer:"return=minimal"}}); toast("Zahlung zurückgenommen"); await SB.live(); }catch(e){ toast(e.message); } }));
   document.querySelectorAll("[data-sto]").forEach(b=>b.addEventListener("click",()=>{ const r=$("sto-"+b.dataset.sto); r.hidden=!r.hidden; }));
   document.querySelectorAll("[data-stogo]").forEach(btn=>btn.addEventListener("click",async()=>{
-    const id=btn.dataset.stogo, grund=$("stg-"+id).value.trim(), gs=$("stk-"+id).checked, bet=$("stb-"+id).value;
+    const id=btn.dataset.stogo, grund=$("stg-"+id).value.trim(), gs=SB.istOwner() && $("stk-"+id).checked, bet=SB.istOwner()?$("stb-"+id).value:"";
     if(!grund){ toast("Bitte einen Grund angeben"); return; }
     if(btn.dataset.c!=="1"){ btn.dataset.c="1"; btn.textContent="Wirklich stornieren?"; return; }
     btn.disabled=true; try{ await SB.rpc("cockpit_storno",{p_booking_id:id,p_grund:grund,p_gutschrift:gs,p_betrag:bet===""?null:Number(bet)}); toast(gs?"Storniert. Die Gutschrift bitte noch von Hand erstellen, dafür gibt es noch keinen Lauf.":"Storniert"); await SB.live(); }catch(e){ toast(e.message); btn.disabled=false; }
@@ -1393,7 +1413,7 @@ $("lmCancel").addEventListener("click",()=>{ $("loginModal").hidden=true; });
 $("lmGo").addEventListener("click",async()=>{
   $("lmErr").textContent=""; $("lmGo").disabled=true;
   try{ await SB.auth({email:$("lmMail").value.trim(),password:$("lmPw").value},"password"); $("lmPw").value=""; $("loginModal").hidden=true;
-    const ok=await SB.rpc("cockpit_is_admin"); if(!ok){ SB.s=null; SB.keep(); throw new Error("Dieses Konto ist kein Admin-Konto."); }
+    const ok=await SB.rolleHolen(); if(!ok){ SB.s=null; SB.keep(); SB.setRolle(null); throw new Error("Dieses Konto hat keinen Zugang zum Cockpit."); } SB.keep();
     await SB.pull(); await SB.live(); gateUi(""); toast("Verbunden"); }
   catch(e){ $("loginModal").hidden=false; $("lmErr").textContent=e.message; }
   $("lmGo").disabled=false;
@@ -1955,7 +1975,7 @@ function zuErledigen(){
   (BUCH||[]).filter(b=>b.status==="confirmed"&&!b.test&&!b.re_status).forEach(b=>{
     const n=Number(b.anzahl)||1, betrag=b.preis_vereinbart!=null?Number(b.preis_vereinbart):(b.referenzpreis!=null?Number(b.referenzpreis)*n:null);
     L.push({p:1, was:`Rechnung für ${b.eltern||"Familie"}`, warum:`${b.kurs||""} ${dt(b.start)} · ${kinderText(n)} · noch keine Rechnung`,
-      tu: betrag? `<button class="btn small accent" data-hre="${b.id}" data-betrag="${betrag}">Rechnung vorbereiten (${eurc(betrag)})</button>` : `<button class="btn small light" data-go="zentrale">Preis fehlt</button>`}); });
+      tu: betrag? `<button class="btn small accent nur-owner" data-hre="${b.id}" data-betrag="${betrag}">Rechnung vorbereiten (${eurc(betrag)})</button>` : `<button class="btn small light" data-go="zentrale">Preis fehlt</button>`}); });
   (BUCH||[]).filter(b=>b.re_status==="fehler").forEach(b=>L.push({p:1, was:`Rechnung hängt: ${b.eltern||""}`, warum:(b.fehler||"Fehler im Rechnungslauf").slice(0,90), tu:`<button class="btn small light" data-go="zentrale">Ansehen</button>`}));
   (BUCH||[]).filter(b=>b.status==="cancelled"&&b.bezahlt_am&&!(Number(b.erstattet_betrag)>=Number(b.bezahlt_betrag)-0.01)).forEach(b=>L.push({p:2, was:`Erstattung prüfen: ${b.eltern||""}`, warum:`${b.rechnungsnummer||""} storniert, aber ${eurc(b.bezahlt_betrag)} bezahlt`, tu:`<button class="btn small light" data-go="zentrale">Ansehen</button>`}));
   const zk=(BUCH||[]).filter(b=>b.status==="confirmed"&&!b.test&&(b.re_status==="entwurf_abgelegt"||(b.re_status==="uebersprungen"&&b.rechnungsnummer))&&!b.rechnung_storniert_am&&!b.bezahlt_am&&b.faellig_am&&b.faellig_am<h).sort((x,y)=>x.faellig_am.localeCompare(y.faellig_am));
@@ -1991,7 +2011,7 @@ function renderHeute(){
 $("hRefresh").addEventListener("click",()=>{ if(!SB.s){ toast("Bitte zuerst anmelden"); return; } SB.live().then(()=>toast("Aktualisiert")).catch(e=>SB.fail(e)); });
 document.addEventListener("click",async e=>{
   const r=e.target.closest("[data-hre]");
-  if(r){ if(r.dataset.c!=="1"){ r.dataset.c="1"; r.textContent=`Sicher? ${eurc(Number(r.dataset.betrag))}`; return; }
+  if(r){ if(!SB.istOwner()) return; if(r.dataset.c!=="1"){ r.dataset.c="1"; r.textContent=`Sicher? ${eurc(Number(r.dataset.betrag))}`; return; }
     r.disabled=true; try{ await SB.rpc("cockpit_rechnung_anstossen",{p_booking_id:r.dataset.hre,p_betrag:Number(r.dataset.betrag),p_notiz:null}); toastLang("Rechnung vorbereitet. Der Entwurf liegt nach dem nächsten Rechnungslauf im Postfach."); await SB.live(); }catch(err){ toast(err.message); r.disabled=false; } return; }
   if(e.target.closest("[data-zkauf]")){ ZK_AUF=!ZK_AUF; renderHeute(); return; }
   const t=e.target.closest("[data-terl]");
@@ -2018,7 +2038,7 @@ function bkPreisRechnen(){
   else { $("bkPreisText").textContent="Für diesen Kurs ist kein Preis hinterlegt"; $("bkPreis").textContent="bitte eintragen"; }
   const mail=$("bkMail").value.trim(), rech=$("bkRechnung");
   rech.disabled=!mail; rech.checked = !!mail && BK.rechWunsch;
-  $("bkRechHinweis").textContent = !mail ? "Ohne E-Mail keine Rechnung. Du kannst sie später nachholen." : (k && n && $("bkRechnung").checked ? "Eine gemeinsame Rechnung für die Familie, als Entwurf. Senden entscheidest du." : "");
+  $("bkRechHinweis").textContent = !SB.istOwner() ? (mail ? "Die Rechnung gibt das Inhaber-Konto frei." : "Ohne E-Mail keine Rechnung.") : !mail ? "Ohne E-Mail keine Rechnung. Du kannst sie später nachholen." : (k && n && $("bkRechnung").checked ? "Eine gemeinsame Rechnung für die Familie, als Entwurf. Senden entscheidest du." : "");
   const frei=k&&k.max!=null? k.max-(k.teilnehmer||[]).reduce((a,t)=>a+(Number(t.anzahl)||1),0) : null;
   $("bkGo").dataset.c=""; $("bkGo").textContent = frei!=null && n>frei ? `Buchen (nur ${Math.max(0,frei)} frei)` : "Buchen";
 }
@@ -2064,9 +2084,9 @@ $("bkGo").addEventListener("click",async()=>{
   if(b.dataset.c!=="1"){ b.dataset.c="1"; b.textContent=`Jetzt buchen: ${kinderText(n)}${preis!=null?", "+eurc(preis):""}`; return; }
   b.disabled=true;
   try{
-    const r=await SB.rpc("cockpit_buchung_anlegen",{p_cycle:k.id,p_name:name,p_email:mail||null,p_telefon:tel||null,p_anzahl:n,p_preis:eigen,p_preis_hinweis:eigen!=null?($("bkPreisGrund").value.trim()||null):null,p_rechnung:$("bkRechnung").checked,p_ueberbuchen:BK.ueberbuchen,p_notiz:null});
+    const r=await SB.rpc("cockpit_buchung_anlegen",{p_cycle:k.id,p_name:name,p_email:mail||null,p_telefon:tel||null,p_anzahl:n,p_preis:eigen,p_preis_hinweis:eigen!=null?($("bkPreisGrund").value.trim()||null):null,p_rechnung:SB.istOwner() && $("bkRechnung").checked,p_ueberbuchen:BK.ueberbuchen,p_notiz:null});
     $("buchModal").hidden=true;
-    const re = r.rechnung==="entwurf_folgt"?" Die Rechnung liegt nach dem nächsten Rechnungslauf als Entwurf im Postfach.": r.rechnung==="keine_email"?" Ohne E-Mail keine Rechnung.": r.rechnung==="kein_preis"?" Kein Preis, deshalb keine Rechnung.":"";
+    const re = r.rechnung==="entwurf_folgt"?" Die Rechnung liegt nach dem nächsten Rechnungslauf als Entwurf im Postfach.": r.rechnung==="keine_email"?" Ohne E-Mail keine Rechnung.": r.rechnung==="kein_preis"?" Kein Preis, deshalb keine Rechnung.": r.rechnung==="freigabe_offen"?" Die Rechnung gibt das Inhaber-Konto frei.":"";
     toastLang(`Gebucht: ${name}, ${kinderText(n)}. Jetzt ${r.belegt} von ${r.max} Plätzen belegt.${re}`);
     await SB.live();
   }catch(err){
@@ -2108,7 +2128,7 @@ $("aeGo").addEventListener("click",async()=>{
     toastLang(`Gespeichert: ${kinderText(n)}. ${r.belegt} von ${r.max} Plätzen belegt.${info}`); await SB.live(); }
   catch(err){ const m=String(err.message||err); if(/Nicht genug Plaetze/.test(m)){ AE.ueber=true; $("aeFehler").innerHTML=`<div class="fehlerbox">${esc(m.replace("Plaetze","Plätze"))}. Nochmal tippen speichert trotzdem (überbucht).</div>`; b.dataset.c="1"; b.textContent="Trotzdem speichern"; } else { $("aeFehler").innerHTML=`<div class="fehlerbox">${esc(m)}</div>`; b.dataset.c=""; b.textContent="Speichern"; } }
   b.disabled=false; });
-$("aeNach").addEventListener("click",async()=>{ const b=$("aeNach"); if(b.dataset.c!=="1"){ b.dataset.c="1"; b.textContent="Sicher? Rechnung vorbereiten"; return; } b.disabled=true;
+$("aeNach").addEventListener("click",async()=>{ const b=$("aeNach"); if(!SB.istOwner()) return; if(b.dataset.c!=="1"){ b.dataset.c="1"; b.textContent="Sicher? Rechnung vorbereiten"; return; } b.disabled=true;
   try{ const r=await SB.rpc("cockpit_rechnung_nachholen",{p_booking:AE.id}); $("aeModal").hidden=true; toastLang(`Rechnung über ${eurc(r.preis)} vorbereitet, Entwurf folgt im nächsten Rechnungslauf.`); await SB.live(); }
   catch(err){ $("aeFehler").innerHTML=`<div class="fehlerbox">${esc(err.message)}</div>`; } b.disabled=false; b.dataset.c=""; b.textContent="Rechnung jetzt vorbereiten"; });
 $("aeStorno").addEventListener("click",async()=>{ const b=$("aeStorno"), g=$("aeStGrund").value.trim();
