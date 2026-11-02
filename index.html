@@ -1252,7 +1252,7 @@ const SB_URL="https://lxvxmjpytueclyasvmzp.supabase.co";
 const SB_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx4dnhtanB5dHVlY2x5YXN2bXpwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg5MTcyNjgsImV4cCI6MjA4NDQ5MzI2OH0.Q75cNXrRDVxYckz7M_p6xFkxDqTPEd1-donSjE19bSg"; // öffentlicher Schlüssel, kein Geheimnis
 window.LIVE=null; let BUCH=[], AUFTR=[], TODOS=[], KUNDEN=[], B2B=[], TYPEN=[], ORTE=[];
 const SB = window.SB = {
-  s:null, t:null, last:null, state:"aus",
+  s:null, t:null, last:null, state:"aus", ver:null, // ver: Version von cockpit_state beim letzten Laden/Speichern (Etappe 0a)
   load(){ try{ this.s=JSON.parse(localStorage.getItem(KEY+"-sb")); }catch(e){ this.s=null; } },
   keep(){ try{ this.s? localStorage.setItem(KEY+"-sb",JSON.stringify(this.s)) : localStorage.removeItem(KEY+"-sb"); }catch(e){} },
   async auth(body, grant){
@@ -1265,20 +1265,39 @@ const SB = window.SB = {
     const at=await this.token();
     const r=await fetch(SB_URL+path,{...opts,headers:{apikey:SB_KEY,Authorization:"Bearer "+at,"Content-Type":"application/json",...(opts.headers||{})}});
     const txt=await r.text(); let j=null; try{ j=txt?JSON.parse(txt):null; }catch(e){ j=txt; }
-    if(!r.ok) throw new Error((j&&(j.message||j.hint||j.error))||("Fehler "+r.status));
+    if(!r.ok){ const e=new Error((j&&(j.message||j.hint||j.error))||("Fehler "+r.status)); e.status=r.status; e.code=j&&j.code; throw e; }
     return j;
   },
   rpc(fn,args={}){ return this.call(`/rest/v1/rpc/${fn}`,{method:"POST",body:JSON.stringify(args)}); },
   async pull(){
-    const rows=await this.call("/rest/v1/cockpit_state?id=eq.main&select=data,updated_at");
+    const rows=await this.call("/rest/v1/cockpit_state?id=eq.main&select=data,updated_at,version");
+    this.ver = rows && rows[0] && rows[0].version!=null ? rows[0].version : null;
     if(rows && rows[0] && rows[0].data && !D._dirty){ D=rows[0].data; migrateNow(); try{ localStorage.setItem(KEY,JSON.stringify(D)); }catch(e){} }
     else if(D._dirty || !rows || !rows[0]) await this.push();
   },
   async push(){
     if(D._leer) return;
     const data={...D}; delete data._dirty;
-    await this.call("/rest/v1/cockpit_state",{method:"POST",headers:{Prefer:"resolution=merge-duplicates,return=minimal"},body:JSON.stringify({id:"main",data,updated_at:new Date().toISOString()})});
+    try{
+      // Speichern nur, wenn seit dem letzten Laden niemand anderes gespeichert hat (Versionsprüfung, Etappe 0a)
+      const res=await this.rpc("save_cockpit_state",{p_expected_version:this.ver,p_data:data});
+      if(res && res.version!=null) this.ver=res.version;
+    }catch(e){
+      if(e.status===409 || e.code==="PT409" || /cockpit_state_konflikt/.test(e.message)) return this.konflikt(data);
+      if(e.code==="PGRST202" || /Could not find the function/i.test(e.message)){
+        // Rückfall, falls die Datenbank-Funktion fehlt (z. B. nach Rückbau): altes direktes Speichern
+        await this.call("/rest/v1/cockpit_state",{method:"POST",headers:{Prefer:"resolution=merge-duplicates,return=minimal"},body:JSON.stringify({id:"main",data,updated_at:new Date().toISOString()})});
+      } else throw e;
+    }
     D._dirty=false; try{ localStorage.setItem(KEY,JSON.stringify(D)); }catch(e){} this.last=new Date(); this.ui();
+  },
+  async konflikt(lokal){
+    // Jemand anderes hat zwischenzeitlich gespeichert: eigenen Stand zur Sicherheit lokal ablegen, Serverstand laden, Hinweis zeigen
+    try{ localStorage.setItem(KEY+"-konflikt",JSON.stringify({gesichert:new Date().toISOString(),data:lokal})); }catch(e){}
+    const rows=await this.call("/rest/v1/cockpit_state?id=eq.main&select=data,updated_at,version");
+    if(rows && rows[0] && rows[0].data){ D=rows[0].data; this.ver=rows[0].version; migrateNow(); D._dirty=false; try{ localStorage.setItem(KEY,JSON.stringify(D)); }catch(e){} }
+    applyLive(); renderAll(); this.ui();
+    toastLang("Jemand hat das Cockpit inzwischen auf einem anderen Gerät geändert. Neu geladen, bitte deine letzte Änderung noch einmal eintragen.");
   },
   schedulePush(){ if(!this.s) return; clearTimeout(this.t); this.t=setTimeout(()=>this.push().catch(e=>this.fail(e)),1200); },
   async live(){
