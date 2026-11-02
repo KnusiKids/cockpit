@@ -113,7 +113,35 @@ input[type=checkbox]{width:18px;height:18px;accent-color:var(--terracotta)}
 .seg button.ja[aria-pressed="true"]{color:var(--green)}.seg button.nein[aria-pressed="true"]{color:var(--red)}
 .dec{display:grid;grid-template-columns:1fr auto;gap:8px 18px;padding:14px 0;border-top:1px solid var(--line)}
 .dec:first-child{border-top:0}
-.dec textarea{grid-column:1/-1;min-height:34px;font-size:.875rem}
+.dec textarea{grid-column:1/-1;min-height:44px;font-size:.875rem}
+/* Entscheidungen → Bot (v8): 44-px-Ziele, Kontrast ≥ 4,5:1 */
+.dec .seg button{min-height:44px;min-width:56px;color:var(--ink)}
+.dec-zeile{grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+.dec-zeile label{font-size:.875rem;color:var(--ink-2);font-weight:600}
+.dec-zeile select{min-height:44px;width:auto;min-width:150px;font-size:.9rem;color:var(--ink);background:#fff;border:1.5px solid var(--rahmen);border-radius:10px;padding:6px 10px}
+.dec-hinweis{grid-column:1/-1;font-size:.875rem;color:var(--ink-3);margin-top:-4px}
+.em{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:.875rem;color:var(--ink-2)}
+.em .chip{font-weight:600}
+.em button{min-height:44px;min-width:44px;padding:8px 12px;border-radius:10px;cursor:pointer;font-size:.875rem;font-weight:600;background:#fff;color:var(--ink);border:0;box-shadow:inset 0 0 0 1.5px var(--rahmen)}
+.em button[aria-pressed="true"]{background:var(--green-soft);color:var(--green-text);box-shadow:inset 0 0 0 1.5px var(--green)}
+.em .em-fehler{color:var(--red-text)}
+/* Projekt → Unterkategorie → Entscheidung (v8): nur vorhandene Bausteine (.pbar, .tiny, .btn.primary, .alleda-st) */
+.dg{border-top:1px solid var(--line)}.dg:first-child{border-top:0}
+.dg>summary{list-style:none;cursor:pointer;display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;min-height:48px;padding:10px 0}
+.dg>summary::-webkit-details-marker{display:none}
+.dg>summary::before{content:"▸";color:var(--terracotta-dark);font-size:1rem;width:14px;transition:transform .15s}
+.dg[open]>summary::before{transform:rotate(90deg)}
+.dg>summary:focus-visible{outline:3px solid var(--terracotta);outline-offset:2px;border-radius:8px}
+.dg-kopf{flex:1 1 220px;min-width:0;display:flex;flex-direction:column;gap:2px}
+.dg-titel{font-weight:600;overflow-wrap:anywhere}.dg1>summary .dg-titel{font-size:1.05rem}
+.dg-stand{flex:1 1 260px;display:flex;flex-direction:column;gap:6px}
+.dg-stand .pbar.dreier{display:flex;flex:none;width:100%;min-height:8px;box-shadow:inset 0 0 0 1px var(--rahmen, #E3D6C6)}.pbar.dreier span{border-radius:0;flex:none}
+.dg-inhalt{padding:0 0 8px 20px}.dg2>summary{min-height:48px}.dg2 .dg-inhalt{padding-left:14px}
+.dec .dec-ok{min-width:132px}.dec .dec-ok-st{flex:none;min-width:132px;padding:0 18px}
+.dec-zeile select[data-bereich]{min-width:180px;max-width:100%}
+.dg .dec{grid-template-columns:minmax(0,1fr) auto}
+@media (max-width:600px){.dg-inhalt,.dg2 .dg-inhalt{padding-left:0}.dg2>summary{padding-left:8px}.dg .dec{grid-template-columns:minmax(0,1fr)}.dg .dec .seg{justify-self:start}}
+#entscheidungen .fbar select,#entscheidungen .fbar button,#entscheidungen .fbar input{min-height:44px}
 .toast{position:fixed;bottom:22px;right:22px;background:var(--ink);color:#fff;padding:10px 16px;border-radius:12px;opacity:0;transition:opacity .2s;pointer-events:none;font-size:.88rem}
 .toast.show{opacity:1}
 .kanban{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(160px,1fr);gap:12px;overflow-x:auto;padding-bottom:6px}
@@ -152,7 +180,6 @@ details.pick label{display:flex;gap:6px;align-items:center;font-size:.875rem;mar
 .fbar .fcount{font-size:.875rem;color:var(--ink-3);margin-left:auto;white-space:nowrap}
 .fbar .freset{all:unset;cursor:pointer;font-size:.875rem;color:var(--terracotta);font-weight:600}
 .fhide{display:none!important}
-#decBar[hidden]{display:none!important}
 body.lokal .nurWeb{display:none!important}
 body:not(.lokal) .nurLokal{display:none!important}
 body.online .nurOffline{display:none!important}
@@ -339,6 +366,14 @@ input[type=email],input[type=tel],input[type=search].bk{background:#FCFAF7;borde
 .linkbtn{all:unset;cursor:pointer;color:var(--terracotta-dark);font-weight:600;font-size:.875rem}
 .hinweis{font-size:.875rem;color:var(--ink-2);background:var(--mustard-soft);border-radius:10px;padding:8px 10px;margin-top:10px}
 .fehlerbox{font-size:.875rem;color:var(--red);background:var(--red-soft);border-radius:10px;padding:8px 10px;margin-top:10px}
+/* Rechnung sofort: Knopf, gesperrter Zustand, Ergebnis (min. 44 px, Kontrast >= 4.5:1) */
+.btn.re-sofort{min-height:44px;min-width:44px;box-sizing:border-box}
+.btn.re-sofort[disabled]{cursor:default;opacity:1}
+.btn.re-sofort.erstellt{background:var(--green-text);color:#fff}
+.beleg-ok{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;color:var(--green-text);font-weight:700;font-size:.9rem}
+.beleg-ok a{display:inline-flex;align-items:center;min-height:44px;padding:0 4px;color:var(--terracotta-dark);font-weight:700;text-decoration:underline}
+.re-sofort-link,a.re-sofort{display:inline-flex;align-items:center;min-height:44px;min-width:44px;box-sizing:border-box;padding:0 6px;color:var(--terracotta-dark);font-weight:700;text-decoration:underline}
+.beleg-fehler{font-size:.875rem;color:var(--red-text);background:var(--red-soft);border-radius:10px;padding:8px 10px;margin-top:6px;max-width:34ch;white-space:normal}
 .plusliste{display:grid;gap:8px;margin-top:12px}
 .plusliste .btn{width:100%;padding:13px 14px;font-size:.95rem;text-align:left}
 .mbar .plus{display:flex;align-items:center;justify-content:center}
@@ -691,6 +726,23 @@ body::before{content:"";position:fixed;left:0;right:0;top:0;height:env(safe-area
 .gk .z.rot{color:var(--red-text)}.gk .d{font-size:14px;color:var(--ink-2);margin-top:2px}
 .gp{display:grid;grid-template-columns:1fr auto;gap:2px 12px;padding:12px 0;border-bottom:1px solid var(--line)}
 .gp:last-child{border-bottom:0}.gp .k{font-weight:600}.gp .b{font-weight:700;text-align:right}.gp .d{font-size:15px;color:var(--ink-2)}
+/* Kundenname zuerst (Rechnungs- und Zahlungslisten): Name, dahinter Betrag und fällig seit, klein Gruppe/Kurs. Nie Kindername. */
+.kz{padding:12px 0;border-bottom:1px solid var(--line);min-width:0}.kz:last-child{border-bottom:0}
+.kz-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 10px;min-width:0}
+.kz-name{font-weight:700;color:var(--ink);overflow-wrap:anywhere;word-break:normal;min-width:0;max-width:100%}
+.kz-betrag{font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap}
+.kz-faellig{color:var(--ink-2);white-space:nowrap}.kz-faellig.rot{color:var(--red-text);font-weight:600}
+.kz-klein{font-size:.875rem;line-height:1.35;color:var(--ink-3);overflow-wrap:anywhere;margin-top:2px}
+.kz-ohne{font-style:italic;font-weight:600}
+.kz .st,.kz .stz{margin-top:6px}
+td .kz-name{display:block}td .kz-klein{display:block}
+.match td.kz-zelle{min-width:12ch;max-width:30ch}
+.match .kz-chk{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;cursor:pointer}
+.match .kz-chk input{width:22px;height:22px;margin:0}
+#csvOut label:has(>input[data-acc]){min-height:44px}
+#csvOut .btn{min-height:44px}
+#hTodo .btn,#hTodo .kbtn{min-height:44px;box-sizing:border-box;display:inline-flex;align-items:center}
+#csvOut details>summary{color:var(--terracotta-dark)!important;min-height:44px;display:flex;align-items:center}
 /* Mehr: große Kacheln */
 .mehr-gross{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:8px}
 .mehr-gross button{display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-height:110px;padding:16px;border:0;border-radius:18px;background:var(--terracotta-soft);color:var(--terracotta-dark);font:inherit;font-weight:700;font-size:17px;text-align:left;cursor:pointer}
@@ -768,6 +820,96 @@ aside .conn,aside .conn *{overflow-wrap:anywhere}
   .plus-hw-m{display:flex;position:fixed;right:88px;bottom:calc(94px + env(safe-area-inset-bottom));z-index:59}
   .plus-hw-m::after{content:"";position:absolute;right:-6px;top:50%;transform:translateY(-50%);border:6px solid transparent;border-right:0;border-left-color:var(--ink)}
 }
+/* ===== Entscheidungen v1 (ent.css von Yuna) ===== */
+/* Entscheidungen v1 – nur bestehende Tokens und Muster (tile, tdl/tdx/tdk, tdgrp, bar wie .hk, btn.primary, ibtn, pills, fgk, stp, toast.mitknopf) */
+.ent-proj{margin-bottom:14px}
+.ent-proj .et{font-size:14px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+.ent-proj h2{font-family:var(--serif);font-weight:normal;font-size:22px;margin:2px 0 0}
+.ent-proj .zahl{font-size:15px;color:var(--ink-2)}
+.ent-proj .zahl b{color:var(--ink)}
+.ent-bar{height:8px;border-radius:4px;background:var(--sand-soft);margin:10px 0 4px;overflow:hidden}
+.ent-bar span{display:block;height:100%;background:var(--terra-btn);border-radius:4px}
+.ent-bar.klein{height:6px;border-radius:3px;margin:6px 0 2px}
+.ent-kats{background:var(--surface);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+.ent-kat{display:grid;grid-template-columns:1fr auto 20px;gap:2px 10px;align-items:center;width:100%;min-height:76px;padding:12px 14px;border:0;border-bottom:1px solid var(--line);background:#fff;text-align:left;font:inherit;color:inherit;cursor:pointer}
+.ent-kat:last-child{border-bottom:0}
+.ent-kat b{font-size:17px}
+.ent-kat .xy{font-size:15px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.ent-kat .ent-bar{grid-column:1/3}
+.ent-kat .me{grid-column:1/3;font-size:15px;color:var(--ink-2)}
+.ent-kat .me b{font-size:15px;color:var(--terracotta-dark)}
+.ent-kat .mp{grid-row:1/4;grid-column:3;color:var(--ink-3);font-size:22px}
+.ent-kat.sel{background:var(--sand-soft)}
+.ent-kat.fertig .xy{color:var(--green-text);font-weight:700}
+.ent-zur{display:inline-flex;align-items:center;min-height:44px;padding:0 4px;border:0;background:none;color:var(--terracotta-dark);font-weight:600;font-size:15px;margin:-6px 0 4px -4px;cursor:pointer}
+.ent-p{display:flex;gap:6px;align-items:flex-start;border-bottom:1px solid var(--line);padding:4px 0 12px}
+.ent-p:last-child{border-bottom:0}
+.ent-p .tdk{cursor:default}
+.ent-p .inh{flex:1;min-width:0;padding-top:12px}
+.ent-p .ti{font-size:17px;color:var(--ink);overflow-wrap:anywhere;display:block}
+.ent-p .me{font-size:15px;color:var(--ink-2);display:block;margin-top:2px}
+.ent-p .kn{display:flex;gap:8px;align-items:center;margin-top:10px}
+.ent-p .kn .btn.primary{flex:0 1 auto;min-width:120px}
+.ent-p .stp{margin-top:6px}
+.ent-ext{border-left:5px solid var(--mustard);background:var(--surface);border-radius:var(--r);box-shadow:var(--shadow);padding:14px 16px 16px;margin-bottom:12px}
+.ent-ext .et{font-size:14px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--senf-text)}
+.ent-ext .ti{font-size:17px;font-weight:600;margin:6px 0 8px}
+.ent-ext dl{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;margin:0 0 10px;font-size:15px}
+.ent-ext dt{color:var(--ink-2)}.ent-ext dd{margin:0;color:var(--ink);font-weight:600;overflow-wrap:anywhere}
+.ent-text{background:var(--sand-soft);border-radius:14px;padding:12px 14px;font-size:16px;line-height:1.5;white-space:pre-line;color:var(--ink)}
+.ent-text .zu{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.ent-mehrtext{display:inline-flex;align-items:center;min-height:44px;border:0;background:none;padding:0 2px;color:var(--terracotta-dark);font-weight:600;font-size:15px;cursor:pointer}
+.ent-ext .kn{display:flex;gap:8px;margin-top:6px}.ent-ext .kn .btn.primary{flex:1}
+.ent-ext .fuer{font-size:15px;color:var(--ink-2);margin-top:8px}
+.ent-leer{text-align:center;padding:32px 16px}
+.ent-leer b{display:block;font-family:var(--serif);font-weight:normal;font-size:22px;margin-bottom:4px}
+.ent-leer span{color:var(--ink-2);font-size:16px}
+.ent-heute{display:flex;align-items:center;gap:10px;min-height:56px}
+@media (min-width:1100px){ #entscheidungen .split{grid-template-columns:400px 1fr} }
+
+#entscheidungen .pane .tdl{box-shadow:inset 0 0 0 1px var(--line)}
+#entscheidungen .pane .ent-ext{box-shadow:inset 0 0 0 1px var(--line)}
+
+/* Entscheidungen v1 im Cockpit (Sota): nur bestehende Farben, Radien, Schatten */
+#entscheidungen .ent-pills{margin-bottom:14px}
+.ent-p .me{overflow-wrap:anywhere}
+.ent-p .kn{flex-wrap:wrap}
+.ent-p .kn .stp{margin-top:0}
+.ent-p .ent-wie{margin-top:10px}
+.ent-p .ent-wie button{padding:0 12px}
+.ent-p.erl .ti{color:var(--ink-2);text-decoration:line-through;text-decoration-color:var(--ink-3)}
+.ent-p.erl .inh{padding-top:12px}
+.ent-anl{margin-top:4px}
+.ent-anl[hidden]{display:none}
+.ent-schritte{margin:4px 0 0;padding-left:22px;font-size:16px;line-height:1.5;color:var(--ink)}
+.ent-schritte li{margin:2px 0}
+.ent-lbl{font-size:14px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin:12px 0 6px}
+.ent-anl .ent-text{max-height:240px;overflow:auto}
+.ent-ext .stp{margin-top:6px}
+.ent-ext .kn{flex-wrap:wrap;align-items:center}
+.ent-ext .kn .stp{flex-basis:100%;margin-top:2px}
+.ent-ext .tiny{font-weight:400;color:var(--ink-2)}
+.ent-leer div{margin-top:8px}
+.ent-kat .me{overflow-wrap:anywhere}
+button.ent-heute{width:100%;border:0;text-align:left;font:inherit;color:inherit;cursor:pointer;margin-bottom:14px}
+.ent-heute .grow{flex:1;display:flex;flex-direction:column;gap:2px}.ent-heute b{font-size:17px}
+.ent-heute .mp{color:var(--ink-3);font-size:22px}
+.ent-heute[hidden]{display:none}
+.ent-laden{display:grid;gap:12px}
+.ent-platz{height:96px;border-radius:var(--r);background:var(--sand-soft)}
+.ent-platz.kurz{height:56px}
+#entscheidungen .pane .ent-proj{margin-bottom:6px}
+#entscheidungen .hinweis{align-items:center;flex-wrap:wrap}
+#entscheidungen .hinweis .btn{margin-left:auto}
+/* ⋯ am Desktop: Popover am Knopf (360 px), am Handy Sheet von unten */
+#sxSheet.pop{background:transparent}
+#sxSheet.pop .sh-karte{transform:none;width:360px;max-width:calc(100vw - 32px);max-height:min(70vh,620px);box-sizing:border-box}
+#sxSheet .sx-liste button{min-height:56px}
+#sxSheet .btn.voll{width:100%}
+/* Fix 3b: Hinweis zum Plus-Knopf verdeckt die letzte Geld-Karte nicht; .chip.warn wie die anderen Chips */
+.chip.warn{background:none!important;padding-left:0!important;padding-right:0!important;gap:7px;font-weight:700;color:var(--senf-text)}
+.chip.warn::before{content:"";width:9px;height:9px;border-radius:50%;flex:none;background:var(--mustard)}
+@media (max-width:820px){ body:has(.plus-hw-m:not([hidden])) main{padding-bottom:calc(200px + env(safe-area-inset-bottom))!important} }
 </style>
 </head>
 <body>
@@ -804,6 +946,7 @@ aside .conn,aside .conn *{overflow-wrap:anywhere}
     <div><h1 id="hGruss">Guten Tag</h1><div class="sub" id="hSub"></div></div>
     <div class="actions"><button class="btn sek" id="hRefresh">Aktualisieren</button></div>
   </div>
+  <button type="button" class="tile ent-heute" id="hEnt" data-go="entscheidungen" hidden></button>
   <div class="nurOnline heute-grid">
     <div class="heute-col spalte"><div class="heute-col" id="hKurse"></div><div class="tile" id="hMorgen" hidden></div></div>
     <div class="heute-col spalte">
@@ -875,7 +1018,7 @@ aside .conn,aside .conn *{overflow-wrap:anywhere}
     <div class="tile s12" id="zLogin" hidden><div class="empty">Für die Schaltzentrale bitte links unten anmelden (Admin-Konto der Website).</div></div>
     <div class="tile s12"><div class="t-head"><h2>Vom Buchen bis zum Geld</h2><span id="flowPill" style="margin-left:auto"></span></div><div class="flow" id="flow"></div><div id="flowStuck" style="margin-top:14px"></div></div>
     <div class="tile s12 tablewrap">
-      <div class="t-head"><h2>Buchungen ohne Rechnung</h2><span class="tiny" style="margin-left:auto">Betrag prüfen, dann anstoßen. Der nächste Rechnungslauf legt den Entwurf ab.</span></div>
+      <div class="t-head"><h2>Buchungen ohne Rechnung</h2><span class="tiny" style="margin-left:auto">Betrag prüfen, dann erstellen. Nummer und PDF entstehen sofort, verschickt wird nichts.</span></div>
       <table id="zOhne"></table>
     </div>
   </div>
@@ -967,10 +1110,8 @@ aside .conn,aside .conn *{overflow-wrap:anywhere}
 </section>
 
 <section id="entscheidungen" hidden>
-  <div class="topbar"><div><h1>Entscheidungen</h1><div class="sub" id="decLead"></div></div></div>
-  <div class="tile" id="decBar" hidden style="margin-bottom:12px;display:flex;align-items:center;gap:10px;background:var(--mustard-soft);color:var(--ink);box-shadow:inset 0 0 0 1px var(--mustard)">
-    <span id="decBarText" class="grow"></span><button class="btn light small" id="decUndo">Verwerfen</button><button class="btn accent small" id="decSave">Speichern</button></div>
-  <div class="tile" id="decList"></div>
+  <div class="topbar"><div><h1>Entscheidungen</h1><div class="sub" id="decLead">Hier sagt ihr Okay zu dem, was vorbereitet ist. Pro Punkt reicht ein Tipp.</div></div></div>
+  <div id="entInhalt" aria-live="polite"></div>
 </section>
 
 <section id="projekte" hidden>
@@ -1182,7 +1323,7 @@ aside .conn,aside .conn *{overflow-wrap:anywhere}
     <div class="tiny" id="aeRech" style="margin-top:8px"></div>
     <div id="aeFehler"></div>
     <button class="btn accent" id="aeGo" style="width:100%;margin-top:14px;padding:13px">Speichern</button>
-    <button class="btn light nur-owner" id="aeNach" style="width:100%;margin-top:8px" hidden>Rechnung jetzt vorbereiten</button>
+    <button class="btn light nur-owner" id="aeNach" style="width:100%;margin-top:8px" hidden>Rechnung jetzt erstellen</button><div id="aeNachZiel"></div>
     <details style="margin-top:12px"><summary class="linkbtn">Buchung stornieren</summary>
       <label for="aeStGrund">Grund</label><input type="text" id="aeStGrund" placeholder="z. B. Familie hat abgesagt">
       <div class="hinweis" id="aeStHinweis"></div>
@@ -1460,10 +1601,11 @@ function renderOverview(){
   const fol=(K("instagram").wert||0)+(K("facebook").wert||0)+(K("tiktok").wert||0);
   kpiTile("kFollower","Reichweite","instagram",fol?fmt(fol):"–",chip(lastDelta("instagram")),`Follower auf Instagram, Facebook und TikTok`, verlaufOf("instagram"));
   const offF = D.fristen.filter(f=>!f.ok && daysTo(f.datum)<=14).length; $("badgeFrist").hidden=!offF; $("badgeFrist").textContent=offF;
-  const open=D.entscheidungen.filter(e=>e.a==="offen"), w=D.projekte.filter(p=>p.status==="wartet");
-  $("badgeDec").hidden=!open.length; $("badgeDec").textContent=open.length;
-  const pb=$("badgeP"); if(pb){ const n=open.length+offF; pb.hidden=!n; pb.textContent=n; }
-  const nWart=open.length+w.length;
+  /* Entscheidungen: offene Punkte „für mich“ (ENT, v1 nach Yuna); Badge Planung = diese + Fristen */
+  const nDec=(typeof ENT!=="undefined"&&ENT)?ENT.zahlFuerMich():D.entscheidungen.filter(e=>e.a==="offen").length, open={length:nDec}, w=D.projekte.filter(p=>p.status==="wartet");
+  $("badgeDec").hidden=!nDec; $("badgeDec").textContent=nDec;
+  const pb=$("badgeP"); if(pb){ const n=nDec+offF; pb.hidden=!n; pb.textContent=n; }
+  const nWart=nDec+w.length;
   $("ubWartet").innerHTML=`<span class="chip ${nWart?"warn":"up"}">${nWart}</span><div class="uz-t"><b>Wartet auf euer Ja</b><span class="tiny">${nWart?[open.length?`${open.length} ${open.length===1?"Entscheidung":"Entscheidungen"}`:"",w.length?`${w.length} ${w.length===1?"Projekt wartet":"Projekte warten"}`:""].filter(Boolean).join(" · "):"Nichts offen."}</span></div><button class="btn light small" data-go="entscheidungen">Ansehen ›</button>`;
   const fr=D.fristen.filter(f=>!f.ok&&f.datum).sort((a,b)=>a.datum.localeCompare(b.datum))[0];
   $("ubFrist").innerHTML= fr? (()=>{ const d=daysTo(fr.datum); const c=d<0?"down":d<=14?"warn":"neutral"; return `<span class="chip ${c}">${d<0?"überfällig":d===0?"heute":"in "+d+" T."}</span><div class="uz-t"><b>Nächste Frist</b><span class="tiny">${esc(fr.titel)} · ${dt(fr.datum)}</span></div><button class="btn light small" data-go="fristen">Fristen ›</button>`; })()
@@ -1519,27 +1661,7 @@ $("addStd").addEventListener("click",()=>{ const w=$("hWoche").value, s=$("hStd"
   const ex=D.stunden.find(x=>x.woche===mo); if(ex) ex.std=Number(s); else D.stunden.push({woche:mo,std:Number(s)});
   $("hStd").value=""; save(Number(s)>=15?"Gespeichert. Achtung: 15 Stunden erreicht":"Gespeichert"); });
 
-/* ===== Entscheidungen ===== */
-let DEC_DRAFT={};
-function decWert(i){ return {...D.entscheidungen[i], ...(DEC_DRAFT[i]||{})}; }
-function decBar(){ const n=Object.keys(DEC_DRAFT).length; $("decBar").hidden=!n; $("decBarText").textContent = n===1? "1 Entscheidung geändert, noch nicht gespeichert" : `${n} Entscheidungen geändert, noch nicht gespeichert`; }
-function renderDec(){
-  const offen=D.entscheidungen.filter(e=>e.a==="offen").length;
-  $("decLead").textContent = `${offen} von ${D.entscheidungen.length} offen · Änderungen erst mit „Speichern“ übernehmen`;
-  $("decList").innerHTML = D.entscheidungen.map((e0,i)=>{ const e=decWert(i), neu=!!DEC_DRAFT[i];
-    return `<div class="dec" style="${neu?"background:#FFF6EC;border-radius:14px;padding-left:10px;padding-right:10px":""}"><div><div>${esc(e.q)}</div><div class="tiny">${esc(e.src)}${e0.datum&&e0.a!=="offen"?` · entschieden am ${dt(e0.datum)}`:""}${neu?' · <b style="color:var(--terracotta)">geändert</b>':""}</div></div>
-    <div class="seg" role="group" aria-label="Antwort">${["offen","ja","nein"].map(a=>`<button class="${a}" data-i="${i}" data-a="${a}" aria-pressed="${e.a===a}">${a==="offen"?"Offen":a==="ja"?"Ja":"Nein"}</button>`).join("")}</div>
-    <textarea data-i="${i}" placeholder="Notiz, z. B. Bedingung oder Datum" aria-label="Notiz">${esc(e.notiz)}</textarea></div>`; }).join("");
-  const setDraft=(i,p)=>{ const base=D.entscheidungen[i], d={...(DEC_DRAFT[i]||{}),...p}; if((d.a??base.a)===base.a && (d.notiz??base.notiz)===base.notiz) delete DEC_DRAFT[i]; else DEC_DRAFT[i]=d; decBar(); };
-  document.querySelectorAll("#decList .seg button").forEach(b=>b.addEventListener("click",()=>{ setDraft(b.dataset.i,{a:b.dataset.a}); renderDec(); }));
-  document.querySelectorAll("#decList textarea").forEach(x=>x.addEventListener("input",()=>setDraft(x.dataset.i,{notiz:x.value})));
-  decBar();
-}
-$("decSave").addEventListener("click",()=>{ const heute=heuteBerlin(); let n=0;
-  Object.entries(DEC_DRAFT).forEach(([i,d])=>{ const e=D.entscheidungen[i]; if(d.a!==undefined && d.a!==e.a){ e.a=d.a; e.datum=heute; } if(d.notiz!==undefined) e.notiz=d.notiz; n++; });
-  DEC_DRAFT={}; save(n===1?"Entscheidung gespeichert":`${n} Entscheidungen gespeichert`); });
-$("decUndo").addEventListener("click",()=>{ DEC_DRAFT={}; renderDec(); toast("Änderungen verworfen"); });
-window.addEventListener("beforeunload",e=>{ if(Object.keys(DEC_DRAFT).length){ e.preventDefault(); e.returnValue=""; } });
+/* ===== Entscheidungen: siehe ENT (weiter unten, v1 nach Yuna) ===== */
 
 /* ===== Projekte ===== */
 const STAT={laeuft:"läuft",wartet:"wartet auf Ja",geplant:"geplant",erledigt:"erledigt",gestoppt:"gestoppt"};
@@ -1647,6 +1769,15 @@ const SB = window.SB = {
     return j;
   },
   rpc(fn,args={}){ return this.call(`/rest/v1/rpc/${fn}`,{method:"POST",body:JSON.stringify(args)}); },
+  // Rechnung sofort: Edge Function aufrufen, Fehler mit Klartext aus der Funktion
+  async fn(name,body){
+    const at=await this.token(); let r;
+    try{ r=await fetch(`${SB_URL}/functions/v1/${name}`,{method:"POST",headers:{apikey:SB_KEY,Authorization:"Bearer "+at,"Content-Type":"application/json"},body:JSON.stringify(body)}); }
+    catch(_){ const e=new Error("Keine Verbindung. Bitte noch einmal tippen – doppelt vergeben wird nichts."); e.netz=true; throw e; }
+    let j=null; try{ j=await r.json(); }catch(_){}
+    if(!r.ok||!j||j.ok===false){ const e=new Error((j&&j.fehler)||"Unerwarteter Fehler. Bitte Riku Bescheid geben."); e.code=j&&j.code; e.nummer=j&&j.nummer; throw e; }
+    return j;
+  },
   async pull(){
     const rows=await this.call("/rest/v1/cockpit_state?id=eq.main&select=data,updated_at,version");
     this.ver = rows && rows[0] && rows[0].version!=null ? rows[0].version : null;
@@ -1725,32 +1856,36 @@ function renderLiveTiles(){
   const ohne=BUCH.filter(b=>b.status==="confirmed"&&!b.test&&!b.re_status).length;
   const offen=AUFTR.filter(a=>a.status==="neu"||a.status==="in_arbeit").length+ohne; $("badgeZ").hidden=!offen; $("badgeZ").textContent=offen;
 }
-function renderZentrale(){ renderCSV();
+function renderZentrale(){ renderCSV(); gsOffenLaden();
   if(!SB.s){ ["zOhne","zRe","zAuftr"].forEach(id=>$(id).innerHTML=""); return; }
   const ohne=BUCH.filter(b=>b.status==="confirmed"&&!b.test&&!b.re_status);
-  $("zOhne").innerHTML = ohne.length? `<thead><tr><th>Gebucht</th><th>Eltern</th><th>Kurs</th><th>Start</th><th class="n" style="width:120px">Betrag €</th><th></th></tr></thead><tbody>`+ohne.map(b=>`<tr><td class="num">${dt((b.gebucht_am||"").slice(0,10))}</td><td>${esc(b.eltern)}</td><td>${esc(b.kurs)}<div class="tiny">${esc(b.ort)}</div></td><td class="num">${dt(b.start)}</td><td><input class="nur-owner" type="number" step="0.01" min="0" id="amt-${b.id}" value="${b.referenzpreis??""}" aria-label="Betrag"></td><td><button class="btn accent small nur-owner" data-re="${b.id}">Rechnung anstoßen</button></td></tr>`).join("")+"</tbody>" : `<tbody><tr><td class="empty">Jede bestätigte Buchung hat einen Rechnungsvorgang.</td></tr></tbody>`;
+  $("zOhne").innerHTML = ohne.length? `<thead><tr><th>Kunde</th><th class="n" style="width:120px">Betrag €</th><th></th></tr></thead><tbody>`+ohne.map(b=>{ const n=Number(b.anzahl)||1, betrag=b.preis_vereinbart!=null?Number(b.preis_vereinbart):(b.referenzpreis!=null?Number(b.referenzpreis)*n:null);
+    return `<tr><td>${kundeKopf(b,betrag)}${kundeKlein(b.kurs,b.ort,b.start?"ab "+dt(b.start):"",b.gebucht_am?"gebucht "+dt(String(b.gebucht_am).slice(0,10)):"")}${stHtml({cls:"grau",txt:"noch keine Rechnung"})}</td><td><input class="nur-owner" type="number" step="0.01" min="0" id="amt-${b.id}" value="${b.referenzpreis??""}" aria-label="Betrag"></td><td id="reziel-${b.id}"><button class="btn accent small re-sofort nur-owner" data-re="${b.id}">Rechnung erstellen</button></td></tr>`; }).join("")+"</tbody>" : `<tbody><tr><td class="empty">Jede bestätigte Buchung hat einen Rechnungsvorgang.</td></tr></tbody>`;
   document.querySelectorAll("[data-re]").forEach(btn=>btn.addEventListener("click",async()=>{
     if(!SB.istOwner()) return;
     const id=btn.dataset.re, v=Number($("amt-"+id).value);
-    if(btn.dataset.c!=="1"){ btn.dataset.c="1"; btn.textContent=`Bestätigen: ${eur(v)}`; return; }
-    btn.disabled=true; try{ await SB.rpc("cockpit_rechnung_anstossen",{p_booking_id:id,p_betrag:v,p_notiz:null}); toast("Rechnung angestoßen, Entwurf folgt im nächsten Lauf"); await SB.live(); }catch(e){ toast(e.message); btn.disabled=false; }
+    if(!(v>0)){ toast("Bitte einen Betrag eintragen"); return; }
+    if(btn.dataset.c!=="1"){ btn.dataset.c="1"; btn.textContent=`Sicher? Rechnung über ${eurc(v)} mit Nummer erstellen`; return; }
+    btn.dataset.c="1"; await belegErstellen(btn,$("reziel-"+id),{booking_id:id,art:"rechnung",betrag:v},"Rechnung erstellen");
   }));
   let res=BUCH.filter(b=>b.rechnungsnummer).sort((a,b)=>b.rechnungsnummer.localeCompare(a.rechnungsnummer));
-  const RS={entwurf_abgelegt:["Entwurf im Postfach","up"],rechnung_erstellt:["wird abgelegt","warn"],julia_bestaetigt:["wartet auf Lauf","warn"],fehler:["Fehler","down"],uebersprungen:["vor Automatik, manuell","neutral"]};
-  $("zRe").innerHTML = res.length? `<thead><tr><th>Rechnung</th><th>Eltern</th><th>Kurs</th><th class="n">Betrag</th><th>Fällig</th><th>Stand</th><th></th></tr></thead><tbody>`+res.slice(0,60).map(b=>{ let [l,c]=RS[b.re_status]||[b.re_status||"–","neutral"]; const st=b.status==="cancelled"||!!b.rechnung_storniert_am;
-    if(b.bezahlt_am && !st){ l="bezahlt "+dshort(b.bezahlt_am); c="up"; }
-    return `<tr><td class="num">${esc(b.rechnungsnummer)}</td><td>${esc(b.eltern)}</td><td>${esc(b.kurs)}<div class="tiny">${esc(b.ort)} · ${dt(b.start)}</div></td><td class="n num">${b.betrag!=null?Number(b.betrag).toLocaleString("de-DE",{style:"currency",currency:"EUR"}):"–"}</td><td class="num">${dt(b.faellig_am)}${b.erinnerung_am?`<div class="tiny">erinnert</div>`:""}</td><td>${st?(b.bezahlt_am?(Number(b.erstattet_betrag)>=Number(b.bezahlt_betrag)-0.01?'<span class="chip">storniert, erstattet</span>':'<span class="chip warn">storniert, aber bezahlt: Erstattung prüfen</span>'):'<span class="chip down">storniert</span>'):`<span class="chip ${c}">${l}</span>`}</td><td style="white-space:nowrap">${b.bezahlt_am?`<button class="btn light small" data-unpaid="${esc(b.rechnungsnummer)}" title="Zahlung zurücknehmen">↺</button>`:`<button class="btn light small" data-paid="${esc(b.rechnungsnummer)}" data-betrag="${b.betrag??""}">bezahlt</button>`} ${st?"":`<button class="btn light small" data-sto="${b.id}">Storno</button>`}</td></tr>
-    <tr id="sto-${b.id}" hidden><td colspan="7"><div class="inline-form"><input type="text" id="stg-${b.id}" placeholder="Grund, z. B. Workshop abgesagt" aria-label="Grund"><input class="nur-owner" type="number" step="0.01" id="stb-${b.id}" value="${b.betrag??""}" aria-label="Gutschrift Betrag"><label class="tiny nur-owner" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="stk-${b.id}" checked> Gutschrift in dieser Höhe</label><button class="btn accent small" data-stogo="${b.id}">Stornieren</button></div><div class="tiny" style="margin-top:4px">Storniert die Buchung sofort im System. Die Gutschrift bitte noch von Hand erstellen, die Automatik dafür ist noch nicht eingerichtet.</div></td></tr>`; }).join("")+"</tbody>" : `<tbody><tr><td class="empty">Keine Rechnungen gefunden.</td></tr></tbody>`;
+  const RS={entwurf_abgelegt:["Entwurf im Postfach","up"],rechnung_erstellt:["Rechnung erstellt","up"],julia_bestaetigt:["wartet auf Lauf","warn"],fehler:["Fehler","down"],uebersprungen:["vor Automatik, manuell","neutral"]};
+  $("zRe").innerHTML = res.length? `<thead><tr><th>Kunde</th><th>Fällig</th><th>Stand</th><th></th></tr></thead><tbody>`+res.slice(0,60).map(b=>{ const st=b.status==="cancelled"||!!b.rechnung_storniert_am;
+    const offenNoch=!b.bezahlt_am&&!st, stand=st?(b.bezahlt_am?(Number(b.erstattet_betrag)>=Number(b.bezahlt_betrag)-0.01?{cls:"grau",txt:"Rechnung storniert, erstattet"}:{cls:"rot",txt:"Rechnung storniert, Erstattung prüfen"}):{cls:"grau",txt:"Rechnung storniert"}):zahlStatus(b);
+    return `<tr><td>${kundeKopf(b,b.betrag!=null?Number(b.betrag):null,offenNoch?b.faellig_am:null)}${kundeKlein(b.kurs,b.ort,b.start?dt(b.start):"",b.rechnungsnummer)}</td><td class="num">${dt(b.faellig_am)}${b.erinnerung_am?`<div class="tiny">erinnert</div>`:""}</td><td>${stHtml(stand)}${b.bezahlt_am&&!st?`<div class="tiny">am ${esc(dshort(b.bezahlt_am))}</div>`:""}</td><td style="white-space:nowrap">${b.bezahlt_am?`<button class="btn light small" data-unpaid="${esc(b.rechnungsnummer)}" title="Zahlung zurücknehmen" aria-label="Zahlung zurücknehmen">↺</button>`:`<button class="btn light small" data-paid="${esc(b.rechnungsnummer)}" data-betrag="${b.betrag??""}">bezahlt</button>`} ${b.rechnungsnummer?`<button class="btn light small re-sofort nur-owner" type="button" data-pdf="${esc(b.rechnungsnummer)}">PDF öffnen</button>`:""} ${st?(window.GS_OFFEN&&GS_OFFEN.has(b.id)?`<span id="gsziel-${b.id}" class="nur-owner"><button class="btn light small re-sofort" data-gs="${b.id}" data-gsart="${GS_OFFEN.get(b.id)}">${BELEG_NAME[GS_OFFEN.get(b.id)]} erstellen</button></span>`:""):`<button class="btn light small" data-sto="${b.id}">Storno</button>`}</td></tr>
+    <tr id="sto-${b.id}" hidden><td colspan="4"><div class="inline-form"><input type="text" id="stg-${b.id}" placeholder="Grund, z. B. Workshop abgesagt" aria-label="Grund"><input class="nur-owner" type="number" step="0.01" id="stb-${b.id}" value="${b.betrag??""}" aria-label="Gutschrift Betrag"><label class="tiny nur-owner" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="stk-${b.id}" checked> Gutschrift in dieser Höhe</label><button class="btn accent small" data-stogo="${b.id}">Stornieren</button></div><div class="tiny" style="margin-top:4px">Storniert die Buchung sofort im System. Danach erscheint hier der Knopf für die Gutschrift mit eigener Nummer.</div></td></tr>`; }).join("")+"</tbody>" : `<tbody><tr><td class="empty">Keine Rechnungen gefunden.</td></tr></tbody>`;
   document.querySelectorAll("[data-paid]").forEach(btn=>btn.addEventListener("click",async()=>{ if(btn.dataset.c!=="1"){ btn.dataset.c="1"; btn.textContent="heute bezahlt?"; return; } btn.disabled=true;
     try{ await SB.call("/rest/v1/cockpit_zahlungen",{method:"POST",headers:{Prefer:"return=minimal"},body:JSON.stringify({rechnungsnummer:btn.dataset.paid,betrag:Number(btn.dataset.betrag)||0,datum:heuteBerlin(),quelle:"manuell"})}); toast("Als bezahlt erfasst"); await SB.live(); }catch(e){ toast(e.message); btn.disabled=false; } }));
   document.querySelectorAll("[data-unpaid]").forEach(btn=>btn.addEventListener("click",async()=>{ if(btn.dataset.c!=="1"){ btn.dataset.c="1"; btn.textContent="zurücknehmen?"; return; }
     try{ await SB.call(`/rest/v1/cockpit_zahlungen?rechnungsnummer=eq.${encodeURIComponent(btn.dataset.unpaid)}`,{method:"DELETE",headers:{Prefer:"return=minimal"}}); toast("Zahlung zurückgenommen"); await SB.live(); }catch(e){ toast(e.message); } }));
   document.querySelectorAll("[data-sto]").forEach(b=>b.addEventListener("click",()=>{ const r=$("sto-"+b.dataset.sto); r.hidden=!r.hidden; }));
+  document.querySelectorAll("[data-gs]").forEach(btn=>btn.addEventListener("click",()=>{ const id=btn.dataset.gs, art=btn.dataset.gsart;
+    belegErstellen(btn,$("gsziel-"+id),{booking_id:id,art},BELEG_NAME[art]+" erstellen"); }));
   document.querySelectorAll("[data-stogo]").forEach(btn=>btn.addEventListener("click",async()=>{
     const id=btn.dataset.stogo, grund=$("stg-"+id).value.trim(), gs=SB.istOwner() && $("stk-"+id).checked, bet=SB.istOwner()?$("stb-"+id).value:"";
     if(!grund){ toast("Bitte einen Grund angeben"); return; }
     if(btn.dataset.c!=="1"){ btn.dataset.c="1"; btn.textContent="Wirklich stornieren?"; return; }
-    btn.disabled=true; try{ await SB.rpc("cockpit_storno",{p_booking_id:id,p_grund:grund,p_gutschrift:gs,p_betrag:bet===""?null:Number(bet)}); toast(gs?"Storniert. Die Gutschrift bitte noch von Hand erstellen, dafür gibt es noch keinen Lauf.":"Storniert"); await SB.live(); }catch(e){ toast(e.message); btn.disabled=false; }
+    btn.disabled=true; try{ await SB.rpc("cockpit_storno",{p_booking_id:id,p_grund:grund,p_gutschrift:gs,p_betrag:bet===""?null:Number(bet)}); toast(gs?"Storniert. Gutschrift jetzt über den Knopf in der Zeile erstellen.":"Storniert"); await SB.live(); }catch(e){ toast(e.message); btn.disabled=false; }
   }));
   $("zAuftr").innerHTML = AUFTR.length? `<thead><tr><th>Angelegt</th><th>Auftrag</th><th>Stand</th><th>Ergebnis</th><th></th></tr></thead><tbody>`+AUFTR.map(a=>{ let [l,c]=AUFTRAG_STATUS[a.status]||[a.status,"neutral"]; if(a.status==="neu"&&a.typ==="rechnung"){ l="Rechnungslauf erstellt den Entwurf"; c="neutral"; } return `<tr><td class="num">${new Date(a.erstellt_am).toLocaleString("de-DE",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"})}</td><td>${AUFTRAG_NAME[a.typ]||esc(a.typ)}${a.payload&&a.payload.rechnungsnummer?`<div class="tiny">${esc(a.payload.rechnungsnummer)}</div>`:""}</td><td><span class="chip ${c}">${l}</span></td><td class="tiny">${esc(a.ergebnis||"")}</td><td>${a.status==="neu"&&a.typ!=="rechnung"?`<button class="btn light small" data-abbr="${a.id}">Abbrechen</button>`:""}</td></tr>`; }).join("")+"</tbody>" : `<tbody><tr><td class="empty">Noch keine Aufträge.</td></tr></tbody>`;
   document.querySelectorAll("[data-abbr]").forEach(b=>b.addEventListener("click",async()=>{ try{ await SB.call(`/rest/v1/cockpit_auftraege?id=eq.${b.dataset.abbr}`,{method:"PATCH",headers:{Prefer:"return=minimal"},body:JSON.stringify({status:"abgebrochen"})}); toast("Abgebrochen"); await SB.live(); }catch(e){ toast(e.message); } }));
@@ -1879,7 +2014,7 @@ function renderPipelines(){
   $("flow").innerHTML=[["ohne","Gebucht, ohne Rechnung"],["lauf","Rechnung in Arbeit"],["entwurf","Entwurf im Postfach, unbezahlt"],["erinnert","Erinnert, unbezahlt"],["bezahlt","Bezahlt"],["storno","Storniert"]].map(([k,l])=>`<div class="st"><b class="num">${g[k].length}</b><span>${l}</span><div class="sum num">${eur(sum(g[k]))}</div></div>`).join("");
   const ueber=[...g.entwurf,...g.erinnert].filter(b=>b.faellig_am&&b.faellig_am<heute).sort((a,b)=>a.faellig_am.localeCompare(b.faellig_am));
   $("flowStuck").innerHTML=`<div class="tiny" style="margin-bottom:8px">${alt} ältere Buchungen vor dem Start der Rechnungsautomatik (19.09.) wurden von Hand abgerechnet und zählen hier nicht mit. „Entwurf im Postfach“ heißt: angelegt, ob verschickt, wisst nur ihr. Zahlungen: Stand des letzten N26-Abgleichs.</div>`+
-    (ueber.length? `<div class="t-head" style="margin:6px 0"><h2 style="font-size:.95rem">Fällig, kein Zahlungseingang gefunden</h2></div><table class="mini"><tbody>${ueber.map(b=>`<tr><td class="num">${esc(b.rechnungsnummer)}</td><td>${esc(b.eltern)}</td><td>${esc(b.kurs)}</td><td class="n num">${eurc(b.betrag)}</td><td><span class="chip down">${-tageBis(b.faellig_am)} T. über Ziel</span></td><td class="tiny">${b.erinnerung_am?"erinnert":"noch nicht erinnert"}</td></tr>`).join("")}</tbody></table>` : `<div class="tiny">Nichts überfällig.</div>`);
+    (ueber.length? `<div class="t-head" style="margin:6px 0"><h2 style="font-size:.95rem">Fällig, kein Zahlungseingang gefunden</h2></div><div>${ueber.map(b=>`<div class="kz">${kundeKopf(b,b.betrag,b.faellig_am)}${kundeKlein(b.kurs,b.rechnungsnummer,b.erinnerung_am?"erinnert":"noch nicht erinnert")}</div>`).join("")}</div>` : `<div class="tiny">Nichts überfällig.</div>`);
 }
 $("mkAdd").addEventListener("click",()=>{ const n=$("mkName").value.trim(); if(!n){ toast("Kanal eintragen"); return; } D.marketing.push({name:n,status:"geplant",wer:$("mkWer").value.trim(),schritt:$("mkSchritt").value.trim(),kz:""}); ["mkName","mkWer","mkSchritt"].forEach(x=>$(x).value=""); save("Kanal angelegt"); });
 
@@ -2010,9 +2145,9 @@ function renderCSV(){
     <details><summary class="tiny" style="cursor:pointer;color:var(--terracotta);font-weight:600">Monatssummen anzeigen</summary><div class="tablewrap"><table class="mini"><thead><tr><th>Monat</th><th class="n">Einnahmen</th><th class="n">Ausgaben</th><th class="n">Saldo</th></tr></thead><tbody>${mk.map(k=>`<tr><td>${MON[k.slice(5)]} ${k.slice(0,4)}</td><td class="n num">${eur(A.m[k].ein)}</td><td class="n num">${eur(-A.m[k].aus)}</td><td class="n num" style="color:${A.m[k].ein+A.m[k].aus>=0?"var(--green)":"var(--red)"}">${eur(A.m[k].ein+A.m[k].aus)}</td></tr>`).join("")}</tbody></table></div></details>
     ${!SB.s?`<div class="tiny" style="margin-top:8px">Für den Abgleich mit den Rechnungen bitte anmelden.</div>`: (!Z.length && !E.length)? `<div style="margin-top:10px"><span class="chip up">Alle Rechnungen sind schon als bezahlt erfasst.</span></div>` : `
     ${Z.length?`<div class="t-head" style="margin:14px 0 6px"><h2 style="font-size:.95rem">Zahlungen: ${plural(Z.length,"Rechnung","Rechnungen")} ohne erfasste Zahlung, ${Z.filter(x=>x.z).length} gefunden</h2></div>
-    <div class="tablewrap"><table class="mini match"><thead><tr><th></th><th>Rechnung</th><th>Eltern</th><th class="n">Betrag</th><th>Fällig</th><th>Gefunden</th></tr></thead><tbody>${Z.map((x,i)=>`<tr><td>${x.z?`<input type="checkbox" data-zi="${i}" ${x.an?"checked":""} aria-label="übernehmen">`:""}</td><td class="num">${esc(x.b.rechnungsnummer)}</td><td>${esc(x.b.eltern)}${x.b.status==="cancelled"?' <span class="chip down">storniert</span>':""}</td><td class="n num">${eu(x.b.betrag)}</td><td class="num">${dt(x.b.faellig_am)}</td><td>${x.z?`<span class="chip ${/^Nummer/.test(x.art)?"up":x.an?"ok":"warn"}">${x.art}</span> <span class="tiny">${dt(x.z.datum)}, ${eu(x.z.betrag)}${x.von?` · von ${esc(x.von)}`:""}</span>`:`<span class="chip ${x.b.faellig_am&&x.b.faellig_am<heute?"down":"neutral"}">${x.art}</span>`}</td></tr>`).join("")}</tbody></table></div>`:""}
+    <div class="tablewrap"><table class="mini match"><thead><tr><th></th><th>Kunde</th><th>Gefunden</th></tr></thead><tbody>${Z.map((x,i)=>`<tr><td>${x.z?`<label class="kz-chk"><input type="checkbox" data-zi="${i}" ${x.an?"checked":""} aria-label="übernehmen: ${esc(kundeName(x.b))}"></label>`:""}</td><td class="kz-zelle">${kundeKopf(x.b,x.b.betrag!=null?Number(x.b.betrag):null,x.b.faellig_am)}${kundeKlein(x.b.kurs,x.b.rechnungsnummer)}${x.b.status==="cancelled"?stHtml({cls:"grau",txt:"Rechnung storniert"}):""}</td><td>${x.z?`<span class="chip ${/^Nummer/.test(x.art)?"up":x.an?"ok":"warn"}">${x.art}</span> <span class="tiny">${dt(x.z.datum)}, ${eu(x.z.betrag)}${x.von?` · von ${esc(x.von)}`:""}</span>`:`<span class="chip ${x.b.faellig_am&&x.b.faellig_am<heute?"down":"neutral"}">${x.art}</span>`}</td></tr>`).join("")}</tbody></table></div>`:""}
     ${E.length?`<div class="t-head" style="margin:14px 0 6px"><h2 style="font-size:.95rem">Rückerstattungen erkannt: ${E.length}</h2></div>
-    <div class="tablewrap"><table class="mini match"><thead><tr><th></th><th>Rechnung</th><th>Eltern</th><th class="n">Erstattet</th><th>Am</th><th>Erkannt über</th></tr></thead><tbody>${E.map((x,i)=>`<tr><td><input type="checkbox" data-ei="${i}" ${x.an?"checked":""} aria-label="übernehmen"></td><td class="num">${esc(x.b.rechnungsnummer)}</td><td>${esc(x.b.eltern)}</td><td class="n num">${eu(x.betrag)}</td><td class="num">${dt(x.r.d)}</td><td><span class="chip ${x.an?"ok":"warn"}">${x.art}</span> <span class="tiny">${esc(x.r.ref.slice(0,60))}</span></td></tr>`).join("")}</tbody></table></div>`:""}
+    <div class="tablewrap"><table class="mini match"><thead><tr><th></th><th>Kunde</th><th>Am</th><th>Erkannt über</th></tr></thead><tbody>${E.map((x,i)=>`<tr><td><label class="kz-chk"><input type="checkbox" data-ei="${i}" ${x.an?"checked":""} aria-label="übernehmen: ${esc(kundeName(x.b))}"></label></td><td class="kz-zelle">${kundeKopf(x.b,x.betrag)}${kundeKlein(x.b.kurs,x.b.rechnungsnummer,"Erstattung")}</td><td class="num">${dt(x.r.d)}</td><td><span class="chip ${x.an?"ok":"warn"}">${x.art}</span> <span class="tiny">${esc(x.r.ref.slice(0,60))}</span></td></tr>`).join("")}</tbody></table></div>`:""}
     <div class="tiny" style="margin-top:6px">Vorausgewählt: Rechnungsnummer im Verwendungszweck, oder eindeutiger Name mit genau passendem Betrag. Gelb (Betrag weicht ab, Teilbetrag) bitte selbst prüfen und anhaken. Gespeichert wird erst mit dem Knopf.</div>
     <button class="btn accent small" id="csvZahl" style="margin-top:10px">Angehakte speichern (${anzZ} Zahlungen${E.length?`, ${anzE} Erstattungen`:""})</button>`}`;
   out.querySelectorAll("[data-acc]").forEach(c=>c.addEventListener("change",()=>{ CSV.wahl = c.checked? [...CSV.wahl,c.dataset.acc] : CSV.wahl.filter(x=>x!==c.dataset.acc); renderCSV(); }));
@@ -2109,9 +2244,10 @@ function applyFilter(id){
 const col=(i,norm)=>el=>{ const v=zellWert(el.cells&&el.cells[i]); return norm?norm(v):v; };
 const tiny=(i,part)=>el=>{ const t=el.cells&&el.cells[i]&&el.cells[i].querySelector(".tiny"); return t? t.textContent.split("·")[part||0].trim() : ""; };
 const monat=i=>el=>monatVon(el.cells&&el.cells[i]?el.cells[i].textContent:"");
+const klein=(i,part)=>el=>{ const t=el.cells&&el.cells[i]&&el.cells[i].querySelector(".kz-klein"); return t? (t.textContent.split("·")[part]||"").trim() : ""; };
 function filterAnlegen(){
-  filterbar("zRe",{ph:"Rechnungsnummer, Eltern, Kurs, Betrag",skip:'tr[id^="sto-"]',cols:[{label:"Kurs",get:col(2)},{label:"Ort",get:tiny(2,0)},{label:"Fällig",get:monat(4),mode:"monat"},{label:"Stand",get:col(5,v=>/^bezahlt/.test(v)?"bezahlt":v)}]});
-  filterbar("zOhne",{ph:"Eltern, Kurs",cols:[{label:"Kurs",get:col(2)},{label:"Ort",get:tiny(2,0)},{label:"Start",get:monat(3),mode:"monat"}]});
+  filterbar("zRe",{ph:"Rechnungsnummer, Eltern, Kurs, Betrag",skip:'tr[id^="sto-"]',cols:[{label:"Kurs",get:klein(0,0)},{label:"Ort",get:klein(0,1)},{label:"Fällig",get:monat(1),mode:"monat"},{label:"Stand",get:el=>{ const t=el.cells&&el.cells[2]&&el.cells[2].querySelector(".stp"); return t?t.textContent.trim():""; }}]});
+  filterbar("zOhne",{ph:"Eltern, Kurs",cols:[{label:"Kurs",get:klein(0,0)},{label:"Ort",get:klein(0,1)},{label:"Start",get:el=>monatVon(klein(0,2)(el)),mode:"monat"}]});
   filterbar("zAuftr",{ph:"Auftrag, Ergebnis",cols:[{label:"Auftrag",get:col(1)},{label:"Stand",get:col(2)}]});
   filterbar("zKurse",{ph:"Kurs, Ort",cols:[{label:"Kurs",get:col(0)},{label:"Status",get:col(4)}]});
   filterbar("fristTable",{ph:"Frist suchen",cols:[{label:"Wer",get:col(2)},{label:"Status",get:col(4,v=>/^in /.test(v)?"offen":v)},{label:"Monat",get:monat(3),mode:"monat"}]});
@@ -2121,7 +2257,6 @@ function filterAnlegen(){
   filterbar("kpiTable",{ph:"Kennzahl suchen"});
   filterbar("projGrid",{items:".pcard",ph:"Projekt, Schritt, Person",cols:[{label:"Wer",get:el=>(el.querySelector('[data-f="wer"]')?.value||"").split(",")[0].trim()},{label:"Frist",get:el=>{ const v=el.querySelector('[data-f="frist"]')?.value; return v?`${MONATE[+v.slice(5,7)-1]} ${v.slice(0,4)}`:"ohne Frist"; },mode:"monat"}]});
   filterbar("tdBoard",{items:".tdrow",ph:"Aufgabe suchen",cols:[{label:"Prio",get:el=>{ const p=el.querySelector(".prio"); return p? (p.classList.contains("p1")?"hoch":p.classList.contains("p2")?"mittel":"niedrig") : ""; }}]});
-  filterbar("decList",{items:".dec",ph:"Entscheidung suchen",cols:[{label:"Antwort",get:el=>el.querySelector('[aria-pressed="true"]')?.textContent||""},{label:"Quelle",get:el=>el.querySelector(".tiny")?.textContent||""}]});
   filterbar("kbKita",{items:".kcard",ph:"Einrichtung suchen"});
   filterbar("kbMarketing",{items:".kcard",ph:"Kanal suchen"});
   filterbar("famTable",{ph:"Name, E-Mail, Telefon, Kurs",cols:[{label:"Kurs",get:el=>el.dataset.kurse?el.dataset.kurse.split("|")[0]:""},{label:"Status",get:el=>el.dataset.st||""}]});
@@ -2210,7 +2345,7 @@ const KP=(()=>{
   };
 })();
 function renderAll(){
-  renderOverview(); renderKonto(); renderPlan(); renderNachtragen(); renderFristen(); renderDec(); renderProjekte(); renderKitas(); renderOrte(); if(typeof renderZentrale==="function") renderZentrale(); renderTodos(); renderStrategie(); renderPipelines(); renderKurse(); renderFS(); renderKunden(); renderNeuKurs();
+  renderOverview(); renderKonto(); renderPlan(); renderNachtragen(); renderFristen(); if(typeof ENT!=="undefined"&&ENT) ENT.render(); renderProjekte(); renderKitas(); renderOrte(); if(typeof renderZentrale==="function") renderZentrale(); renderTodos(); renderStrategie(); renderPipelines(); renderKurse(); renderFS(); renderKunden(); renderNeuKurs();
   let ok=true; try{ localStorage.setItem(KEY+"-t","1"); }catch(e){ ok=false; }
   $("saveInfo").textContent = ok ? "Speichern im Browser funktioniert. Daten bleiben, bis du den Browserverlauf samt Website-Daten löschst." : "Dieser Browser erlaubt kein Speichern für lokale Dateien. Bitte Chrome oder Edge nutzen oder regelmäßig sichern.";
 }
@@ -2326,6 +2461,42 @@ const _renderAllOrig = renderAll;
 renderAll = function(){ _renderAllOrig(); tabellenKarten(); renderTeilnehmer(); if(!ZAEHL.fertig && window.LIVE) setTimeout(zahlenHochzaehlen,30); };
 
 /* ===== Phase B: Heute, Familie buchen, Anwesenheit pro Termin ===== */
+/* Rechnung sofort: Beleg erzeugen und Ergebnis an Ort und Stelle anzeigen. Kein Versand. */
+const BELEG_NAME={rechnung:"Rechnung",gutschrift:"Gutschrift",stornogutschrift:"Stornogutschrift"};
+function belegErgebnis(ziel,r,art){
+  if(r.probelauf){ ziel.innerHTML=`<div class="beleg-ok">Probelauf ok – Test-Zugang vergibt keine Nummer.</div>`; return; }
+  const name=BELEG_NAME[art]||"Beleg";
+  ziel.innerHTML=`<div class="beleg-ok"><button class="btn small re-sofort erstellt" type="button" disabled aria-disabled="true">${name} erstellt</button><span class="num">${esc(r.nummer||"")}</span>${r.nummer&&r.pdf_bereit!==false?`<button class="btn light small re-sofort" type="button" data-pdf="${esc(r.nummer)}">PDF öffnen</button>`:""}${r.hinweis?`<span class="tiny">${esc(r.hinweis)}</span>`:""}</div>`;
+}
+/* Gutschrift-Knöpfe nur für Buchungen, die die DB als offen meldet (rechnung_gs_offen), Art kommt aus der DB */
+var GS_OFFEN=new Map(), GS_OFFEN_ZEIT=0, GS_OFFEN_LAEDT=false;
+async function gsOffenLaden(){
+  if(!SB.s||GS_OFFEN_LAEDT||Date.now()-GS_OFFEN_ZEIT<30000) return;
+  GS_OFFEN_LAEDT=true;
+  try{ const l=await SB.rpc("rechnung_gs_offen",{}); const m=new Map((Array.isArray(l)?l:[]).map(x=>[x.booking_id,x.art]));
+    const neu=[...m].join()!==[...GS_OFFEN].join(); GS_OFFEN=m; GS_OFFEN_ZEIT=Date.now(); if(neu) renderZentrale(); }
+  catch(_){ GS_OFFEN=new Map(); GS_OFFEN_ZEIT=Date.now(); }
+  finally{ GS_OFFEN_LAEDT=false; }
+}
+/* „PDF öffnen“: bei jedem Klick frischer Link (60 s), auch für ältere Rechnungen */
+document.addEventListener("click",async e=>{ const b=e.target.closest("[data-pdf]"); if(!b) return; e.preventDefault();
+  if(!SB.istOwner() && SB.rolle!=="test") return;
+  const nr=b.dataset.pdf, fenster=window.open("about:blank","_blank"); b.disabled=true; const t=b.textContent; b.textContent="Link wird geholt …";
+  try{ const r=await SB.fn("rechnung-sofort",{aktion:"pdf_link",nummer:nr});
+    if(r.probelauf){ if(fenster) fenster.close(); toast("Probelauf: Test-Zugang öffnet keine echten PDFs."); return; }
+    if(fenster){ try{ fenster.opener=null; }catch(_){} fenster.location.href=r.link; }
+    else{ b.insertAdjacentHTML("afterend",`<a class="re-sofort-link" href="${esc(r.link)}" target="_blank" rel="noopener">PDF ${esc(nr)} (Link 60 s gültig)</a>`); }
+  }catch(err){ if(fenster) fenster.close(); toastLang(err.message); }
+  finally{ b.disabled=false; b.textContent=t; }
+});
+async function belegErstellen(btn,ziel,body,ruhetext){
+  if(!SB.istOwner() && SB.rolle!=="test") return;
+  const art=body.art||"rechnung";
+  if(btn.dataset.c!=="1"){ btn.dataset.c="1"; btn.textContent=`Sicher? ${BELEG_NAME[art]} mit Nummer erstellen`; return; }
+  btn.disabled=true; btn.textContent="Wird erstellt …"; const alt=ziel.querySelector(".beleg-fehler"); if(alt) alt.remove();
+  try{ const r=await SB.fn("rechnung-sofort",body); belegErgebnis(ziel,r,art); toastLang(r.probelauf?"Probelauf ohne Nummer.":`${BELEG_NAME[art]} ${r.nummer} erstellt. Nichts wurde verschickt.`); }
+  catch(e){ btn.disabled=false; btn.dataset.c=""; btn.textContent=ruhetext; ziel.insertAdjacentHTML("beforeend",`<div class="beleg-fehler" role="alert">${esc(e.message)}</div>`); }
+}
 function toastLang(t){ const el=$("toast"); el.textContent=t; el.classList.add("show"); clearTimeout(toast._t); toast._t=setTimeout(()=>el.classList.remove("show"),5000); }
 const ANW_SEL={};
 function kursTermineAlle(k){ return Array.isArray(k.termine)&&k.termine.length ? [...new Set(k.termine.map(d=>ymdBerlin(d)))].sort() : (k.start?[k.start]:[]); }
@@ -2403,20 +2574,36 @@ function heuteTermine(){
   if(!paare.length) return [];
   const erster=paare[0].d; return paare.filter(p=>p.d===erster);
 }
+/* ----- Kundenname in Rechnungs- und Zahlungslisten -----
+   Quelle: bookings.parent_name (Rechnungsempfänger), geliefert als BUCH[].eltern (cockpit_buchungen)
+   bzw. zahler_name aus cockpit_geld_offene_posten (Entwurf v2). Rückfall: maskierte Mail, sonst "Kunde ohne Namen".
+   Ein Kindername wird nie verwendet (cockpit_buchungen liefert child_name gar nicht aus). */
+function mailMaske(m){ m=String(m||"").trim().toLowerCase(); const i=m.indexOf("@"); if(i<1) return "";
+  const d=m.slice(i+1), e=(d.match(/(\.[a-z0-9-]+)$/)||[""])[0]; return m[0]+"***@"+(d[0]||"")+"***"+e; }
+function kundeName(o){ o=o||{}; const b=o.booking_id?(BUCH||[]).find(z=>String(z.id)===String(o.booking_id)):null;
+  const ok=v=>{ v=String(v||"").replace(/\s+/g," ").trim(); return v&&!v.includes("@")?v:""; };
+  return ok(o.zahler_name)||ok(o.eltern)||ok(b&&b.eltern)||o.zahler_mail_maskiert||mailMaske(o.email)||mailMaske(b&&b.email)||"Kunde ohne Namen"; }
+function kundeHtml(o){ const n=kundeName(o); return `<span class="kz-name${n==="Kunde ohne Namen"?" kz-ohne":""}">${esc(n)}</span>`; }
+function faelligSeit(d){ if(!d) return {txt:"",rot:false}; const t=-tageBis(d);
+  return t>0?{txt:`fällig seit ${dt(d)} · ${plural(t,"Tag","Tage")}`,rot:true}:t===0?{txt:"heute fällig",rot:false}:{txt:`fällig am ${dt(d)}`,rot:false}; }
+function kundeKopf(o,betrag,faellig){ const f=faelligSeit(faellig);
+  return `<div class="kz-h">${kundeHtml(o)}${betrag!=null?`<span class="kz-betrag">${eurc(betrag)}</span>`:""}${f.txt?`<span class="kz-faellig${f.rot?" rot":""}">${esc(f.txt)}</span>`:""}</div>`; }
+function kundeKlein(...t){ const v=t.filter(x=>x!=null&&String(x).trim()!==""&&x!=="–"); return v.length?`<div class="kz-klein">${v.map(esc).join(" · ")}</div>`:""; }
+
 let ZK_AUF=false;
 function zuErledigen(){
   const h=heuteBerlin(), L=[];
   (BUCH||[]).filter(b=>b.status==="confirmed"&&!b.test&&!b.re_status).forEach(b=>{
     const n=Number(b.anzahl)||1, betrag=b.preis_vereinbart!=null?Number(b.preis_vereinbart):(b.referenzpreis!=null?Number(b.referenzpreis)*n:null);
-    L.push({p:1, was:`Rechnung für ${b.eltern||"Familie"}`, warum:`${b.kurs||""} ${dt(b.start)} · ${kinderText(n)} · noch keine Rechnung`,
-      tu: betrag? `<button class="btn small sek nur-owner" data-hre="${b.id}" data-betrag="${betrag}">Rechnung vorbereiten (${eurc(betrag)})</button>` : `<button class="btn small sek" data-go="zentrale">Preis fehlt</button>`}); });
-  (BUCH||[]).filter(b=>b.re_status==="fehler").forEach(b=>L.push({p:1, was:`Rechnung hängt: ${b.eltern||""}`, warum:(b.fehler||"Fehler im Rechnungslauf").slice(0,90), tu:`<button class="btn small light" data-go="zentrale">Ansehen</button>`}));
-  (BUCH||[]).filter(b=>b.status==="cancelled"&&b.bezahlt_am&&!(Number(b.erstattet_betrag)>=Number(b.bezahlt_betrag)-0.01)).forEach(b=>L.push({p:2, was:`Erstattung prüfen: ${b.eltern||""}`, warum:`${b.rechnungsnummer||""} storniert, aber ${eurc(b.bezahlt_betrag)} bezahlt`, tu:`<button class="btn small light" data-go="zentrale">Ansehen</button>`}));
+    L.push({p:1, was:`Rechnung für ${kundeName(b)}`, wasHtml:kundeKopf(b,betrag), warum:`noch keine Rechnung · ${[b.kurs,b.start?dt(b.start):"",kinderText(n)].filter(Boolean).join(" · ")}`,
+      tu: betrag? `<span id="hreziel-${b.id}"><button class="btn small sek re-sofort nur-owner" data-hre="${b.id}" data-betrag="${betrag}">Rechnung erstellen</button></span>` : `<button class="btn small sek" data-go="zentrale">Preis fehlt</button>`}); });
+  (BUCH||[]).filter(b=>b.re_status==="fehler").forEach(b=>L.push({p:1, was:`Rechnung hängt: ${kundeName(b)}`, wasHtml:kundeKopf(b,b.betrag!=null?Number(b.betrag):null), warum:"Rechnung hängt · "+(b.fehler||"Fehler im Rechnungslauf").slice(0,80), tu:`<button class="btn small light" data-go="zentrale">Ansehen</button>`}));
+  (BUCH||[]).filter(b=>b.status==="cancelled"&&b.bezahlt_am&&!(Number(b.erstattet_betrag)>=Number(b.bezahlt_betrag)-0.01)).forEach(b=>L.push({p:2, was:`Erstattung prüfen: ${kundeName(b)}`, wasHtml:kundeKopf(b,b.bezahlt_betrag!=null?Number(b.bezahlt_betrag):null), warum:`Erstattung prüfen · ${b.rechnungsnummer||""} storniert, aber bezahlt`, tu:`<button class="btn small light" data-go="zentrale">Ansehen</button>`}));
   const zk=(BUCH||[]).filter(b=>b.status==="confirmed"&&!b.test&&(b.re_status==="entwurf_abgelegt"||(b.re_status==="uebersprungen"&&b.rechnungsnummer))&&!b.rechnung_storniert_am&&!b.bezahlt_am&&b.faellig_am&&b.faellig_am<h).sort((x,y)=>x.faellig_am.localeCompare(y.faellig_am));
   if(zk.length){ const stand=window.LIVE&&LIVE.zahlungen_stand?dt(LIVE.zahlungen_stand):"unbekannt", summe=zk.reduce((s,b)=>s+(Number(b.betrag)||0),0);
     L.push({p:2, was:`${plural(zk.length,"Rechnung","Rechnungen")} ohne erfassten Zahlungseingang`, warum:`zusammen ${eurc(summe)} · letzter Bankabgleich ${stand}. Erst N26 abgleichen, dann nachfragen.`,
       tu:`<button class="btn small light" data-zkauf>Liste zeigen</button><button class="btn small light" data-go="zentrale">N26 abgleichen</button>`,
-      extra: zk.map(b=>`<div class="todo2"><div class="was">${esc(b.eltern||"")}</div><div class="tu">${kontaktKnoepfe({telefon:b.telefon,email:b.email})}</div><div class="warum">${esc(b.rechnungsnummer||"")} · ${eurc(b.betrag)} · seit ${-tageBis(b.faellig_am)} Tagen fällig</div></div>`).join("")}); }
+      extra: zk.map(b=>`<div class="todo2"><div class="was">${kundeKopf(b,b.betrag,b.faellig_am)}</div><div class="tu">${kontaktKnoepfe({telefon:b.telefon,email:b.email})}</div><div class="warum">${kundeKlein(b.kurs,b.start?"ab "+dt(b.start):"",b.rechnungsnummer)}</div></div>`).join("")}); }
   return L.sort((a,b)=>a.p-b.p);
 }
 function renderHeute(){
@@ -2440,7 +2627,7 @@ function renderHeute(){
     : '<div class="tile"><div class="tnleer">Keine kommenden Kurstermine. <button class="linkbtn" data-plusgo="orte">Kurs anlegen</button></div></div>';
   const L=zuErledigen();
   $("hTodoN").textContent = L.length? L.length+" offen" : "";
-  $("hTodo").innerHTML = L.length ? L.slice(0,10).map(x=>`<div class="todo2"><div class="was">${esc(x.was)}</div><div class="tu">${x.tu}</div><div class="warum">${esc(x.warum)}</div></div>${x.extra?`<div class="zkliste" ${ZK_AUF?"":"hidden"} style="padding-left:12px;border-left:3px solid var(--sand)">${x.extra}</div>`:""}`).join("")+(L.length>10?`<div class="tiny" style="margin-top:8px">und ${L.length-10} weitere</div>`:"")
+  $("hTodo").innerHTML = L.length ? L.slice(0,10).map(x=>`<div class="todo2"><div class="was">${x.wasHtml||esc(x.was)}</div><div class="tu">${x.tu}</div><div class="warum">${esc(x.warum)}</div></div>${x.extra?`<div class="zkliste" ${ZK_AUF?"":"hidden"} style="padding-left:12px;border-left:3px solid var(--sand)">${x.extra}</div>`:""}`).join("")+(L.length>10?`<div class="tiny" style="margin-top:8px">und ${L.length-10} weitere</div>`:"")
     : '<div class="allesgut">Alles Wichtige erledigt 🌿</div>';
   const bh=$("badgeH"); if(bh){ const n=L.filter(x=>x.p<=1).length; bh.textContent=n; bh.hidden=!n; }
   const grenze=Date.now()-7*864e5;
@@ -2452,8 +2639,8 @@ function renderHeute(){
 $("hRefresh").addEventListener("click",()=>{ if(!SB.s){ toast("Bitte zuerst anmelden"); return; } SB.live().then(()=>toast("Aktualisiert")).catch(e=>SB.fail(e)); });
 document.addEventListener("click",async e=>{
   const r=e.target.closest("[data-hre]");
-  if(r){ if(!SB.istOwner()) return; if(r.dataset.c!=="1"){ r.dataset.c="1"; r.textContent=`Sicher? ${eurc(Number(r.dataset.betrag))}`; return; }
-    r.disabled=true; try{ await SB.rpc("cockpit_rechnung_anstossen",{p_booking_id:r.dataset.hre,p_betrag:Number(r.dataset.betrag),p_notiz:null}); toastLang("Rechnung vorbereitet. Der Entwurf liegt nach dem nächsten Rechnungslauf im Postfach."); await SB.live(); }catch(err){ toast(err.message); r.disabled=false; } return; }
+  if(r){ if(!SB.istOwner()) return; const bt=Number(r.dataset.betrag);
+    await belegErstellen(r,$("hreziel-"+r.dataset.hre),{booking_id:r.dataset.hre,art:"rechnung",betrag:bt},`Rechnung erstellen (${eurc(bt)})`); return; }
   if(e.target.closest("[data-zkauf]")){ ZK_AUF=!ZK_AUF; renderHeute(); return; }
   const t=e.target.closest("[data-terl]");
   if(t){ t.disabled=true; try{ await todoPatch(t.dataset.terl,{status:"erledigt"}); toast("Erledigt"); renderHeute(); }catch(err){ toast(err.message); t.disabled=false; } return; }
@@ -2468,7 +2655,7 @@ function plusHwWeg(){ try{ localStorage.setItem(PLUS_HW,"1"); }catch(e){} docume
 document.addEventListener("click",e=>{ if(e.target.closest("[data-plusauf],[data-plushwzu]")) plusHwWeg(); },true);
 plusHwZeigen();
 const PLUS={ letzter:null, ausTaste:false,
-  auf(ausTaste){ if(!$("sxSheet").hidden) SX.zu(true);
+  auf(ausTaste){ plusHwWeg(); if(!$("sxSheet").hidden) SX.zu(true);
     this.letzter=document.activeElement; const sh=$("plusSheet"), kt=sh.querySelector(".sh-karte"), dk=matchMedia("(min-width:821px)").matches;
     const own=SB.istOwner&&SB.istOwner(); sh.querySelector(".sh-gross").classList.toggle("einzeln",!own); $("plusSatz").hidden=!!own;
     sh.classList.toggle("pop",dk); sh.hidden=false;
@@ -2598,7 +2785,7 @@ document.addEventListener("click",e=>{ const b=e.target.closest("[data-aendern]"
   $("aeAnzMehr").value = AE.anz>3?AE.anz:""; $("aePreis").value = t.preis_vereinbart!=null?Number(t.preis_vereinbart).toFixed(2):""; $("aeGrund").value=t.preis_hinweis||"";
   $("aePreis").placeholder = k.preis!=null? `Standard ${eurc(Number(k.preis)*AE.anz)}` : "kein Standardpreis";
   $("aeRech").textContent = t.rechnungsnummer ? `Rechnung ${t.rechnungsnummer}: Ändert sich der Betrag, wird sie unter derselben Nummer neu als Entwurf abgelegt. Ist sie schon verschickt, besser Gutschrift statt neuer Fassung.` : t.re_status==="uebersprungen" ? "Bisher ohne Rechnung." : t.re_status ? "Rechnung ist in Vorbereitung, der Betrag wird angepasst." : "Noch keine Rechnung.";
-  $("aeNach").hidden = !(t.re_status==="uebersprungen" && !t.rechnungsnummer && t.email);
+  $("aeNach").hidden = !(t.re_status==="uebersprungen" && !t.rechnungsnummer && t.email); $("aeNach").disabled=false; $("aeNach").dataset.c=""; $("aeNach").textContent="Rechnung jetzt erstellen"; $("aeNachZiel").innerHTML="";
   $("aeStHinweis").textContent=stornoHinweis(k); $("aeStGrund").value=""; $("aeFehler").innerHTML=""; $("aeStorno").dataset.c=""; $("aeStorno").textContent="Stornieren";
   aeZeichnen(); $("aeModal").hidden=false; });
 $("aeAnz").addEventListener("click",e=>{ const b=e.target.closest("[data-anz]"); if(!b) return; AE.anz=Number(b.dataset.anz); $("aeAnzMehr").value=""; aeZeichnen(); });
@@ -2614,9 +2801,9 @@ $("aeGo").addEventListener("click",async()=>{
     toastLang(`Gespeichert: ${kinderText(n)}. ${r.belegt} von ${r.max} Plätzen belegt.${info}`); await SB.live(); }
   catch(err){ const m=String(err.message||err); if(/Nicht genug Plaetze/.test(m)){ AE.ueber=true; $("aeFehler").innerHTML=`<div class="fehlerbox">${esc(m.replace("Plaetze","Plätze"))}. Nochmal tippen speichert trotzdem (überbucht).</div>`; b.dataset.c="1"; b.textContent="Trotzdem speichern"; } else { $("aeFehler").innerHTML=`<div class="fehlerbox">${esc(m)}</div>`; b.dataset.c=""; b.textContent="Speichern"; } }
   b.disabled=false; });
-$("aeNach").addEventListener("click",async()=>{ const b=$("aeNach"); if(!SB.istOwner()) return; if(b.dataset.c!=="1"){ b.dataset.c="1"; b.textContent="Sicher? Rechnung vorbereiten"; return; } b.disabled=true;
-  try{ const r=await SB.rpc("cockpit_rechnung_nachholen",{p_booking:AE.id}); $("aeModal").hidden=true; toastLang(`Rechnung über ${eurc(r.preis)} vorbereitet, Entwurf folgt im nächsten Rechnungslauf.`); await SB.live(); }
-  catch(err){ $("aeFehler").innerHTML=`<div class="fehlerbox">${esc(err.message)}</div>`; } b.disabled=false; b.dataset.c=""; b.textContent="Rechnung jetzt vorbereiten"; });
+$("aeNach").addEventListener("click",async()=>{ const b=$("aeNach"); if(!SB.istOwner()) return;
+  await belegErstellen(b,$("aeNachZiel"),{booking_id:AE.id,art:"rechnung"},"Rechnung jetzt erstellen");
+  if(b.disabled && $("aeNachZiel").querySelector(".beleg-ok")) b.hidden=true; });
 $("aeStorno").addEventListener("click",async()=>{ const b=$("aeStorno"), g=$("aeStGrund").value.trim();
   if(!g){ $("aeFehler").innerHTML='<div class="fehlerbox">Bitte einen Grund für das Storno eintragen.</div>'; return; }
   if(b.dataset.c!=="1"){ b.dataset.c="1"; b.textContent="Wirklich stornieren? Plätze werden frei"; return; } b.disabled=true;
@@ -2650,10 +2837,10 @@ function plusTage(d,n){ const x=new Date(d+"T12:00:00"); x.setDate(x.getDate()+n
 function zahlStatus(x){
   const b=(BUCH||[]).find(z=>z.id===x.id)||x, nr=b.rechnungsnummer||x.rechnungsnummer, st=b.re_status||x.re_status;
   if(x.bezahlt===true||b.bezahlt_am) return {cls:"ok",txt:"bezahlt ✓"};
-  if(b.rechnung_storniert_am) return {cls:"grau",txt:"Rechnung storniert"};
+  if(b.rechnung_storniert_am||st==="storniert") return {cls:"grau",txt:"Rechnung storniert"};
   if(st==="fehler") return {cls:"rot",txt:"Rechnung hängt"};
   if(nr) return (b.faellig_am&&b.faellig_am<heuteBerlin())? {cls:"rot",txt:"Rechnung gestellt, Zahlung fehlt\u00a0noch"} : {cls:"offen",txt:"Rechnung offen"};
-  if(["neu","julia_gefragt","julia_bestaetigt","rechnung_erstellt","entwurf_abgelegt"].includes(st)) return {cls:"offen",txt:"Rechnung in Arbeit"};
+  if(["entwurf","neu","julia_gefragt","julia_bestaetigt","rechnung_erstellt","entwurf_abgelegt"].includes(st)) return {cls:"grau",txt:"Rechnung in Arbeit"};
   return {cls:"grau",txt:"noch keine Rechnung"};
 }
 function plural(n,ein,mehr){ n=Number(n)||0; return n+" "+(n===1?ein:mehr); }
@@ -2666,10 +2853,10 @@ function kinderZeile(t,termin){ const n=Number(t.anzahl)||1, a=n===1?alterAm(t,t
 function tnFinden(id){ let r=null; (TN||[]).forEach(k=>(k.teilnehmer||[]).forEach(t=>{ if(String(t.id)===String(id)) r={k,t}; })); return r; }
 function anwNaechster(t,termin){ const v=(t.anwesenheit||{})[termin]; return (v==null||v===0)? (Number(t.anzahl)||1) : null; }
 
-/* Toast mit Rückgängig (5 s) */
-function toastRueck(text,rueck){ const el=$("toast"); el.innerHTML=`<span>${esc(text)}</span><button class="tbtn" type="button">Rückgängig</button>`; el.classList.add("show","mitknopf");
+/* Toast mit Rückgängig (Standard 5 s, Entscheidungen 10 s) */
+function toastRueck(text,rueck,ms){ const el=$("toast"); el.innerHTML=`<span>${esc(text)}</span><button class="tbtn" type="button">Rückgängig</button>`; el.classList.add("show","mitknopf");
   clearTimeout(toast._t); el.querySelector(".tbtn").onclick=()=>{ el.classList.remove("show","mitknopf"); rueck&&rueck(); };
-  toast._t=setTimeout(()=>el.classList.remove("show","mitknopf"),5000); }
+  el.setAttribute("role","status"); toast._t=setTimeout(()=>el.classList.remove("show","mitknopf"),ms||5000); }
 
 /* Sheets: eins zur Zeit, Zurück-Taste schließt */
 const BLATT={ign:false,warte:false,
@@ -2680,6 +2867,9 @@ const SX={letzter:null,
     if($("sxSheet").hidden) this.letzter=document.activeElement;
     $("sxTitel").textContent=titel; $("sxMeta").textContent=o.meta||""; $("sxMeta").hidden=!o.meta; $("sxInhalt").innerHTML=html;
     const war=!$("sxSheet").hidden; $("sxSheet").hidden=false; if(!war) BLATT.auf();
+    const kt=$("sxSheet").querySelector(".sh-karte"), pop=!!(o.anker&&matchMedia("(min-width:821px)").matches); $("sxSheet").classList.toggle("pop",pop);
+    if(pop){ const r=o.anker.getBoundingClientRect(), b=Math.min(360,innerWidth-32), l=Math.max(16,Math.min(r.right-b,innerWidth-b-16)), h=kt.offsetHeight||400;
+      kt.style.left=Math.round(l)+"px"; kt.style.top=Math.round(r.bottom+8+h>innerHeight-16?Math.max(16,r.top-8-h):r.bottom+8)+"px"; } else { kt.style.left=""; kt.style.top=""; }
     setTimeout(()=>{ const f=o.fokus&&$("sxSheet").querySelector(o.fokus); (f||$("sxSheet").querySelector(".sh-karte")).focus({preventScroll:true}); },30); },
   zu(ausHistory){ if($("sxSheet").hidden) return; $("sxSheet").hidden=true; if(!ausHistory) BLATT.zu();
     if(this.letzter&&document.contains(this.letzter)&&this.letzter.focus) this.letzter.focus({preventScroll:true}); }
@@ -2788,7 +2978,7 @@ function renderHeute(){
     : `<div class="leer-k"><p>Heute keine Kurse.${nx?` Nächster Kurs: ${esc(wannText(nx.d))}${nx.k.zeit?", "+esc(nx.k.zeit):""}, ${esc(nx.k.kurs||"Kurs")}.`:""}</p><button class="btn sek" data-go="teilnehmer">Alle Kurse</button></div>`;
   const L=zuErledigen();
   $("hTodoN").textContent = L.length? L.length+" offen" : "";
-  $("hTodo").innerHTML = L.length ? L.slice(0,6).map(x=>`<div class="todo2"><div class="was">${esc(x.was)}</div><div class="tu">${x.tu}</div><div class="warum">${esc(x.warum)}</div></div>${x.extra?`<div class="zkliste" ${ZK_AUF?"":"hidden"} style="padding-left:12px;border-left:3px solid var(--sand)">${x.extra}</div>`:""}`).join("")
+  $("hTodo").innerHTML = L.length ? L.slice(0,6).map(x=>`<div class="todo2"><div class="was">${x.wasHtml||esc(x.was)}</div><div class="tu">${x.tu}</div><div class="warum">${esc(x.warum)}</div></div>${x.extra?`<div class="zkliste" ${ZK_AUF?"":"hidden"} style="padding-left:12px;border-left:3px solid var(--sand)">${x.extra}</div>`:""}`).join("")
     : '<div class="leer">Alles Wichtige erledigt.</div>';
   const bh=$("badgeH"); if(bh){ const n=L.filter(x=>x.p<=1).length; bh.textContent=n; bh.hidden=!n; }
   const grenze=Date.now()-7*864e5, neu=(BUCH||[]).filter(b=>!b.test&&b.status==="confirmed"&&new Date(b.gebucht_am).getTime()>=grenze).slice(0,8);
@@ -2820,12 +3010,15 @@ function tdGefiltert(){ const ich=ichPerson(), L=todoList();
 let FG=[], FG_STAND="?";
 async function ladeFreigaben(){ if(!SB.s) return; const r=await KP.freigaben({limit:100}); FG_STAND=r.ok?"da":r.art; FG=r.ok?(r.daten||[]):[]; renderTodos(); }
 function fgKarte(f){ const tay=ichPerson()==="Tay", seit=f.angefragt_am?tagKurz(String(f.angefragt_am).slice(0,10)):"";
+  /* gehört zu einem Punkt in Entscheidungen: dort freigeben, hier nur Hinweis (ein Vorgang, keine doppelte Freigabe) */
+  if(typeof ENT!=="undefined"&&ENT&&ENT.hatFreigabe(f.id)) return `<div class="fgk"><div class="et">FREIGABE · IN ENTSCHEIDUNGEN</div><div class="ti">${esc(f.titel||"Entwurf")}</div><div class="me">wird unter Planung › Entscheidungen freigegeben${seit?" · seit "+esc(seit):""}</div>
+    <div class="kn"><span class="stp offen" style="flex:1"><i></i>in Entscheidungen</span><button class="btn sek" data-go="entscheidungen">Ansehen ›</button></div></div>`;
   return `<div class="fgk"><div class="et">FREIGABE · TAY ENTSCHEIDET</div><div class="ti">${esc(f.titel||"Entwurf")}</div><div class="me">vom Helferlein vorbereitet${seit?" · seit "+esc(seit):""}</div>
     <div class="kn">${tay?`<button class="btn primary" data-fgok="${esc(f.id)}">Freigeben</button><button class="btn sek" data-fgsee="${esc(f.id)}">Ansehen</button>`:`<button class="btn sek" data-fgsee="${esc(f.id)}">Ansehen</button><span class="stp offen" style="flex:1;justify-content:center"><i></i>wartet auf Tay</span>`}</div></div>`; }
 function renderTodos(){
   const sek=$("aufgaben"); if(!sek||!$("td3Liste")) return;
   const ich=ichPerson(), L=todoList(), wart=FG.filter(f=>f.status==="wartet");
-  $("td3Seg").innerHTML=`<button data-td3seg="aufgaben" aria-pressed="${TD3.seg==="aufgaben"}">Aufgaben · ${L.filter(x=>istOffen3(x)&&KP.personVon(x)===ich).length}</button><button data-td3seg="freigaben" aria-pressed="${TD3.seg==="freigaben"}">Freigaben · ${wart.length}</button>`;
+  $("td3Seg").innerHTML=`<button data-td3seg="aufgaben" aria-pressed="${TD3.seg==="aufgaben"}">Aufgaben · ${L.filter(x=>istOffen3(x)&&KP.personVon(x)===ich).length}</button><button data-td3seg="freigaben" aria-pressed="${TD3.seg==="freigaben"}">Freigaben · ${wart.filter(f=>!(typeof ENT!=="undefined"&&ENT&&ENT.hatFreigabe(f.id))).length}</button>`;
   const F=[["meine","Meine"],["alle","Alle"],[andere().toLowerCase(),andere()],["helferlein","Helferlein"]];
   if(!F.some(f=>f[0]===TD3.filter)) TD3.filter="meine";
   $("td3Filter").hidden=TD3.seg!=="aufgaben";
@@ -2984,7 +3177,7 @@ function renderGeld(){ const el=$("geldNeu"); if(!el) return;
     .map(([w,z,d,c])=>`<div class="tile"><div class="w">${esc(w)}</div><div class="z ${c}">${z}</div><div class="d">${d}</div></div>`).join("");
   const P=GELD.o.ok?(GELD.o.daten||[]):[];
   $("geldP").innerHTML=!GELD.o.ok?'<div class="leer">Offene Posten gerade nicht erreichbar.</div>'
-    : P.length? P.map(x=>`<div class="gp"><div><div class="k">${esc(x.kurs||"Kurs")} · ${esc(x.zahler_kuerzel||"")}</div><div class="d">${esc(x.rechnungsnummer||"")}${x.faellig_am?" · fällig "+esc(tagKurz(x.faellig_am)):""}</div>${stHtml(x.ueberfaellig?{cls:"rot",txt:`Rechnung gestellt, Zahlung fehlt noch · seit ${x.tage_ueberfaellig} Tagen`}:{cls:"offen",txt:"Rechnung offen"})}</div><div class="b">${eurc(x.offen)}</div></div>`).join("")
+    : P.length? P.map(x=>`<div class="kz">${kundeKopf(x,x.offen,x.faellig_am)}${kundeKlein(x.kurs,x.rechnungsnummer,Number(x.bezahlt)>0?"davon bezahlt "+eurc(x.bezahlt):"")}${stHtml(x.ueberfaellig?{cls:"rot",txt:"Rechnung gestellt, Zahlung fehlt noch"}:{cls:"offen",txt:"Rechnung offen"})}</div>`).join("")
     : '<div class="leer">Alle Rechnungen sind bezahlt.</div>';
   $("geldStand").textContent=K.stand?`Stand ${new Date(K.stand).toLocaleString("de-DE",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})} · Zahlungen aus dem N26-Abgleich`:""; }
 
@@ -3007,11 +3200,304 @@ renderNavi=function(){ _renderNavi0(); const A=ANSICHTEN[ansicht()], gross=A.meh
 document.addEventListener("click",e=>{ if(!e.target.closest("[data-ubmehr]")) return;
   SX.auf("Übersicht","",`<div class="sx-liste"><button data-go="plan" data-sxzu>Monatsplan<span class="mp">›</span></button><button data-go="nachtragen" data-sxzu>Zahlen eintragen<span class="mp">›</span></button></div>`); });
 
+/* ===== Entscheidungen v1 (nach 2026-11-02_Cockpit_Entscheidungen_v1_Yuna.md) =====
+   Daten: cockpit_entscheidungen_liste + cockpit_entscheidungen_fortschritt (Migration v3). Fehlt die Tabelle,
+   zeigt die Seite die bisherigen Entscheidungen aus dem Cockpit-Stand (D.entscheidungen) im neuen Aussehen.
+   „Okay“ wird erst nach 10 Sekunden gespeichert (Rückgängig). Das Cockpit sendet nie selbst etwas nach außen:
+   bei „Geht nach außen“ wird nur die Freigabe gesetzt, raus geht es über das Helferlein.
+   „Machen wir selbst“: keine Warteschlange, kein Webhook; Anleitung, Text zum Kopieren und Haken „Erledigt“. */
+var ENT=(()=>{
+  const BOTS=["gaia","sota","taro","yuna","haru","kaito","ryo","yuki","mei","riku","dara","ren"];
+  const botName=k=>!k?"":k==="gaia"?"GAIA":k[0].toUpperCase()+k.slice(1);
+  const KAT=["Outreach B2B","Kooperationen","Google Ads","Meta","Website","Bewertungen"];
+  const PERS={julia:"Julia",tay:"Tay",beide:"euch beide"};
+  const ART={mail:"Mail",post:"Post",anzeige:"Anzeige",nachricht:"Nachricht"};
+  const WARTE_MS=10000, QKEY=KEY+"-ent-warte", FKEY=KEY+"-ent-filter";
+  const S={stand:"start",liste:[],fort:null,zeit:null,kat:null,auf:{},anl:{},warte:new Map(),queue:[],erlAuf:false};
+  try{ S.queue=JSON.parse(localStorage.getItem(QKEY)||"[]"); if(!Array.isArray(S.queue)) S.queue=[]; }catch(e){ S.queue=[]; }
+  let filter="mich"; try{ filter=localStorage.getItem(FKEY)==="alle"?"alle":"mich"; }catch(e){}
+  const qSichern=()=>{ try{ localStorage.setItem(QKEY,JSON.stringify(S.queue)); }catch(e){} };
+  const uuid=()=>(crypto.randomUUID?crypto.randomUUID():"10000000-1000-4000-8000-100000000000".replace(/[018]/g,c=>(c^crypto.getRandomValues(new Uint8Array(1))[0]&15>>c/4).toString(16)));
+  const test=()=>SB.rolle==="test";
+  const darf=()=>S.stand==="alt"||(SB.istOwner&&SB.istOwner())||test();
+  const ich=()=>String(ichPerson()||"").toLowerCase();
+  const andere=()=>ich()==="julia"?"Tay":"Julia";
+  const tagKurz=d=>new Intl.DateTimeFormat("de-DE",{weekday:"short",day:"numeric",month:"short",timeZone:"Europe/Berlin"}).format(new Date(d+"T12:00:00"));
+  const uhr=ts=>{ if(!ts) return ""; const d=new Date(ts), h=new Intl.DateTimeFormat("de-DE",{timeZone:"Europe/Berlin",hour:"2-digit",minute:"2-digit"}).format(d);
+    return ymdBerlin(d)===heuteBerlin()?h:`${new Intl.DateTimeFormat("de-DE",{timeZone:"Europe/Berlin",day:"2-digit",month:"2-digit"}).format(d)} ${h}`; };
+  const plusTage=n=>{ const d=new Date(heuteBerlin()+"T12:00:00"); d.setDate(d.getDate()+n); return ymdBerlin(d); };
+  const projName=p=>/\s/.test(p)||/^projekt\b/i.test(p)?p:"Projekt "+p;
+
+  /* Bisheriger Stand (ohne Tabelle): gleiche Form wie die RPC */
+  function ausAlt(){ return (D.entscheidungen||[]).map((e,i)=>({id:"alt:"+i,alt:i,projekt:"Bisherige Entscheidungen",kategorie:e.src||"Allgemein",kategorie_reihenfolge:99,
+    titel:e.q||"",warum:e.notiz||"",fuer_wen:"beide",extern:false,status:e.a==="ja"?"okay":e.a==="nein"?"nein":"offen",ausfuehrung:"team",
+    weiter_an:e.fuer?String(e.fuer).toLowerCase():null,entschieden_am:e.datum&&e.a!=="offen"?e.datum+"T12:00:00":null,entschieden_von:null,reihenfolge:i})).filter(x=>x.titel); }
+  function roh(){ return S.stand==="alt"?ausAlt():S.liste; }
+  /* Wert mit allem, was lokal schon entschieden, aber noch nicht gespeichert ist (Rückgängig-Zeit, Warteschlange offline) */
+  function wert(e){ const w=S.warte.get(e.id); if(w) return {...e,...w.neu,_warte:true};
+    const q=S.queue.find(x=>x.id===e.id); if(q) return {...e,...q.neu,_queue:true}; return e; }
+  const istErl=e=>e.status==="nein"||(e.status==="okay"&&(e.ausfuehrung==="team"||!!e.erledigt_am));
+  const fuerMich=e=>!ich()||e.fuer_wen==="beide"||e.fuer_wen===ich();
+  /* wartet jetzt auf eine Antwort (nicht: „Änderung gewünscht“, „später“ vor dem Datum) */
+  const wartet=e=>!istErl(e)&&e.status!=="aendern"&&!(e.status==="spaeter"&&e.spaeter_bis&&e.spaeter_bis>heuteBerlin());
+  const alle=()=>roh().map(wert);
+  const zahl=m=>alle().filter(e=>wartet(e)&&(!m||fuerMich(e))).length;
+
+  /* Fortschritt je Projekt/Kategorie: Server-Zahlen (alle Punkte) plus lokale, noch nicht gespeicherte Änderungen */
+  function gruppen(){ const L=alle(), G=new Map();
+    const g=(p,k,r)=>{ const key=p+"\u0001"+k; if(!G.has(key)) G.set(key,{projekt:p,kategorie:k,r:r??99,gesamt:0,erledigt:0,items:[]}); return G.get(key); };
+    if(S.stand!=="alt"&&S.fort){ S.fort.forEach(f=>{ const x=g(f.projekt,f.kategorie,f.kategorie_reihenfolge); x.gesamt=+f.gesamt||0; x.erledigt=+f.erledigt||0; });
+      L.forEach(e=>{ const x=g(e.projekt,e.kategorie,e.kategorie_reihenfolge); x.items.push(e); const o=roh().find(z=>z.id===e.id);
+        if(!S.fort.some(f=>f.projekt===e.projekt&&f.kategorie===e.kategorie)){ x.gesamt++; if(istErl(e)) x.erledigt++; }
+        else if(o&&istErl(e)!==istErl(o)) x.erledigt+=istErl(e)?1:-1; }); }
+    else L.forEach(e=>{ const x=g(e.projekt,e.kategorie,e.kategorie_reihenfolge); x.items.push(e); x.gesamt++; if(istErl(e)) x.erledigt++; });
+    const ord=x=>{ const i=KAT.indexOf(x.kategorie); return [x.r,i<0?99:i]; };
+    const kats=[...G.values()].filter(x=>x.gesamt>0).sort((a,b)=>{ const A=ord(a),B=ord(b); return A[0]-B[0]||A[1]-B[1]||a.kategorie.localeCompare(b.kategorie,"de"); });
+    const P=new Map(); kats.forEach(k=>{ if(!P.has(k.projekt)) P.set(k.projekt,{projekt:k.projekt,kats:[],gesamt:0,erledigt:0}); const p=P.get(k.projekt); p.kats.push(k); p.gesamt+=k.gesamt; p.erledigt+=k.erledigt; });
+    const projekte=[...P.values()].sort((a,b)=>zahlIn(b,true)-zahlIn(a,true)||a.projekt.localeCompare(b.projekt,"de"));
+    return projekte; }
+  const zahlIn=(p,m)=>(p.kats||[p]).reduce((s,k)=>s+k.items.filter(e=>wartet(e)&&(!m||fuerMich(e))).length,0);
+  const kKey=k=>k.projekt+"\u0001"+k.kategorie;
+
+  function balken(x,y,label,klein){ const p=y?Math.round(100*x/y):100;
+    return `<div class="ent-bar${klein?" klein":""}" role="progressbar" aria-valuemin="0" aria-valuemax="${y}" aria-valuenow="${x}" aria-label="${esc(label)}: ${x} von ${y} erledigt"><span style="width:${p}%"></span></div>`; }
+  const fuerText=e=>e.fuer_wen==="beide"?"beide":PERS[e.fuer_wen]||"beide";
+
+  /* ----- Bausteine ----- */
+  function projKachel(p){ const n=zahlIn(p,filter==="mich");
+    return `<div class="tile ent-proj"><h2>${esc(projName(p.projekt))}</h2>${balken(p.erledigt,p.gesamt,projName(p.projekt))}
+      <div class="zahl"><b class="num">${p.erledigt} von ${p.gesamt}</b> erledigt${n?` · <b class="num">${n}</b> ${filter==="mich"?(n===1?"wartet auf dich":"warten auf dich"):(n===1?"wartet auf euch":"warten auf euch")}`:""}</div></div>`; }
+  function katListe(p,sel){ return `<div class="ent-kats">${p.kats.map(k=>{ const n=k.items.filter(e=>wartet(e)&&fuerMich(e)).length;
+      const nx=k.items.filter(e=>wartet(e)&&(filter==="alle"||fuerMich(e))).sort(sortOffen)[0]||k.items.filter(wartet).sort(sortOffen)[0]; const fertig=k.erledigt>=k.gesamt;
+      const beiAnd=nx&&!fuerMich(nx)?` bei ${andere()}`:"";
+      const me=fertig?"Alles entschieden ✓":(n?`<b>${n} für dich</b>`:"")+(nx?`${n?" · ":""}als Nächstes${beiAnd}: ${esc(nx.titel)}`:(n?"":"wartet gerade auf eine Antwort vom Team"));
+      return `<button type="button" class="ent-kat${sel===kKey(k)?" sel":""}${fertig?" fertig":""}" data-entkat="${esc(kKey(k))}" aria-label="${esc(k.kategorie)}, ${k.erledigt} von ${k.gesamt} erledigt${n?`, ${n} für dich`:""}"${sel===kKey(k)?' aria-current="true"':""}><b>${esc(k.kategorie)}</b><span class="xy num">${k.erledigt} von ${k.gesamt}</span><span class="mp" aria-hidden="true">›</span>${balken(k.erledigt,k.gesamt,k.kategorie,true)}<span class="me">${me}</span></button>`; }).join("")}</div>`; }
+  function sortOffen(a,b){ const s=e=>e.status==="aendern"?3:(e.status==="spaeter"&&e.spaeter_bis>heuteBerlin())?2:0;
+    return s(a)-s(b)||(a.spaeter_bis||"").localeCompare(b.spaeter_bis||"")||(a.reihenfolge??100)-(b.reihenfolge??100)||String(a.titel).localeCompare(String(b.titel),"de"); }
+  const offline=()=>navigator.onLine===false;
+  function statusZeile(e){
+    if(e._queue) return `<span class="stp offen"><i></i>wird gesendet, sobald Verbindung da ist</span>`;
+    if(e.status==="aendern") return `<span class="stp offen"><i></i>Änderung gewünscht${e.weiter_an?` · an ${esc(botName(e.weiter_an))}`:""}</span>`;
+    if(e.status==="spaeter"&&e.spaeter_bis) return `<span class="stp grau"><i></i>später · ab ${esc(tagKurz(e.spaeter_bis))}</span>`;
+    if(e.status==="okay"&&e.ausfuehrung==="selbst"&&!e.erledigt_am) return `<span class="stp offen"><i></i>okay, noch nicht erledigt</span>`;
+    if(e.neue_fassung>0&&e.status==="offen") return `<span class="stp offen"><i></i>neue Fassung</span>`;
+    return ""; }
+  const mehrKnopf=e=>`<button type="button" class="ibtn rahmen" data-entmehr="${esc(e.id)}" aria-label="Mehr zu „${esc(e.titel)}“: Später, Ändern, Nein">⋯</button>`;
+  function wieSchalter(e){ if(e.extern||S.stand==="alt"||!darf()) return "";
+    return `<div class="seg2 ent-wie" role="group" aria-label="Wer macht es: ${esc(e.titel)}"><button type="button" data-entwie="selbst" data-id="${esc(e.id)}" aria-pressed="${e.ausfuehrung==="selbst"}">Machen wir selbst</button><button type="button" data-entwie="team" data-id="${esc(e.id)}" aria-pressed="${e.ausfuehrung==="team"}">Team</button></div>`; }
+  function anleitung(e){ const auf=!!S.anl[e.id], id="entanl-"+String(e.id).replace(/[^a-z0-9-]/gi,"");
+    const zeilen=String(e.anleitung||"").split(/\n+/).map(z=>z.replace(/^\s*\d+[.)]\s*/,"").trim()).filter(Boolean);
+    const inhalt=(zeilen.length?`<ol class="ent-schritte">${zeilen.map(z=>`<li>${esc(z)}</li>`).join("")}</ol>`:`<div class="sx-hint">Für diesen Punkt gibt es noch keine Schritt-für-Schritt-Anleitung. Ihr erledigt ihn selbst und setzt danach den Haken.</div>`)
+      +(e.kopiertext?`<div class="ent-lbl">Text zum Kopieren</div><div class="ent-text">${esc(e.kopiertext)}</div><div class="kn"><button type="button" class="btn sek" data-entkopie="${esc(e.id)}">Text kopieren</button></div>`:"");
+    return `<button type="button" class="ent-mehrtext" data-entanl="${esc(e.id)}" aria-expanded="${auf}" aria-controls="${id}">${auf?"Anleitung zuklappen ▴":"So geht’s ▾"}</button><div class="ent-anl" id="${id}"${auf?"":" hidden"}>${inhalt}</div>`; }
+  function punkt(e){ const selbst=e.ausfuehrung==="selbst";
+    let haupt="";
+    if(!darf()) haupt=`<span class="stp grau"><i></i>entscheiden Julia und Tay</span>`;
+    else if(e.status==="aendern") haupt="";
+    else if(selbst) haupt=`<button type="button" class="btn primary" role="checkbox" aria-checked="false" data-enterl="${esc(e.id)}" aria-label="Erledigt: ${esc(e.titel)}">Erledigt ✓</button>`;
+    else haupt=`<button type="button" class="btn primary" data-entok="${esc(e.id)}" aria-label="Okay: ${esc(e.titel)}">Okay</button>`;
+    const meta=[`für ${esc(fuerText(e))}`, e.warum?`Warum: ${esc(e.warum)}`:"", !selbst&&e.weiter_an&&e.status!=="aendern"?`Ergebnis geht an ${esc(botName(e.weiter_an))}`:""].filter(Boolean).join(" · ");
+    return `<div class="ent-p" data-entid="${esc(e.id)}"><span class="tdk" aria-hidden="true"><i></i></span><div class="inh"><span class="ti">${esc(e.titel)}</span><span class="me">${meta}</span>${statusZeile(e)}
+      ${selbst&&darf()?anleitung(e):""}${wieSchalter(e)}<div class="kn">${haupt}${darf()?mehrKnopf(e):""}</div></div></div>`; }
+  function extKarte(e){ const art=ART[e.art]||"Mail", artZ=art+(e.kanal?" · "+esc(e.kanal):""), auf=!!S.auf[e.id], tid="enttx-"+String(e.id).replace(/[^a-z0-9-]/gi,"");
+    const fehlt=!String(e.text||"").trim()||!String(e.empfaenger||"").trim()||(e.art==="mail"&&!String(e.betreff||"").trim());
+    const knopfText=e.art==="post"||e.art==="anzeige"?"Okay, so veröffentlichen":"Okay, so senden";
+    let haupt;
+    if(!darf()) haupt=`<span class="stp grau"><i></i>entscheiden Julia und Tay</span>`;
+    else if(e.status==="aendern") haupt="";
+    else if(fehlt) haupt=`<span class="stp rot"><i></i>Text fehlt noch</span>`;
+    else if(offline()) haupt=`<button type="button" class="btn primary" disabled aria-disabled="true">${knopfText}</button><span class="stp grau"><i></i>Nur mit Verbindung</span>`;
+    else haupt=`<button type="button" class="btn primary" data-entok="${esc(e.id)}" aria-label="${knopfText}: ${esc(e.titel)}">${knopfText}</button>`;
+    return `<div class="ent-ext" data-entid="${esc(e.id)}"><div class="et">Geht nach außen · ${artZ}</div><div class="ti">${esc(e.titel)}</div>
+      <dl>${e.empfaenger?`<dt>An</dt><dd>${esc(e.empfaenger)}${e.empfaenger_adresse?`<br><span class="tiny">${esc(e.empfaenger_adresse)}</span>`:""}</dd>`:""}${e.art==="mail"&&e.betreff?`<dt>Betreff</dt><dd>${esc(e.betreff)}</dd>`:""}</dl>
+      ${e.text?`<div class="ent-text"><div class="${auf?"":"zu"}" id="${tid}">${esc(e.text)}</div></div><button type="button" class="ent-mehrtext" data-enttext="${esc(e.id)}" aria-expanded="${auf}" aria-controls="${tid}">${auf?"Weniger zeigen ▴":"Ganzen Text zeigen ▾"}</button>`:""}
+      ${statusZeile(e)}
+      <div class="kn">${haupt}${darf()?mehrKnopf(e):""}</div>
+      <div class="fuer">für ${esc(fuerText(e))} · gesendet wird erst nach dem Okay, 10 Sekunden lang rückgängig</div></div>`; }
+  function erlZeile(e){ const nein=e.status==="nein", wer=e.entschieden_von, z=uhr(e.erledigt_am||e.entschieden_am);
+    const teile=[nein?"abgelehnt":e.ausfuehrung==="selbst"?`selbst erledigt${e.erledigt_von?` von ${esc(e.erledigt_von)}`:""}`:`okay${wer?` von ${esc(wer)}`:""}`];
+    if(z) teile[0]+=` · ${z}`;
+    if(e.extern&&!nein) teile.push(e.freigabe_status==="freigegeben"||!e.freigabe_status?"freigegeben, geht über das Helferlein raus":esc(e.freigabe_status));
+    if(!e.extern&&e.ausfuehrung==="team"&&e.weiter_an&&!nein) teile.push(`an ${esc(botName(e.weiter_an))} weitergegeben`);
+    const bis=e.zurueck_bis?new Date(e.zurueck_bis).getTime():(e.entschieden_am&&S.stand!=="alt"&&e.entschieden_von!=="Übernahme"?new Date(e.entschieden_am).getTime()+864e5:0);
+    const zurueck=!e.extern&&darf()&&!e._warte&&(S.stand==="alt"||bis>Date.now());
+    return `<div class="ent-p erl" data-entid="${esc(e.id)}"><span class="tdk" aria-hidden="true"${nein?"":' aria-checked="true"'}><i>${nein?"":"✓"}</i></span><div class="inh"><span class="ti">${esc(e.titel)}</span><span class="me">${teile.join(" · ")}</span>${zurueck?`<button type="button" class="ent-mehrtext" data-entzurueck="${esc(e.id)}">Zurück auf offen</button>`:""}</div></div>`; }
+
+  function katInhalt(k,mitZur){ const sicht=k.items.filter(e=>filter==="alle"||fuerMich(e));
+    const offen=sicht.filter(e=>!istErl(e)).sort(sortOffen), erl=sicht.filter(istErl).sort((a,b)=>String(b.erledigt_am||b.entschieden_am||"").localeCompare(String(a.erledigt_am||a.entschieden_am||"")));
+    let h=(mitZur?`<button type="button" class="ent-zur" data-entzur>‹ ${esc(projName(k.projekt))}</button>`:"")
+      +`<div class="${mitZur?"tile ":""}ent-proj"><div class="et">${esc(projName(k.projekt))}</div><h2 id="entKatT">${esc(k.kategorie)}</h2>${balken(k.erledigt,k.gesamt,k.kategorie)}<div class="zahl"><b class="num">${k.erledigt} von ${k.gesamt}</b> erledigt</div></div>`;
+    if(!offen.length){ const rest=k.items.filter(e=>!istErl(e)).length;
+      h+= filter==="mich"&&rest? `<div class="tile ent-leer"><b>Für dich ist hier nichts offen</b><span>Bei ${andere()} ${rest===1?"wartet noch 1 Punkt":`warten noch ${rest} Punkte`}.</span><div><button type="button" class="ent-mehrtext" data-entfilter="alle">Alle offenen zeigen</button></div></div>`
+        : `<div class="tile ent-leer"><b>Alles in dieser Kategorie entschieden ✓</b><span>Neue Punkte erscheinen hier, sobald etwas vorbereitet ist.</span></div>`; }
+    else { h+=`<div class="tdgrp">Offen · ${offen.length}</div>`; let tdl=[];
+      const zu=()=>{ if(tdl.length){ h+=`<div class="tdl" style="margin-bottom:12px">${tdl.join("")}</div>`; tdl=[]; } };
+      offen.forEach(e=>{ if(e.extern){ zu(); h+=extKarte(e); } else tdl.push(punkt(e)); }); zu(); }
+    if(erl.length) h+=`<details class="td-erl" data-enterl-auf${S.erlAuf?" open":""}><summary class="tdgrp">Erledigt · ${erl.length} ›</summary><div class="tdl">${erl.map(erlZeile).join("")}</div></details>`;
+    return h; }
+
+  function hinweise(){ let h="";
+    if(S.stand==="alt"&&SB.s) h+=`<div class="hinweis" role="status"><p>Die neue Entscheidungsliste ist noch nicht eingerichtet. Hier stehen die bisherigen Entscheidungen; „Okay“ speichert wie bisher im Cockpit.</p></div>`;
+    if(S.stand==="fehler"||S.stand==="fehler_alt") h+=`<div class="hinweis" role="alert"><p><b>Entscheidungen konnten nicht geladen werden.</b>${S.zeit?` Stand: ${uhr(S.zeit)}`:""}</p><button type="button" class="btn sek" data-entneu>Nochmal laden</button></div>`;
+    if(offline()) h+=`<div class="hinweis" role="status"><p>Keine Verbindung. „Okay“ bei internen Punkten wird gesendet, sobald Verbindung da ist. Was nach außen geht, braucht Verbindung.</p></div>`;
+    return h; }
+  function pills(){ return `<div class="pills ent-pills" role="group" aria-label="Welche Punkte"><button type="button" data-entfilter="mich" aria-pressed="${filter==="mich"}">Für mich · ${zahl(true)}</button><button type="button" data-entfilter="alle" aria-pressed="${filter==="alle"}">Alle offenen · ${zahl(false)}</button></div>`; }
+  function laedt(){ const p=`<div class="ent-platz"></div>`; return `<div class="ent-laden" aria-busy="true" aria-label="Entscheidungen werden geladen">${p}<div class="ent-platz kurz"></div>${p}${p}</div>`; }
+
+  function render(){ const box=$("entInhalt"); badges(); heuteZeile(); if(typeof renderTodos==="function"&&S._fgDirty){ S._fgDirty=false; try{ renderTodos(); }catch(e){} }
+    if(!box) return;
+    const fokus=document.activeElement&&box.contains(document.activeElement)?document.activeElement:null;
+    const fSel=fokus? ["data-entok","data-enterl","data-entkat","data-entfilter","data-entmehr","data-entanl","data-enttext","data-entwie"].map(a=>fokus.hasAttribute(a)?`[${a}="${CSS.escape(fokus.getAttribute(a))}"]`:null).find(Boolean):null;
+    if(S.stand==="start"||S.stand==="laden"){ box.innerHTML=hinweise()+laedt(); return; }
+    if(S.stand==="fehler"){ box.innerHTML=hinweise(); return; }
+    const P=gruppen(), breit=istBreit();
+    if(!P.length){ box.innerHTML=hinweise()+`<div class="tile ent-leer"><b>Alles entschieden ✓</b><span>Neue Punkte erscheinen hier, sobald etwas vorbereitet ist.</span></div>`; return; }
+    const kats=P.flatMap(p=>p.kats); let sel=S.kat&&kats.find(k=>kKey(k)===S.kat);
+    if(S.kat&&!sel) S.kat=null;
+    const nM=zahl(true), nA=zahl(false);
+    let leerMich="";
+    if(filter==="mich"&&!nM) leerMich= nA? `<div class="tile ent-leer"><b>Für dich ist nichts offen.</b><span>Bei ${andere()} ${nA===1?"wartet noch 1 Punkt":`warten noch ${nA} Punkte`}.</span><div><button type="button" class="ent-mehrtext" data-entfilter="alle">Alle offenen zeigen</button></div></div>`
+      : `<div class="tile ent-leer"><b>Alles entschieden ✓</b><span>Neue Punkte erscheinen hier, sobald etwas vorbereitet ist.</span></div>`;
+    else if(filter==="alle"&&!nA) leerMich=`<div class="tile ent-leer"><b>Alles entschieden ✓</b><span>Neue Punkte erscheinen hier, sobald etwas vorbereitet ist.</span></div>`;
+    const links=sel=>P.map(p=>projKachel(p)+`<div class="tdgrp">Kategorien · ${p.kats.length}</div>`+katListe(p,sel?kKey(sel):null)).join("");
+    if(breit){ if(!sel) sel=kats.find(k=>k.items.some(e=>wartet(e)&&fuerMich(e)))||kats.find(k=>k.items.some(e=>!istErl(e)))||kats[0];
+      box.innerHTML=hinweise()+pills()+`<div class="split"><div>${leerMich}${links(sel)}</div><div class="pane" aria-labelledby="entKatT">${katInhalt(sel,false)}</div></div>`; }
+    else box.innerHTML=hinweise()+(sel?katInhalt(sel,true):pills()+leerMich+links(null));
+    nachRender(box);
+    if(fSel){ const f=box.querySelector(fSel); if(f) f.focus({preventScroll:true}); else { const n=box.querySelector("[data-entok],[data-enterl]"); if(n) n.focus({preventScroll:true}); } } }
+  /* „Ganzen Text zeigen“ nur, wenn der Text wirklich länger als 3 Zeilen ist */
+  function nachRender(box){ box.querySelectorAll("[data-enttext]").forEach(b=>{ const t=$(b.getAttribute("aria-controls")); if(!t||!t.classList.contains("zu")) return; if(t.scrollHeight<=t.clientHeight+2) b.hidden=true; }); }
+
+  function badges(){ const n=zahl(true);
+    const bd=$("badgeDec"); if(bd){ bd.hidden=!n; bd.textContent=n; } return n; }
+  function heuteZeile(){ const el=$("hEnt"); if(!el) return; const n=(S.stand==="start"&&SB.s)?0:zahl(true);
+    el.hidden=!n; if(n) el.innerHTML=`<span class="grow"><b>${n} ${n===1?"Entscheidung wartet":"Entscheidungen warten"} auf dich</b><span class="tiny">Planung › Entscheidungen</span></span><span class="mp" aria-hidden="true">›</span>`; }
+
+  /* ----- Laden ----- */
+  async function laden(){ if(!SB.s){ S.stand="alt"; render(); return; }
+    if(S.stand==="start") { S.stand="laden"; render(); }
+    try{ const [l,f]=await Promise.all([SB.rpc("cockpit_entscheidungen_liste",{p_tage:60}),SB.rpc("cockpit_entscheidungen_fortschritt").catch(()=>null)]);
+      S.liste=Array.isArray(l)?l:[]; S.fort=Array.isArray(f)?f:null; S.stand="da"; S.zeit=new Date(); S._fgDirty=true; }
+    catch(e){ const a=KP.art(e); S.stand= a==="fehlt"?"alt" : (S.liste.length?"fehler_alt":"fehler"); }
+    render(); queueSenden(); }
+  function eintragSetzen(x){ if(!x||!x.id) return; const i=S.liste.findIndex(e=>e.id===x.id); if(i>=0) S.liste[i]=x; else S.liste.push(x); S._fgDirty=true; }
+
+  /* ----- Speichern ----- */
+  async function ausfuehren(a){
+    if(a.alt!==undefined){ const e=D.entscheidungen[a.alt]; if(!e) return {ok:false,meldung:"Nicht mehr da"};
+      if(a.status==="offen"){ e.a="offen"; delete e.datum; } else { e.a=a.status==="okay"?"ja":a.status==="nein"?"nein":e.a; e.datum=heuteBerlin(); }
+      if(a.kommentar) e.notiz=String(a.kommentar).slice(0,500);
+      save(); return {ok:true}; }
+    if(!SB.s) return {ok:false,art:"offline"};
+    try{ const d=await SB.rpc(a.fn,{...a.args,p_trocken:test()}); return {ok:true,daten:d}; }
+    catch(e){ const netz=offline()||e instanceof TypeError; return {ok:false,art:netz?"netz":KP.art(e),meldung:e.message}; } }
+  async function nachSpeichern(a,r,still){
+    if(r.ok){ if(r.daten&&r.daten.trocken){ toast("Testkonto: nur Probelauf, nichts gespeichert"); render(); return true; }
+      if(r.daten&&r.daten.eintrag) eintragSetzen(r.daten.eintrag);
+      if(r.daten&&r.daten.schon&&!still) toastLang(`Schon entschieden${r.daten.eintrag&&r.daten.eintrag.entschieden_von?` von ${r.daten.eintrag.entschieden_von}`:""}. Es gilt die erste Entscheidung.`);
+      if(a.freigabe) ladeFreigabenLeise();
+      render(); return true; }
+    if(!still) toastLang(r.meldung||"Speichern hat nicht geklappt"); render(); return false; }
+  const ladeFreigabenLeise=()=>{ try{ if(typeof ladeFreigaben==="function") ladeFreigaben(); }catch(e){} };
+  /* Warteschlange (nur interne Punkte): erst lokal merken, dann senden. Überlebt Neuladen und Funkloch. */
+  async function queueSenden(){ if(!S.queue.length||!SB.s||offline()||S.stand==="alt") return;
+    for(const q of [...S.queue]){ const r=await ausfuehren(q.aktion); if(!r.ok&&r.art==="netz") break;
+      S.queue=S.queue.filter(x=>x!==q); qSichern(); await nachSpeichern(q.aktion,r,true);
+      if(!r.ok) toastLang(`„${q.titel}“: ${r.meldung||"konnte nicht gespeichert werden"}`); }
+    render(); }
+  async function festmachen(id,verlassen){ const w=S.warte.get(id); if(!w) return; clearTimeout(w.t); S.warte.delete(id);
+    if(w.extern&&verlassen){ render(); if(verlassen==="go") toast("Nicht freigegeben, bleibt offen"); return; }
+    if(!w.extern&&w.aktion.alt===undefined){ S.queue.push({id,titel:w.titel,neu:w.neu,aktion:w.aktion}); qSichern();
+      if(offline()){ render(); return; } queueSenden(); return; }
+    const r=await ausfuehren(w.aktion); await nachSpeichern(w.aktion,r); }
+  function vormerken(e,neu,aktion,text){ const alt=S.warte.get(e.id); if(alt) clearTimeout(alt.t);
+    const w={neu,aktion,extern:!!e.extern,titel:e.titel}; w.t=setTimeout(()=>festmachen(e.id),WARTE_MS); S.warte.set(e.id,w);
+    if(navigator.vibrate) try{ navigator.vibrate(15); }catch(x){}
+    render(); toastRueck(text,()=>{ const x=S.warte.get(e.id); if(!x) return; clearTimeout(x.t); S.warte.delete(e.id); render(); toast("Zurückgenommen"); },WARTE_MS); }
+  function allesFestmachen(grund){ [...S.warte.keys()].forEach(id=>festmachen(id,grund)); }
+
+  const finde=id=>alle().find(e=>String(e.id)===String(id));
+  const aktionSetzen=(e,status,o)=>{ o=o||{}; if(e.alt!==undefined) return {alt:e.alt,status,kommentar:o.kommentar};
+    return {fn:"cockpit_entscheidung_setzen",freigabe:!!e.extern,args:{p_id:e.id,p_status:status,p_kommentar:o.kommentar||null,p_spaeter_bis:o.bis||null,p_weiter_an:o.weiter_an||null,p_idem:uuid()}}; };
+  function okay(id){ const e=finde(id); if(!e||!darf()) return;
+    if(e.extern&&offline()){ toast("Nur mit Verbindung"); return; }
+    const text=e.extern? `${ART[e.art]||"Mail"} an ${e.empfaenger||"Empfänger"} freigegeben` : `„${e.titel}“ ist okay`;
+    vormerken(e,{status:"okay",entschieden_von:ichPerson(),entschieden_am:new Date().toISOString()},aktionSetzen(e,"okay",{weiter_an:e.weiter_an}),text); }
+  function erledigt(id){ const e=finde(id); if(!e||!darf()) return;
+    vormerken(e,{status:"okay",erledigt_am:new Date().toISOString(),erledigt_von:ichPerson(),entschieden_von:e.entschieden_von||ichPerson(),entschieden_am:e.entschieden_am||new Date().toISOString()},
+      {fn:"cockpit_entscheidung_erledigt",args:{p_id:e.id,p_erledigt:true}},`„${e.titel}“ ist erledigt`); }
+  function nein(id,grund){ const e=finde(id); if(!e) return; SX.zu();
+    if(e.extern&&offline()){ toast("Nur mit Verbindung"); return; }
+    vormerken(e,{status:"nein",entschieden_von:ichPerson(),entschieden_am:new Date().toISOString()},aktionSetzen(e,"nein",{kommentar:grund}),`„${e.titel}“: nein, wird nicht gemacht`); }
+  async function sofort(e,aktion,neu,text){ SX.zu();
+    if(e.extern&&offline()){ toast("Nur mit Verbindung"); return; }
+    if(!e.extern&&aktion.alt===undefined&&offline()){ S.queue.push({id:e.id,titel:e.titel,neu,aktion}); qSichern(); render(); toast(text+" · wird gesendet, sobald Verbindung da ist"); return; }
+    const r=await ausfuehren(aktion); if(await nachSpeichern(aktion,r)&&!(r.daten&&r.daten.trocken)) toast(text); }
+  function spaeter(id,bis){ const e=finde(id); if(!e) return;
+    if(!bis||bis<=heuteBerlin()){ toast("Bitte ein Datum ab morgen wählen"); return; }
+    if(e.alt!==undefined){ toast("Später geht erst mit der neuen Entscheidungsliste"); return; }
+    sofort(e,aktionSetzen(e,"spaeter",{bis}),{status:"spaeter",spaeter_bis:bis},`Später · ab ${tagKurz(bis)}`); }
+  function aendern(id,text){ const e=finde(id); if(!e) return; text=String(text||"").trim().slice(0,500);
+    if(!text){ toast("Bitte kurz schreiben, was anders sein soll"); return; }
+    if(e.alt!==undefined){ toast("Ändern geht erst mit der neuen Entscheidungsliste"); return; }
+    sofort(e,aktionSetzen(e,"aendern",{kommentar:text,weiter_an:e.weiter_an}),{status:"aendern",kommentar:text},`Änderung geschickt${e.weiter_an?` · an ${botName(e.weiter_an)}`:""}`); }
+  function zurueck(id){ const e=finde(id); if(!e) return;
+    sofort(e,aktionSetzen(e,"offen"),{status:"offen",erledigt_am:null},`„${e.titel}“ ist wieder offen`); }
+  function ausfuehrung(id,wie,weiter){ const e=finde(id); if(!e||e.alt!==undefined) return; if(e.extern&&wie==="selbst"){ toast("Was nach außen geht, macht immer das Team"); return; }
+    if(wie===e.ausfuehrung&&(weiter===undefined||weiter===e.weiter_an)) return;
+    sofort(e,{fn:"cockpit_entscheidung_ausfuehrung",args:{p_id:e.id,p_ausfuehrung:wie,p_weiter_an:wie==="team"?(weiter===undefined?e.weiter_an:weiter)||null:null}},
+      {ausfuehrung:wie,weiter_an:wie==="team"?(weiter===undefined?e.weiter_an:weiter):null},
+      wie==="selbst"?"Machen wir selbst · geht an kein Helferlein":`Team${(weiter??e.weiter_an)?` · Ergebnis geht an ${botName(weiter??e.weiter_an)}`:""}`); }
+
+  /* ⋯: Später · Ändern · Nein · Ergebnis geht an (Handy: Sheet, Desktop: Popover am Knopf) */
+  function mehr(id,knopf){ const e=finde(id); if(!e) return; const alt=e.alt!==undefined, selbst=e.ausfuehrung==="selbst";
+    const h=`${alt?"":`<div class="sx-lbl">Später</div><div class="sx-liste"><button type="button" data-entsp="1" data-id="${esc(e.id)}">Morgen<span class="mp">${esc(tagKurz(plusTage(1)))}</span></button><button type="button" data-entsp="7" data-id="${esc(e.id)}">Nächste Woche<span class="mp">${esc(tagKurz(plusTage(7)))}</span></button><button type="button" data-entspdatum aria-expanded="false" aria-controls="entSpBox">Datum …<span class="mp">›</span></button></div>
+      <div id="entSpBox" hidden><label class="sx-feld"><span>Ab wann wieder zeigen?</span><input type="date" id="entSpD" min="${plusTage(1)}" max="${plusTage(366)}"></label><div class="sx-knoepfe"><button type="button" class="btn sek voll" data-entspok="${esc(e.id)}">Später ab diesem Datum</button></div></div>`}
+      ${alt||selbst?"":`<div class="sx-lbl">Ändern</div><label class="sx-feld"><span>Was soll anders sein?</span><textarea id="entAe" maxlength="500" aria-describedby="entAeH"></textarea></label><div class="sx-hint" id="entAeH">Bitte keine Kindernamen, keine Mail oder Telefonnummer · max. 500 Zeichen${e.weiter_an?` · geht an ${esc(botName(e.weiter_an))}`:""}</div><div class="sx-knoepfe"><button type="button" class="btn primary voll" data-entae="${esc(e.id)}">Änderung schicken</button></div>`}
+      <div class="sx-lbl">Nein</div><label class="sx-feld"><span>Warum nicht? (optional)</span><textarea id="entNein" maxlength="500"></textarea></label><div class="sx-knoepfe"><button type="button" class="btn gefahr voll" data-entnein="${esc(e.id)}">Nein, nicht machen</button></div>
+      ${!alt&&!selbst?`<label class="sx-feld"><span>Ergebnis geht an</span><select id="entWa" data-id="${esc(e.id)}"><option value="">– niemand –</option>${BOTS.map(b=>`<option value="${b}"${e.weiter_an===b?" selected":""}>${botName(b)}</option>`).join("")}</select></label>`:""}`;
+    SX.auf(e.titel,h,{meta:e.extern?`Geht nach außen · ${ART[e.art]||"Mail"} · für ${fuerText(e)}`:`für ${fuerText(e)}${selbst?" · machen wir selbst":""}`,anker:knopf}); }
+
+  /* Klicks */
+  document.addEventListener("click",ev=>{ const t=ev.target; let b;
+    if((b=t.closest("[data-entok]"))){ okay(b.dataset.entok); return; }
+    if((b=t.closest("[data-enterl]"))&&b.tagName==="BUTTON"){ erledigt(b.dataset.enterl); return; }
+    if((b=t.closest("[data-entmehr]"))){ mehr(b.dataset.entmehr,b); return; }
+    if((b=t.closest("[data-entkat]"))){ S.kat=b.dataset.entkat; render(); if(!istBreit()){ window.scrollTo(0,0); const z=$("entInhalt").querySelector("[data-entzur]"); if(z) z.focus({preventScroll:true}); } return; }
+    if((b=t.closest("[data-entzur]"))){ const k=S.kat; S.kat=null; render(); const x=k&&$("entInhalt").querySelector(`[data-entkat="${CSS.escape(k)}"]`); if(x) x.focus(); return; }
+    if((b=t.closest("[data-entfilter]"))){ filter=b.dataset.entfilter==="alle"?"alle":"mich"; try{ localStorage.setItem(FKEY,filter); }catch(e){} render(); return; }
+    if((b=t.closest("[data-enttext]"))){ S.auf[b.dataset.enttext]=!S.auf[b.dataset.enttext]; render(); return; }
+    if((b=t.closest("[data-entanl]"))){ S.anl[b.dataset.entanl]=!S.anl[b.dataset.entanl]; render(); return; }
+    if((b=t.closest("[data-entkopie]"))){ const e=finde(b.dataset.entkopie); if(!e||!e.kopiertext) return;
+      const ok=()=>toast("Text kopiert"), nee=()=>{ const tx=b.closest(".ent-anl").querySelector(".ent-text"); const r=document.createRange(); r.selectNodeContents(tx); const s=getSelection(); s.removeAllRanges(); s.addRange(r); toast("Text markiert, jetzt kopieren"); };
+      if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(e.kopiertext).then(ok,nee); else nee(); return; }
+    if((b=t.closest("[data-entwie]"))){ ausfuehrung(b.dataset.id,b.dataset.entwie); return; }
+    if((b=t.closest("[data-entzurueck]"))){ zurueck(b.dataset.entzurueck); return; }
+    if((b=t.closest("[data-entneu]"))){ laden(); return; }
+    if((b=t.closest("[data-entsp]"))){ spaeter(b.dataset.id,plusTage(+b.dataset.entsp)); return; }
+    if((b=t.closest("[data-entspdatum]"))){ const x=$("entSpBox"); x.hidden=!x.hidden; b.setAttribute("aria-expanded",String(!x.hidden)); if(!x.hidden) $("entSpD").focus(); return; }
+    if((b=t.closest("[data-entspok]"))){ spaeter(b.dataset.entspok,$("entSpD").value); return; }
+    if((b=t.closest("[data-entae]"))){ aendern(b.dataset.entae,$("entAe").value); return; }
+    if((b=t.closest("[data-entnein]"))){ nein(b.dataset.entnein,($("entNein").value||"").trim().slice(0,500)); return; }
+  });
+  document.addEventListener("toggle",ev=>{ if(ev.target.matches&&ev.target.matches("[data-enterl-auf]")) S.erlAuf=ev.target.open; },true);
+  document.addEventListener("change",ev=>{ if(ev.target.id==="entWa"){ const id=ev.target.dataset.id; SX.zu(); ausfuehrung(id,"team",ev.target.value||null); } });
+  /* Seite verlassen: interne Punkte sofort speichern, nach außen bleibt offen */
+  addEventListener("pagehide",()=>allesFestmachen("weg"));
+  document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="hidden") allesFestmachen("weg"); });
+  addEventListener("online",()=>{ render(); queueSenden(); }); addEventListener("offline",()=>render());
+
+  return { laden, render, zahlFuerMich:()=>zahl(true), stand:S, verlassen:()=>allesFestmachen("go"),
+    hatFreigabe:id=>!!id&&S.stand!=="alt"&&S.liste.some(e=>e.freigabe_id&&String(e.freigabe_id)===String(id)),
+    /* nur für Screens/Tests: Daten direkt setzen */
+    _setzen(l,f,st){ S.liste=l||[]; S.fort=f||null; S.stand=st||"da"; S.zeit=new Date(); render(); } };
+})();
+
 /* ----- Verdrahtung ----- */
 const _renderAllE3=renderAll; renderAll=function(){ _renderAllE3(); zweckSetzen(); renderFamilien(); renderGeld(); };
-const _liveE3=SB.live; SB.live=async function(){ await _liveE3(); renderFamilien(); await Promise.all([ladeFreigaben(),ladeGeld()]); };
-const _goE3=go; go=function(v){ _goE3(v); zweckSetzen(); if(v!=="kitas"&&FAM.storno){ FAM.storno=false; renderFamilien(); } };
-let _breitE3=istBreit(); addEventListener("resize",()=>{ const b=istBreit(); if(b!==_breitE3){ _breitE3=b; renderTeilnehmer(); renderTodos(); renderFamilien(); } });
+const _liveE3=SB.live; SB.live=async function(){ await _liveE3(); renderFamilien(); await Promise.all([ladeFreigaben(),ladeGeld(),ENT.laden()]); };
+const _goE3=go; go=function(v){ const es=$("entscheidungen"); if(es&&!es.hidden&&v!=="entscheidungen") ENT.verlassen(); _goE3(v); zweckSetzen(); if(v!=="kitas"&&FAM.storno){ FAM.storno=false; renderFamilien(); } };
+let _breitE3=istBreit(); addEventListener("resize",()=>{ const b=istBreit(); if(b!==_breitE3){ _breitE3=b; renderTeilnehmer(); renderTodos(); renderFamilien(); ENT.render(); } });
 
 renderAll();
 go(ANSICHTEN[ansicht()].start);
