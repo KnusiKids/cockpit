@@ -910,6 +910,35 @@ button.ent-heute{width:100%;border:0;text-align:left;font:inherit;color:inherit;
 .chip.warn{background:none!important;padding-left:0!important;padding-right:0!important;gap:7px;font-weight:700;color:var(--senf-text)}
 .chip.warn::before{content:"";width:9px;height:9px;border-radius:50%;flex:none;background:var(--mustard)}
 @media (max-width:820px){ body:has(.plus-hw-m:not([hidden])) main{padding-bottom:calc(200px + env(safe-area-inset-bottom))!important} }
+/* v9 Heute ruhig (Yuna, Bauliste heute_ruhig_v1): 3 Blöcke, Rest unter „Mehr Zahlen" */
+#heute .hr{max-width:640px;margin:0 auto}
+#heute .topbar{max-width:640px;margin-left:auto;margin-right:auto}
+.hr h2.bl{font-size:1.05rem;color:var(--ink);font-weight:700;margin:22px 4px 10px}
+.hr .kurs{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+.hr .kz1{display:flex;align-items:baseline;gap:10px;min-width:0}.hr .zeit{font-size:1.25rem;font-weight:700;color:var(--ink)}
+.hr .kn{font-size:1.05rem;font-weight:600;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.hr .ort{color:var(--ink-2);font-size:.9rem}
+.hr .kz2{display:flex;align-items:center;gap:12px}.hr .tn{flex:1;font-size:1rem;color:var(--ink)}.hr .tn b{font-size:1.15rem}
+.hr .btn.big{min-height:48px;padding:0 20px;font-size:1rem;border-radius:12px}
+.hr .hr-anw{border-top:1px solid var(--line);padding-top:4px}
+.hr .hr-anw .hk{box-shadow:none;padding:0;margin:0;background:none}
+.hr .hr-anw .hk>.pill,.hr .hr-anw .hk>.kt,.hr .hr-anw .hk>.km,.hr .hr-anw .hk>.bel,.hr .hr-anw .hk>.bar{display:none}
+.hr .hr-anw .hk .ah{border-top:0;margin-top:6px}
+.hr .hr-todo{padding-top:6px;padding-bottom:6px}
+.hr .hr-todo .tdx{min-height:56px;border-bottom:1px solid var(--line)}
+.hr button.hr-ent{min-height:52px;margin:0;padding:0;background:none;box-shadow:none;border-bottom:1px solid var(--line);border-radius:0}
+.hr button.hr-ent b{font-size:1rem;font-weight:600}
+.hr .hr-ent .dot{width:10px;height:10px;border-radius:50%;background:var(--terracotta);margin:0 7px 0 17px;flex:none}
+.hr .lk{display:flex;align-items:center;min-height:48px;width:100%;color:var(--ink);font:inherit;font-weight:600;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+.hr .geld{display:block;width:100%;text-align:left;border:0;font:inherit;cursor:pointer;color:inherit}
+.hr .geld .gz{font-family:var(--serif,inherit);font-size:2.2rem;font-weight:700;color:var(--ink);line-height:1.1}
+.hr .geld .gs{color:var(--ink-2);font-size:.95rem;margin-top:4px}
+.hr .hr-mehr{margin:16px 0 100px}
+.hr .hr-mehr>summary{list-style:none;display:flex;justify-content:center;align-items:center;min-height:48px;color:var(--ink-2);font-weight:600;cursor:pointer}
+.hr .hr-mehr>summary::-webkit-details-marker{display:none}
+.hr .hr-mehr[open]>summary{margin-bottom:10px}
+.hr .hr-mehr details.klapp>summary{min-height:44px;align-items:center}
+.hr .hr-mehrfuss{display:flex;gap:8px;flex-wrap:wrap}.hr .hr-mehrfuss .btn{flex:1}
+.hr .hr-leer{color:var(--ink-2);font-size:1rem}
 </style>
 </head>
 <body>
@@ -944,16 +973,28 @@ button.ent-heute{width:100%;border:0;text-align:left;font:inherit;color:inherit;
 <section id="heute" hidden>
   <div class="topbar">
     <div><h1 id="hGruss">Guten Tag</h1><div class="sub" id="hSub"></div></div>
-    <div class="actions"><button class="btn sek" id="hRefresh">Aktualisieren</button></div>
   </div>
-  <button type="button" class="tile ent-heute" id="hEnt" data-go="entscheidungen" hidden></button>
-  <div class="nurOnline heute-grid">
-    <div class="heute-col spalte"><div class="heute-col" id="hKurse"></div><div class="tile" id="hMorgen" hidden></div></div>
-    <div class="heute-col spalte">
-      <div class="tile"><div class="t-head"><h2>Zu erledigen</h2><span class="tiny" id="hTodoN" style="margin-left:auto"></span></div><div id="hTodo"></div></div>
-      <div class="tile"><div class="t-head"><h2 id="hMeineT">Meine To-dos</h2><button class="more" data-go="aufgaben" id="hMeineN">Alle</button></div><div id="hMeine"></div></div>
-      <details class="tile klapp"><summary class="t-head"><h2>Neu gebucht</h2><span class="tiny" id="hNeuN" style="margin-left:auto">letzte 7 Tage</span></summary><div id="hNeu"></div></details>
+  <div class="nurOnline hr">
+    <h2 class="bl">Heute im Kurs</h2>
+    <div id="hKurse"></div>
+    <h2 class="bl">Jetzt zu tun</h2>
+    <div class="tile hr-todo">
+      <button type="button" class="ent-heute hr-ent" id="hEnt" data-go="entscheidungen" hidden></button>
+      <div id="hMeine"></div>
+      <button type="button" class="lk" data-go="aufgaben" id="hMeineN">Alle To-dos ›</button>
+      <span id="hMeineT" hidden>Meine To-dos</span>
     </div>
+    <h2 class="bl">Offenes Geld</h2>
+    <button type="button" class="tile geld" id="hGeld" data-go="rechnungen"></button>
+    <details class="hr-mehr" id="hMehr">
+      <summary class="mz">Mehr Zahlen ›</summary>
+      <div class="heute-col">
+        <div class="tile"><div class="t-head"><h2>Zu erledigen</h2><span class="tiny" id="hTodoN" style="margin-left:auto"></span></div><div id="hTodo"></div></div>
+        <div class="tile" id="hMorgen" hidden></div>
+        <details class="tile klapp"><summary class="t-head"><h2>Neu gebucht</h2><span class="tiny" id="hNeuN" style="margin-left:auto">letzte 7 Tage</span></summary><div id="hNeu"></div></details>
+        <div class="hr-mehrfuss"><button class="btn sek" data-go="ueberblick">Übersicht mit allen Zahlen ›</button><button class="btn sek" id="hRefresh">Aktualisieren</button></div>
+      </div>
+    </details>
   </div>
 </section>
 <!-- Überblick -->
@@ -2081,7 +2122,7 @@ function renderKurse(){
   if(!SB.s || !LIVE){ $("zKurse").innerHTML=`<tbody><tr><td class="empty">Nach der Anmeldung sichtbar.</td></tr></tbody>`; return; }
   const heute=heuteBerlin(), Z=(LIVE.zyklen||[]).filter(z=>(z.ende||z.start)>=heute&&z.id);
   $("zKurse").innerHTML = Z.length? `<thead><tr><th>Kurs</th><th>Zeitraum</th><th style="width:150px">Belegt</th><th class="n" style="width:90px">Plätze</th><th style="width:170px">Status</th><th></th></tr></thead><tbody>`+Z.map(z=>{ const q=z.plaetze?z.belegt/z.plaetze:0;
-    return `<tr><td>${esc(z.typ)}<div class="tiny">${esc(z.ort||"")}${z.tag?` · ${esc(z.tag)}`:""}${z.zeit?` ${esc(z.zeit)}`:""}</div></td><td class="num">${dshort(z.start)} bis ${dshort(z.ende)}</td><td><div class="bar"><span style="width:${Math.min(100,q*100)}%;background:${q>=.8?'var(--green)':q>=.5?'var(--mustard)':'var(--terracotta)'}"></span></div><div class="tiny num">${z.belegt} von ${z.plaetze} · ${Math.round(q*100)} %</div></td>
+    return `<tr><td>${esc(z.typ)}<div class="tiny">${esc(z.ort||"")}${z.tag?` · ${esc(z.tag)}`:""}${z.zeit?` ${esc(z.zeit)}`:""}</div></td><td class="num">${dshort(z.start)}${z.ende&&z.ende>z.start?` bis ${dshort(z.ende)}`:""}</td><td><div class="bar"><span style="width:${Math.min(100,q*100)}%;background:${q>=.8?'var(--green)':q>=.5?'var(--mustard)':'var(--terracotta)'}"></span></div><div class="tiny num">${z.belegt} von ${z.plaetze} · ${Math.round(q*100)} %</div></td>
       <td><input type="number" min="${z.belegt}" max="40" value="${z.plaetze}" id="kp-${z.id}" aria-label="Plätze"></td><td><select id="ks-${z.id}" aria-label="Status">${[["planned","Entwurf"],["active","offen, buchbar"],["paused","pausiert"],["closed","geschlossen"]].map(([v,l])=>`<option value="${v}" ${z.status===v?"selected":""}>${l}</option>`).join("")}</select></td><td><button class="btn light small" data-kurs="${z.id}">Übernehmen</button></td></tr>`; }).join("")+"</tbody>" : `<tbody><tr><td class="empty">Keine laufenden oder kommenden Kurse.</td></tr></tbody>`;
   document.querySelectorAll("[data-kurs]").forEach(b=>b.addEventListener("click",async()=>{ const id=b.dataset.kurs, p=Number($("kp-"+id).value), s=$("ks-"+id).value;
     if(b.dataset.c!=="1"){ b.dataset.c="1"; b.textContent=s==="active"&&LIVE.zyklen.find(z=>z.id===id)?.status==="planned"?"Jetzt veröffentlichen?":`Übernehmen: ${p} Plätze?`; b.classList.replace("light","accent"); return; }
@@ -2534,7 +2575,7 @@ function kursKarte(k,tn,o){
   const mails=alle.map(t=>t.email).filter(Boolean);
   const kopf = o.modus==="heute"
     ? `<span class="when">${esc(wannText(o.termin))}${k.zeit?` · ${esc(k.zeit)}`:""}</span><h2>${esc(k.kurs||"Kurs")}</h2><div class="meta">${esc(k.ort||"")}${k.alter?` · ${esc(k.alter)}`:""}${termine.length>1?` · Termin ${termine.indexOf(o.termin)+1} von ${termine.length}`:""}</div>`
-    : `<h2>${esc(k.kurs||"Kurs")}${k.gruppe?` <span class="tiny">${esc(k.gruppe)}</span>`:""}</h2><div class="meta">${esc(k.ort||"")}${k.tag?` · ${esc(k.tag)}`:""}${k.zeit?` · ${esc(k.zeit)}`:""} · ${dt(k.start)}${k.ende&&k.ende!==k.start?` bis ${dt(k.ende)}`:""}${naechster?` · nächster Termin ${dt(naechster)}`:""}${k.alter?` · ${esc(k.alter)}`:""}</div>`;
+    : `<h2>${esc(k.kurs||"Kurs")}${k.gruppe?` <span class="tiny">${esc(k.gruppe)}</span>`:""}</h2><div class="meta">${esc(k.ort||"")}${k.tag?` · ${esc(k.tag)}`:""}${k.zeit?` · ${esc(k.zeit)}`:""} · ${dt(k.start)}${k.ende&&k.ende>k.start?` bis ${dt(k.ende)}`:""}${naechster?` · nächster Termin ${dt(naechster)}`:""}${k.alter?` · ${esc(k.alter)}`:""}</div>`;
   const auswahl = (o.modus!=="heute" && vergangen.length>1) ? `<select data-anwsel="${k.id}" aria-label="Termin für Anwesenheit">${vergangen.slice().reverse().map(d=>`<option value="${d}" ${d===termin?"selected":""}>${dt(d)}</option>`).join("")}</select>` : (termin?`<b>${dt(termin)}</b>`:"");
   const anwKopf = erlaubt ? `<div class="anwkopf"><span>${termin===heute&&o.modus==="heute"?"Heute da:":"Da am "+auswahl+":"}</span><span><b>${da}</b> von ${kinder} Kindern${markiert<alle.length?` · ${alle.length-markiert} ${alle.length-markiert===1?"Familie":"Familien"} noch offen`:" · fertig ✓"}</span>${markiert<alle.length?`<button class="kbtn alleda" data-alleda="${k.id}" data-termin="${termin}">Alle da</button>`:""}</div>`
                           : `<div class="anwkopf">${(o.termin||naechster)?`Abhaken geht am Kurstag (${dt(o.termin||naechster)}).`:""}</div>`;
@@ -2959,23 +3000,39 @@ function kursKarte(k,tn,o){ o=o||{};
     <div class="hk-fuss">${haupt}<button class="ibtn rahmen" data-kursmehr="${esc(k.id)}" aria-label="Mehr zu ${esc(k.kurs||"Kurs")}">⋯</button></div></div>`;
 }
 
-/* ----- Heute ----- */
+/* ----- Heute (v9, Yuna Bauliste heute_ruhig_v1): Kurse heute, max. 3 To-dos, offenes Geld; Rest unter „Mehr Zahlen" ----- */
+const H_AUF=new Set();
+function ortKurz(o){ return String(o||"").split(/,|·/)[0].trim(); }
+function heuteKinder(k){ return (k.teilnehmer||[]).reduce((a,t)=>a+(Number(t.anzahl)||1),0); }
+function heuteKursTile(p){ const k=p.k, key=k.id+"|"+p.d, auf=H_AUF.has(key), n=heuteKinder(k);
+  const tn = k.max ? `<b class="num">${n}</b> von ${k.max} Kindern` : `<b class="num">${n}</b> ${n===1?"Kind":"Kinder"}`;
+  return `<div class="tile kurs"><div class="kz1"><span class="zeit num">${esc(k.zeit||"")}</span><span class="kn">${esc(k.kurs||"Kurs")}</span></div>${k.ort?`<div class="ort">${esc(ortKurz(k.ort))}</div>`:""}
+    <div class="kz2"><span class="tn">${tn}</span><button class="btn big" data-hanw="${esc(key)}" aria-expanded="${auf}">${auf?"Schließen":"Anwesenheit"}</button></div>
+    ${auf?`<div class="hr-anw">${kursKarte(k,k.teilnehmer||[],{modus:"heute",termin:p.d})}</div>`:""}</div>`; }
 function renderHeute(){
   const sek=$("heute"); if(!sek) return;
-  $("hGruss").textContent="Heute";
-  $("hSub").textContent=datumLang()+" · deine Kurse und Aufgaben für heute";
+  const std=Number(new Date().toLocaleString("de-DE",{timeZone:"Europe/Berlin",hour:"numeric",hour12:false}));
+  $("hGruss").textContent=std<11?"Guten Morgen":std<18?"Guten Tag":"Guten Abend";
+  $("hSub").textContent="Was heute wichtig ist · "+datumLang();
   const ich=ichPerson(), meine=todoList().filter(t=>istOffen3(t)&&KP.personVon(t)===ich).sort(tdSort);
-  $("hMeineT").textContent="Meine To-dos"; $("hMeineN").textContent=meine.length?`${meine.length} offen ›`:"Alle ›";
-  $("hMeine").innerHTML = meine.length? meine.slice(0,4).map(x=>todoZeile3(x,{ohneWer:true})).join("") : '<div class="leer">Alles erledigt. Neues To-do? Unten rechts auf ＋.</div>';
-  if(!SB.s) return;
-  const T=heuteTermine(), h=heuteBerlin(), heuteT=T.filter(p=>p.d===h);
+  $("hMeineN").textContent=`Alle To-dos (${meine.length}) ›`;
+  $("hMeine").innerHTML = meine.length? meine.slice(0,3).map(x=>todoZeile3(x,{ohneWer:true})).join("") : '<div class="tdx"><span class="hr-leer">Alles erledigt ✓</span></div>';
+  if(!SB.s){ $("hGeld").innerHTML='<div class="gz num">–</div><div class="gs">Nach der Anmeldung aus den Rechnungen</div>'; return; }
+  const h=heuteBerlin(), heuteT=[]; (TN||[]).forEach(k=>kursTermineAlle(k).forEach(d=>{ if(d===h) heuteT.push({k,d}); }));
+  heuteT.sort((a,b)=>(a.k.zeit||"").localeCompare(b.k.zeit||""));
   const nach=[]; (TN||[]).forEach(k=>kursTermineAlle(k).forEach(d=>{ if(d>h) nach.push({k,d}); })); nach.sort((a,b)=>a.d.localeCompare(b.d)||(a.k.zeit||"").localeCompare(b.k.zeit||""));
-  const nx=nach[0];
+  const nx=nach[0], nxText=nx?`${wtKurz(nx.d)}${nx.k.zeit?" "+nx.k.zeit:""}`:"";
+  $("hKurse").innerHTML = !TN ? '<div class="tile"><span class="hr-leer">Lade Kurse …</span></div>'
+    : heuteT.length ? heuteT.map(heuteKursTile).join("")
+    : `<div class="tile"><span class="hr-leer">Heute kein Kurs${nx?` · nächster: ${esc(nxText)}`:""}</span></div>`;
   $("hMorgen").hidden=!(heuteT.length&&nx);
   $("hMorgen").innerHTML = heuteT.length&&nx ? `<div class="t-head"><h2>Danach</h2></div><div class="leer" style="padding:0">${esc(wannText(nx.d))}${nx.k.zeit?", "+esc(nx.k.zeit):""}: ${esc(nx.k.kurs||"Kurs")}${nx.k.ort?" · "+esc(nx.k.ort):""}</div>` : "";
-  $("hKurse").innerHTML = !TN ? '<div class="leer-k"><p>Lade Kurse …</p></div>'
-    : heuteT.length ? heuteT.map(p=>kursKarte(p.k,p.k.teilnehmer||[],{modus:"heute",termin:p.d})).join("")
-    : `<div class="leer-k"><p>Heute keine Kurse.${nx?` Nächster Kurs: ${esc(wannText(nx.d))}${nx.k.zeit?", "+esc(nx.k.zeit):""}, ${esc(nx.k.kurs||"Kurs")}.`:""}</p><button class="btn sek" data-go="teilnehmer">Alle Kurse</button></div>`;
+  /* Offenes Geld: gleiche Logik wie kOffen/offenSum in der Übersicht */
+  const offenRe=(BUCH||[]).filter(b=>!b.test&&b.rechnungsnummer&&b.status==="confirmed"&&!b.rechnung_storniert_am&&!b.bezahlt_am);
+  const offenSum=offenRe.reduce((a,b)=>a+(Number(b.betrag)||0),0), fam=new Set(offenRe.map(b=>String(b.email||b.eltern||b.id).toLowerCase())).size;
+  $("hGeld").innerHTML = !BUCH.length ? '<div class="gz num">–</div><div class="gs">Noch keine Rechnungen geladen</div>'
+    : offenSum>0 ? `<div class="gz num">${eurc(offenSum)} offen</div><div class="gs">bei ${plural(fam,"Familie","Familien")} ›</div>`
+    : '<div class="gz num">0 € offen</div><div class="gs">Alles bezahlt ✓</div>';
   const L=zuErledigen();
   $("hTodoN").textContent = L.length? L.length+" offen" : "";
   $("hTodo").innerHTML = L.length ? L.slice(0,6).map(x=>`<div class="todo2"><div class="was">${x.wasHtml||esc(x.was)}</div><div class="tu">${x.tu}</div><div class="warum">${esc(x.warum)}</div></div>${x.extra?`<div class="zkliste" ${ZK_AUF?"":"hidden"} style="padding-left:12px;border-left:3px solid var(--sand)">${x.extra}</div>`:""}`).join("")
@@ -2986,6 +3043,7 @@ function renderHeute(){
   $("hNeu").innerHTML = neu.length ? neu.map(b=>`<div class="neu2"><div><b>${esc(b.eltern||"")}</b><div class="tiny">${esc(b.kurs||"")} · ${dt(b.start)} · ${kinderText(b.anzahl)}</div></div><div class="tiny num" style="white-space:nowrap">${esc(tagKurz(String(b.gebucht_am||"").slice(0,10)))}</div></div>`).join("")
     : '<div class="leer">Noch keine Buchungen. Zeig den QR-Code, dann buchen Familien selbst.</div>';
 }
+document.addEventListener("click",e=>{ const b=e.target.closest("[data-hanw]"); if(!b) return; const k=b.dataset.hanw; H_AUF.has(k)?H_AUF.delete(k):H_AUF.add(k); renderHeute(); });
 /* Ziehen zum Aktualisieren (Handy, Heute) */
 (function(){ let y0=null; const sek=$("heute");
   sek.addEventListener("touchstart",e=>{ y0=(window.scrollY<=0)?e.touches[0].clientY:null; },{passive:true});
@@ -3251,26 +3309,36 @@ var ENT=(()=>{
         if(!S.fort.some(f=>f.projekt===e.projekt&&f.kategorie===e.kategorie)){ x.gesamt++; if(istErl(e)) x.erledigt++; }
         else if(o&&istErl(e)!==istErl(o)) x.erledigt+=istErl(e)?1:-1; }); }
     else L.forEach(e=>{ const x=g(e.projekt,e.kategorie,e.kategorie_reihenfolge); x.items.push(e); x.gesamt++; if(istErl(e)) x.erledigt++; });
+    /* v9: Projekte aus cockpit_state mit Unterkategorien auch ohne Entscheidungen zeigen; gleichnamige zusammenführen */
+    const norm=v=>String(v||"").trim().toLowerCase(), pNorm=v=>norm(projName(String(v||"").trim()));
+    ((typeof D!=="undefined"&&D&&Array.isArray(D.projekte))?D.projekte:[]).forEach(sp=>{ if(!sp||!Array.isArray(sp.unterkategorien)||!sp.unterkategorien.length) return;
+      const titel=String(sp.titel||sp.name||sp.id||"").trim(); if(!titel) return;
+      const vorh=[...G.values()].find(x=>pNorm(x.projekt)===pNorm(titel)||(sp.id&&norm(x.projekt)===norm(sp.id)));
+      const pn=vorh?vorh.projekt:titel;
+      sp.unterkategorien.forEach((u,i)=>{ const kt=String(u&&(u.titel||u.name)||"").trim(); if(!kt) return;
+        const da=[...G.values()].find(x=>x.projekt===pn&&norm(x.kategorie)===norm(kt));
+        if(da){ da.ausState=true; da.kategorie=kt; if(da.r===99) da.r=i; return; }
+        const x=g(pn,kt,i); x.ausState=true; }); });
     const ord=x=>{ const i=KAT.indexOf(x.kategorie); return [x.r,i<0?99:i]; };
-    const kats=[...G.values()].filter(x=>x.gesamt>0).sort((a,b)=>{ const A=ord(a),B=ord(b); return A[0]-B[0]||A[1]-B[1]||a.kategorie.localeCompare(b.kategorie,"de"); });
+    const kats=[...G.values()].filter(x=>x.gesamt>0||x.ausState).sort((a,b)=>{ const A=ord(a),B=ord(b); return A[0]-B[0]||A[1]-B[1]||a.kategorie.localeCompare(b.kategorie,"de"); });
     const P=new Map(); kats.forEach(k=>{ if(!P.has(k.projekt)) P.set(k.projekt,{projekt:k.projekt,kats:[],gesamt:0,erledigt:0}); const p=P.get(k.projekt); p.kats.push(k); p.gesamt+=k.gesamt; p.erledigt+=k.erledigt; });
     const projekte=[...P.values()].sort((a,b)=>zahlIn(b,true)-zahlIn(a,true)||a.projekt.localeCompare(b.projekt,"de"));
     return projekte; }
   const zahlIn=(p,m)=>(p.kats||[p]).reduce((s,k)=>s+k.items.filter(e=>wartet(e)&&(!m||fuerMich(e))).length,0);
   const kKey=k=>k.projekt+"\u0001"+k.kategorie;
 
-  function balken(x,y,label,klein){ const p=y?Math.round(100*x/y):100;
+  function balken(x,y,label,klein){ const p=y?Math.round(100*x/y):0;
     return `<div class="ent-bar${klein?" klein":""}" role="progressbar" aria-valuemin="0" aria-valuemax="${y}" aria-valuenow="${x}" aria-label="${esc(label)}: ${x} von ${y} erledigt"><span style="width:${p}%"></span></div>`; }
   const fuerText=e=>e.fuer_wen==="beide"?"beide":PERS[e.fuer_wen]||"beide";
 
   /* ----- Bausteine ----- */
   function projKachel(p){ const n=zahlIn(p,filter==="mich");
     return `<div class="tile ent-proj"><h2>${esc(projName(p.projekt))}</h2>${balken(p.erledigt,p.gesamt,projName(p.projekt))}
-      <div class="zahl"><b class="num">${p.erledigt} von ${p.gesamt}</b> erledigt${n?` · <b class="num">${n}</b> ${filter==="mich"?(n===1?"wartet auf dich":"warten auf dich"):(n===1?"wartet auf euch":"warten auf euch")}`:""}</div></div>`; }
+      <div class="zahl"><b class="num">${p.erledigt} von ${p.gesamt}</b> erledigt${!p.gesamt?" · noch keine Entscheidungen":""}${n?` · <b class="num">${n}</b> ${filter==="mich"?(n===1?"wartet auf dich":"warten auf dich"):(n===1?"wartet auf euch":"warten auf euch")}`:""}</div></div>`; }
   function katListe(p,sel){ return `<div class="ent-kats">${p.kats.map(k=>{ const n=k.items.filter(e=>wartet(e)&&fuerMich(e)).length;
-      const nx=k.items.filter(e=>wartet(e)&&(filter==="alle"||fuerMich(e))).sort(sortOffen)[0]||k.items.filter(wartet).sort(sortOffen)[0]; const fertig=k.erledigt>=k.gesamt;
+      const nx=k.items.filter(e=>wartet(e)&&(filter==="alle"||fuerMich(e))).sort(sortOffen)[0]||k.items.filter(wartet).sort(sortOffen)[0]; const leer=!k.gesamt, fertig=!leer&&k.erledigt>=k.gesamt;
       const beiAnd=nx&&!fuerMich(nx)?` bei ${andere()}`:"";
-      const me=fertig?"Alles entschieden ✓":(n?`<b>${n} für dich</b>`:"")+(nx?`${n?" · ":""}als Nächstes${beiAnd}: ${esc(nx.titel)}`:(n?"":"wartet gerade auf eine Antwort vom Team"));
+      const me=leer?"noch keine Entscheidungen":fertig?"Alles entschieden ✓":(n?`<b>${n} für dich</b>`:"")+(nx?`${n?" · ":""}als Nächstes${beiAnd}: ${esc(nx.titel)}`:(n?"":"wartet gerade auf eine Antwort vom Team"));
       return `<button type="button" class="ent-kat${sel===kKey(k)?" sel":""}${fertig?" fertig":""}" data-entkat="${esc(kKey(k))}" aria-label="${esc(k.kategorie)}, ${k.erledigt} von ${k.gesamt} erledigt${n?`, ${n} für dich`:""}"${sel===kKey(k)?' aria-current="true"':""}><b>${esc(k.kategorie)}</b><span class="xy num">${k.erledigt} von ${k.gesamt}</span><span class="mp" aria-hidden="true">›</span>${balken(k.erledigt,k.gesamt,k.kategorie,true)}<span class="me">${me}</span></button>`; }).join("")}</div>`; }
   function sortOffen(a,b){ const s=e=>e.status==="aendern"?3:(e.status==="spaeter"&&e.spaeter_bis>heuteBerlin())?2:0;
     return s(a)-s(b)||(a.spaeter_bis||"").localeCompare(b.spaeter_bis||"")||(a.reihenfolge??100)-(b.reihenfolge??100)||String(a.titel).localeCompare(String(b.titel),"de"); }
@@ -3329,6 +3397,7 @@ var ENT=(()=>{
       +`<div class="${mitZur?"tile ":""}ent-proj"><div class="et">${esc(projName(k.projekt))}</div><h2 id="entKatT">${esc(k.kategorie)}</h2>${balken(k.erledigt,k.gesamt,k.kategorie)}<div class="zahl"><b class="num">${k.erledigt} von ${k.gesamt}</b> erledigt</div></div>`;
     if(!offen.length){ const rest=k.items.filter(e=>!istErl(e)).length;
       h+= filter==="mich"&&rest? `<div class="tile ent-leer"><b>Für dich ist hier nichts offen</b><span>Bei ${andere()} ${rest===1?"wartet noch 1 Punkt":`warten noch ${rest} Punkte`}.</span><div><button type="button" class="ent-mehrtext" data-entfilter="alle">Alle offenen zeigen</button></div></div>`
+        : !k.gesamt ? `<div class="tile ent-leer"><b>Noch keine Entscheidungen</b><span>Neue Punkte erscheinen hier, sobald etwas vorbereitet ist.</span></div>`
         : `<div class="tile ent-leer"><b>Alles in dieser Kategorie entschieden ✓</b><span>Neue Punkte erscheinen hier, sobald etwas vorbereitet ist.</span></div>`; }
     else { h+=`<div class="tdgrp">Offen · ${offen.length}</div>`; let tdl=[];
       const zu=()=>{ if(tdl.length){ h+=`<div class="tdl" style="margin-bottom:12px">${tdl.join("")}</div>`; tdl=[]; } };
@@ -3371,7 +3440,7 @@ var ENT=(()=>{
   function badges(){ const n=zahl(true);
     const bd=$("badgeDec"); if(bd){ bd.hidden=!n; bd.textContent=n; } return n; }
   function heuteZeile(){ const el=$("hEnt"); if(!el) return; const n=(S.stand==="start"&&SB.s)?0:zahl(true);
-    el.hidden=!n; if(n) el.innerHTML=`<span class="grow"><b>${n} ${n===1?"Entscheidung wartet":"Entscheidungen warten"} auf dich</b><span class="tiny">Planung › Entscheidungen</span></span><span class="mp" aria-hidden="true">›</span>`; }
+    el.hidden=!n; if(n) el.innerHTML=`<span class="dot" aria-hidden="true"></span><span class="grow"><b>${n} ${n===1?"Entscheidung wartet":"Entscheidungen warten"} auf dich ›</b></span>`; }
 
   /* ----- Laden ----- */
   async function laden(){ if(!SB.s){ S.stand="alt"; render(); return; }
